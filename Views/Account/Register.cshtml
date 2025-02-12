@@ -6,7 +6,6 @@
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
 
-<!-- Nhúng Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
 <div class="account-container">
@@ -14,16 +13,10 @@
         <h2 class="text-center mb-4">Đăng Kí</h2>
         <form asp-action="Register" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="City" class="form-label"></label>
-                <input asp-for="City" class="form-control" data-val="false" />
+                <label asp-for="UserName" class="form-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
@@ -33,11 +26,21 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="PhoneNumber" class="form-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" data-val="false" />
             </div>
 
-            <!-- Ô nhập mật khẩu -->
+            <div class="mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" data-val="false" />
+            </div>
+
             <div class="mb-3">
                 <label asp-for="Password" class="form-label"></label>
                 <div class="input-group">
@@ -49,7 +52,6 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <!-- Ô nhập xác nhận mật khẩu -->
             <div class="mb-3">
                 <label asp-for="ConfirmPassword" class="form-label"></label>
                 <div class="input-group">

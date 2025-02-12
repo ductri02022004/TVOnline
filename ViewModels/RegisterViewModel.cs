@@ -9,13 +9,17 @@ namespace TVOnline.ViewModels {
         [Display(Name = "Số điện thoại")]
         public string? PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Yêu cầu nhập tên")]
-        [Display(Name= "Họ và tên")]
-        public string Name { get; set; }
+        [Required(ErrorMessage = "Yêu cầu nhập tên đăng nhập")]
+        [Display(Name = "Tên đăng nhập")]
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "Yêu cầu nhập Email")]
         [EmailAddress(ErrorMessage ="Địa chỉ email không hợp lệ")]
         public string Email { get; set; }
+
+        [Required(ErrorMessage = "Yêu cầu nhập tên")]
+        [Display(Name = "Họ và tên")]
+        public string Name { get; set; }
 
         [Required(ErrorMessage = "Yêu cầu nhập mật khẩu")]
         [StringLength(40, MinimumLength = 6, ErrorMessage = "{0} tối thiểu {2} kí tự và tối đa {1} kí tự")]

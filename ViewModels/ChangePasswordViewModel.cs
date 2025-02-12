@@ -2,7 +2,6 @@
 
 namespace TVOnline.ViewModels {
     public class ChangePasswordViewModel {
-        [Required(ErrorMessage = "Yêu cầu nhập Email")]
         [EmailAddress]
         public string Email { get; set; }
 

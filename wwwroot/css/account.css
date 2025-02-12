@@ -9,9 +9,9 @@
     min-height: 100vh;
     padding: 2rem 0;
 }
-.account-box{
+.account-box {
     background-color: white;
-    padding: 30px;
+    padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
     max-width: 500px;
