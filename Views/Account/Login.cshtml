@@ -1,9 +1,9 @@
-﻿@using TVOnline.ViewModels;
+﻿@using TVOnline.ViewModels.Account;
 @model LoginViewModel;
 
 @{
     ViewData["Title"] = "Login";
-    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+    Layout = "~/Views/Shared/Account/_AccountLayout.cshtml";
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
@@ -53,6 +53,24 @@
                 <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Trở về</a>
             </div>
         </form>
+        <div class="external-login">
+            <hr />
+            <p class="text-center">Hoặc đăng nhập bằng:</p>
+            <form asp-action="ExternalLogin" asp-controller="Account" method="post">
+                <button type="submit" class="btn btn-primary w-100 mb-2"
+                        name="provider" value="Google"
+                        style="background-color: #0866FF;">
+                    <i class="fab fa-google"></i> Đăng nhập bằng Google
+                </button>
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
     </div>
 </div>
 

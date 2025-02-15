@@ -5,13 +5,13 @@
 namespace TVOnline.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateCityAttribute : Migration
+    public partial class User : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "City",
+                name: "FullName",
                 table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: true,
@@ -23,7 +23,7 @@ namespace TVOnline.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "City",
+                name: "FullName",
                 table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: false,

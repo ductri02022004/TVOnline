@@ -1,16 +1,13 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
 using TVOnline.Models;
 using TVOnline.Helper;
 
-namespace TVOnline
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+namespace TVOnline {
+    public class Program {
+        public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -35,11 +32,19 @@ namespace TVOnline
             // Configure Email Service
             builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+            //Google login
+            builder.Services.AddAuthentication()
+            .AddGoogle(googleOptions => {
+                var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+                googleOptions.ClientId = googleAuthNSection.GetValue<string>("ClientId") ?? throw new InvalidOperationException("Google ClientId is not configured");
+                googleOptions.ClientSecret = googleAuthNSection.GetValue<string>("ClientSecret") ?? throw new InvalidOperationException("Google ClientSecret is not configured");
+                googleOptions.CallbackPath = "/signin-google";
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
+            if (!app.Environment.IsDevelopment()) {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }

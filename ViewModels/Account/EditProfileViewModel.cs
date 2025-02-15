@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels {
+namespace TVOnline.ViewModels.Account {
     public class EditProfileViewModel {
         public string Id { get; set; }
         [Required(ErrorMessage = "Không được để trống")]
         [Display(Name = "Họ và tên")]
-        public string ? Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Năm sinh")]
         [DataType(DataType.Date)]

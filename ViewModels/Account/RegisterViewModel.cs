@@ -1,20 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels {
+namespace TVOnline.ViewModels.Account {
     public class RegisterViewModel {
-        
+
         [Display(Name = "Thành phố")]
         public string? City { get; set; }
 
         [Display(Name = "Số điện thoại")]
         public string? PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Yêu cầu nhập tên đăng nhập")]
-        [Display(Name = "Tên đăng nhập")]
-        public string UserName { get; set; }
-
         [Required(ErrorMessage = "Yêu cầu nhập Email")]
-        [EmailAddress(ErrorMessage ="Địa chỉ email không hợp lệ")]
+        [EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Yêu cầu nhập tên")]
