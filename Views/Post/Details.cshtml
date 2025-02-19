@@ -1,0 +1,34 @@
+@model TVOnline.Models.Post
+
+@{
+    ViewData["Title"] = "Chi tiết bài đăng";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Chi tiết bài đăng</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <img src="@Model.ImageUrl" class="card-img-top" alt="Ảnh bài đăng">
+                <div class="card-body">
+                    <h5 class="card-title">Bài đăng @Model.PostId</h5>
+                    <p class="card-text">@Model.Description</p>
+                    <p class="card-text"><small class="text-muted">Nhà tuyển dụng: @Model.EmployerID</small></p>
+                    <p class="card-text"><small class="text-muted">Ngày đăng: @Model.Date.ToString("dd/MM/yyyy")</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="cvFile">Tải lên CV của bạn</label>
+                    <input type="file" class="form-control" id="cvFile" name="cvFile" required>
+                </div>
+                <input type="hidden" name="postId" value="@Model.PostId" />
+                <button type="submit" class="btn btn-primary mt-3">Ứng tuyển ngay</button>
+            </form>
+        </div>
+    </div>
+</div>
