@@ -1,113 +1,113 @@
 ﻿:root {
-    --primary: #0d6efd;
-    --primary-foreground: #ffffff;
-    --secondary: #6c757d;
-    --secondary-foreground: #ffffff;
-    --accent: #ffc107;
-    --accent-foreground: #000000;
-    --background: #ffffff;
-    --foreground: #000000;
-    --card: #ffffff;
-    --card-foreground: #000000;
-    --border: #dee2e6;
-    --input: #ced4da;
-    --ring: #0d6efd;
-    --radius: 0.5rem;
-    --font-family: system-ui, -apple-system, "Segoe UI", Roboto;
+  --primary: #0d6efd;
+  --primary-foreground: #ffffff;
+  --secondary: #6c757d;
+  --secondary-foreground: #ffffff;
+  --accent: #ffc107;
+  --accent-foreground: #000000;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --border: #dee2e6;
+  --input: #ced4da;
+  --ring: #0d6efd;
+  --radius: 0.5rem;
+  --font-family: system-ui, -apple-system, "Segoe UI", Roboto;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 ul {
-    list-style: none;
-    margin-bottom: 0;
+  list-style: none;
+  margin-bottom: 0;
 }
 
 li {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 body {
-    font-family: var(--font-family);
-    background-color: var(--background);
-    color: var(--foreground);
+  font-family: var(--font-family);
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .navbar {
-    background-color: var(--background);
-    border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
 }
 
 .hero-section {
-    background-color: var(--background);
-    padding: 80px 0;
+  background-color: var(--background);
+  padding: 80px 0;
 }
 
 .search-box {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .category-card {
-    background-color: var(--card);
-    border: 1px solid var(--border);
-    transition: transform 0.3s ease;
-    cursor: pointer;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
-    .category-card:hover {
-        transform: translateY(-5px);
-    }
+.category-card:hover {
+  transform: translateY(-5px);
+}
 
 .job-card {
-    border: 1px solid var(--border);
-    transition: transform 0.3s ease;
+  border: 1px solid var(--border);
+  transition: transform 0.3s ease;
 }
 
-    .job-card:hover {
-        transform: translateY(-5px);
-    }
+.job-card:hover {
+  transform: translateY(-5px);
+}
 
 .company-logo {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: var(--radius);
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--radius);
 }
 
 .btn-primary {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: var(--primary-foreground);
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .btn-outline-primary {
-    border-color: var(--primary);
-    color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
-    .btn-outline-primary:hover {
-        background-color: var(--primary);
-        color: var(--primary-foreground);
-    }
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
 
 .footer a {
-    text-decoration: none;
-    transition: opacity 0.3s ease;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
 }
 
-    .footer a:hover {
-        opacity: 0.8;
-    }
+.footer a:hover {
+  opacity: 0.8;
+}
 
 .footer li {
-    margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .footer .bi {
-    color: var(--primary);
+  color: var(--primary);
 }
