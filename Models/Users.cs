@@ -4,32 +4,30 @@ using Microsoft.AspNetCore.Identity;
 
 namespace TVOnline.Models {
     public class Users : IdentityUser{
-        [Key] // Khóa chính
+        [Key]
         public int UserID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string FullName { get; set; } // Họ và tên
+        public string FullName { get; set; } 
 
         [Required]
         [EmailAddress]
         [StringLength(100)]
-        public string Email { get; set; } // Email
+        public string Email { get; set; }
 
         [Required]
         [Phone]
         [StringLength(15)]
-        public string PhoneNumber { get; set; } // Số điện thoại
+        public string PhoneNumber { get; set; } 
 
         [Required]
-        public int Age { get; set; } // Tuổi
+        public int Age { get; set; } 
 
-        // Khóa ngoại tham chiếu đến bảng Cities
         [ForeignKey("City")]
         public int CityID { get; set; }
         public virtual City City { get; set; }
 
-        // Quan hệ 1-N: Một User có thể có nhiều UserCV, Feedback, và Payment
         public virtual ICollection<UserCV> UserCVs { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
