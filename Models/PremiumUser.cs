@@ -6,12 +6,16 @@ namespace TVOnline.Models
 {
     public class PremiumUser
     {
-        [Key] // Khóa chính
+        [Key]
         public int PremiumUserID { get; set; }
 
-        // Khóa ngoại tham chiếu đến bảng Users
-        [ForeignKey("User")]
+        [Required]
         public int UserID { get; set; }
-        public virtual User User { get; set; }
+
+        [ForeignKey("UserID")]
+        public Users User { get; set; }
+
+        public ICollection<Templates> Templates { get; set; }
+        public ICollection<UserCV> UserCVs { get; set; }
     }
 }

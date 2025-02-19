@@ -9,11 +9,11 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <img src="@Model.ImageUrl" class="card-img-top" alt="Ảnh bài đăng">
+                @* <img src="@Model.ImageUrl" class="card-img-top" alt="Ảnh bài đăng"> *@
                 <div class="card-body">
                     <h5 class="card-title">Bài đăng @Model.PostId</h5>
                     <p class="card-text">@Model.Description</p>
-                    <p class="card-text"><small class="text-muted">Nhà tuyển dụng: @Model.EmployerID</small></p>
+                    <p class="card-text"><small class="text-muted">Nhà tuyển dụng: @Model.EmployerId</small></p>
                     <p class="card-text"><small class="text-muted">Ngày đăng: @Model.Date.ToString("dd/MM/yyyy")</small></p>
                 </div>
             </div>

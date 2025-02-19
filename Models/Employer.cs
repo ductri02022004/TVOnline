@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using TVOnline.Migrations;
 
 namespace TVOnline.Models
 {
@@ -9,29 +10,33 @@ namespace TVOnline.Models
         public int EmployerID { get; set; }
 
         [Required]
-        [StringLength(100)]
-        public string CompanyName { get; set; }
+        public int UserID { get; set; }
 
-        [StringLength(255)]
-        public string Description { get; set; }
+        [ForeignKey("UserID")]
+        public Users User { get; set; }
 
         [Required]
-        [StringLength(100)]
+        public int CityID { get; set; }
+
+        [ForeignKey("CityID")]
+        public City City { get; set; }
+
+        public int? FeedBackID;
+        [ForeignKey("FeedbackID")]
+        public Feedback Feedback { get; set; }
+
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
-        [ForeignKey("City")]
-        public int CityID { get; set; }
-        public virtual City City { get; set; }
+        [Required]
+        public string CompanyName { get; set; }
 
-        public virtual ICollection<InterviewInvitations> InterviewInvitations { get; set; }
-        public virtual ICollection<Feedback> Feedbacks { get; set; }
-        public virtual ICollection<Post> Posts { get; set; }
+        public string Description { get; set; }
 
-        public Employer()
-        {
-            InterviewInvitations = new HashSet<InterviewInvitations>();
-            Feedbacks = new HashSet<Feedback>();
-            Posts = new HashSet<Post>();
-        }
+        public ICollection<Feedback> Feedbacks { get; set; } = [];
+        public ICollection<Post> Posts { get; set; } = [];
+        public ICollection<InterviewInvitations> InterviewInvitations { get; set; }
+
     }
 }

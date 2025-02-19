@@ -6,23 +6,22 @@ namespace TVOnline.Models
 {
     public class Feedback
     {
-        [Key] // Khóa chính
+        [Key]
         public int FeedbackID { get; set; }
-
-        [Required]
-        public string Content { get; set; }
 
         [Required]
         public DateTime Date { get; set; }
 
-        // Khóa ngoại tham chiếu đến bảng Employers
-        [ForeignKey("Employer")]
-        public int EmployerID { get; set; }
-        public virtual Employer Employer { get; set; }
-
-        // Khóa ngoại tham chiếu đến bảng Users
-        [ForeignKey("User")]
+        [Required]
         public int UserID { get; set; }
-        public virtual User User { get; set; }
+
+        [Required]
+        public int EmployerID { get; set; }
+
+        [ForeignKey("UserID")]
+        public virtual Users User { get; set; }
+
+        [ForeignKey("EmployerID")]
+        public virtual Employer Employer { get; set; }
     }
 }

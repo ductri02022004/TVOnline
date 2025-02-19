@@ -156,6 +156,7 @@ namespace TVOnline.Controllers.Account {
                     UserName = model.Email,
                     PhoneNumber = string.IsNullOrEmpty(model.PhoneNumber) ? null : model.PhoneNumber,
                     City = string.IsNullOrEmpty(model.City) ? null : model.City
+                    // Chỗ này phải tìm City theo CityName trong database
                 };
                 var result = await userManager.CreateAsync(users, model.Password);
                 if (result.Succeeded) {
@@ -314,9 +315,9 @@ namespace TVOnline.Controllers.Account {
                 Age = userCur.Age,
                 Email = userCur.Email,
                 PhoneNumber = userCur.PhoneNumber,
-                City = userCur.City,
-                CvFileUrl = userCur.CvFileUrl,
-                JobIndustry = userCur.JobIndustry
+                City = userCur.City.CityName,
+                CvFileUrl = userCur.UserCVs.CVFileUrl,
+                JobIndustry = ""
             };
             return View(editProfileViewModel);
         }
@@ -340,10 +341,9 @@ namespace TVOnline.Controllers.Account {
             user.FullName = model.Name;
             user.PhoneNumber = model.PhoneNumber;
             user.Age = model.Age;
-            user.City = model.City;
-            user.JobIndustry = model.JobIndustry;
+            user.City.CityName = model.City;
             if (model.CvFileUrl != null) {
-                user.CvFileUrl = model.CvFileUrl;
+                user.UserCVs.CVFileUrl = model.CvFileUrl;
             }
 
             // Lưu thay đổi sử dụng UserManager

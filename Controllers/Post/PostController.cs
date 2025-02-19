@@ -10,16 +10,22 @@ namespace TVOnline.Controllers
 {
     public class PostController : Controller
     {
-        private static List<Post> posts = new List<Post>
-        {
-            new Post { PostId = "1", Description = "Đây là bài đăng 1", EmployerID = 101, Date = DateTime.Now.AddDays(-1), ImageUrl = "/images/post1.jpg" },
-            new Post { PostId = "2", Description = "Mô tả bài đăng 2", EmployerID = 102, Date = DateTime.Now.AddDays(-2), ImageUrl = "/images/post2.jpg" },
-            new Post { PostId = "3", Description = "Mô tả bài đăng 3", EmployerID = 103, Date = DateTime.Now.AddDays(-3), ImageUrl = "/images/post3.jpg" }
-        };
+        private static List<Post> posts =
+        [
+            new()
+            {
+                PostId = 1, Description = "Đây là bài đăng 1", EmployerId = 101, Date = DateTime.Now.AddDays(-1)
+            },
+            new()
+            {
+                PostId = 2, Description = "Mô tả bài đăng 2", EmployerId = 102, Date = DateTime.Now.AddDays(-2)
+            },
+            new() { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103, Date = DateTime.Now.AddDays(-3) }
+        ];
 
         public IActionResult Details(string id)
         {
-            var post = posts.FirstOrDefault(p => p.PostId == id);
+            var post = posts.FirstOrDefault(p => p.PostId.ToString() == id);
             if (post == null)
             {
                 return NotFound();
