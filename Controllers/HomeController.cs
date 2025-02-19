@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
+using TVOnline.Models.Error;
 
 namespace TVOnline.Controllers
 {

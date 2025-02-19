@@ -21,8 +21,6 @@ namespace TVOnline.ViewModels.Account {
         public string Email { get; set; }
 
         [Display(Name = "Ngành")]
-        public string? JobIndustry { get; set; }
-        public IFormFile? CvFile { get; set; }
-        public string? CvFileUrl { get; set; }
+        public string? Job { get; set; }
     }
 }
