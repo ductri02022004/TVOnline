@@ -12,7 +12,7 @@ namespace TVOnline.Models
         // Khóa ngoại tham chiếu đến bảng Users
         [ForeignKey("User")]
         public int UserID { get; set; }
-        public virtual User User { get; set; }
+        public virtual Users User { get; set; }
 
         [Required]
         [StringLength(255)]

@@ -28,15 +28,10 @@ namespace TVOnline.Models {
         public int CityID { get; set; }
         public virtual City City { get; set; }
 
-        public virtual ICollection<UserCV> UserCVs { get; set; }
-        public virtual ICollection<Feedback> Feedbacks { get; set; }
-        public virtual ICollection<Payment> Payments { get; set; }
-
-        public User()
-        {
-            UserCVs = new HashSet<UserCV>();
-            Feedbacks = new HashSet<Feedback>();
-            Payments = new HashSet<Payment>();
-        }
+        public virtual UserCV UserCVs { get; set; }
+        public virtual PremiumUser PremiumUser { get; set; }
+        public virtual ICollection<Payments> Payments { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; } // Feedbacks mà User đưa ra
+        public virtual ICollection<InterviewInvitations> InterviewInvitations { get; set; }
     }
 }   

@@ -9,7 +9,7 @@ namespace TVOnline.ViewModels.Account {
 
         [Display(Name = "Năm sinh")]
         [DataType(DataType.Date)]
-        public DateTime? Age { get; set; }
+        public int Age { get; set; }
 
         [Display(Name = "Thành phố")]
         public string? City { get; set; }

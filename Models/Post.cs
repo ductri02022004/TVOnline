@@ -13,6 +13,7 @@ namespace TVOnline.Models
         [Required]
         public string Description { get; set; }
         [Required]
+        [ForeignKey("Employer")]
         public int EmployerId { get; set; }
 
         public virtual Employer Employer { get; set; }
