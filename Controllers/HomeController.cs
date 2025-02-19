@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
+using System.Collections.Generic;
 
 namespace TVOnline.Controllers
 {
@@ -14,10 +15,20 @@ namespace TVOnline.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
+        public IActionResult Index() {
+        
+            // Tạo danh sách tạm thời các bài đăng
+            var posts = new List<Post>
+            {
+                new Post { PostId = "1", Description = "Đây là bài đăng 1", EmployerID = 101, Date = DateTime.Now.AddDays(-1) },
+                new Post { PostId = "2", Description = "Mô tả bài đăng 2", EmployerID = 102, Date = DateTime.Now.AddDays(-2) },
+                new Post { PostId = "3", Description = "Mô tả bài đăng 3", EmployerID = 103, Date = DateTime.Now.AddDays(-3) },
+                new Post { PostId = "3", Description = "Mô tả bài đăng 3", EmployerID = 103, Date = DateTime.Now.AddDays(-3) },
+                new Post { PostId = "3", Description = "Mô tả bài đăng 3", EmployerID = 103, Date = DateTime.Now.AddDays(-3) },
+                new Post { PostId = "3", Description = "Mô tả bài đăng 3", EmployerID = 103, Date = DateTime.Now.AddDays(-3) },
+            };
 
-            return View();
+            return View(posts);
         }
 
         [Authorize]
