@@ -12,8 +12,8 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250215181912_User")]
-    partial class User
+    [Migration("20250219012347_users")]
+    partial class users
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
