@@ -155,7 +155,7 @@ namespace TVOnline.Controllers.Account {
                     Email = model.Email,
                     UserName = model.Email,
                     PhoneNumber = string.IsNullOrEmpty(model.PhoneNumber) ? null : model.PhoneNumber,
-                    City = string.IsNullOrEmpty(model.City) ? null : model.City
+                    UserCity = string.IsNullOrEmpty(model.City) ? null : model.City
                 };
                 var result = await userManager.CreateAsync(users, model.Password);
                 if (result.Succeeded) {
@@ -314,9 +314,8 @@ namespace TVOnline.Controllers.Account {
                 Age = userCur.Age,
                 Email = userCur.Email,
                 PhoneNumber = userCur.PhoneNumber,
-                City = userCur.City,
-                CvFileUrl = userCur.CvFileUrl,
-                JobIndustry = userCur.JobIndustry
+                City = userCur.UserCity,
+                Job = userCur.UserJob
             };
             return View(editProfileViewModel);
         }
@@ -340,11 +339,8 @@ namespace TVOnline.Controllers.Account {
             user.FullName = model.Name;
             user.PhoneNumber = model.PhoneNumber;
             user.Age = model.Age;
-            user.City = model.City;
-            user.JobIndustry = model.JobIndustry;
-            if (model.CvFileUrl != null) {
-                user.CvFileUrl = model.CvFileUrl;
-            }
+            user.UserCity = model.City;
+            user.UserJob = model.Job;
 
             // Lưu thay đổi sử dụng UserManager
             var result = await userManager.UpdateAsync(user);
