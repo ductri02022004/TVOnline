@@ -1,21 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using TVOnline.Migrations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace TVOnline.Models
-{
-    public class PremiumUser
-    {
+namespace TVOnline.Models {
+    public class PremiumUser {
         [Key]
-        public int PremiumUserID { get; set; }
+        public string PremiumUserId { get; set; }
 
-        [Required]
-        public int UserID { get; set; }
+        [ForeignKey("UserId")]
+        [ValidateNever]
+        public virtual Users? User { get; set; }
+        public string? UserId { get; set; }
 
-        [ForeignKey("UserID")]
-        public Users User { get; set; }
-
-        public ICollection<Templates> Templates { get; set; }
-        public ICollection<UserCV> UserCVs { get; set; }
+        public virtual ICollection<Template>? Templates { get; set; }
     }
 }

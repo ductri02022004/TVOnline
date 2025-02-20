@@ -1,22 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.AspNetCore.Http;
 
 namespace TVOnline.Models {
-    public class UserCV {
+    public class Payment {
         [Key]
-        public int CvID { get; set; }
-
+        public int PaymentId { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public string? PaymentMethod { get; set; }
+        
         [ForeignKey("UserId")]
         [ValidateNever]
-        public Users? Users { get; set; }
+        public virtual Users? User { get; set; }
         public string? UserId { get; set; }
-
-        [NotMapped]
-        public IFormFile? CvFile { get; set; }
         
-        public string? CVFileUrl { get; set; }
-        public string? CVStatus { get; set; }
+        public double? Amount { get; set; }
     }
 }
