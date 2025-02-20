@@ -149,8 +149,16 @@ namespace TVOnline.Controllers.Account {
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model) {
-            if (ModelState.IsValid) {
-                Users users = new Users {
+            if (ModelState.IsValid)
+            {
+                City city = null;
+                if (!string.IsNullOrEmpty(model.City))
+                {
+                    city = await _context.Cities.FirstOrDefaultAsync(c => c.CityName == model.City);
+                }
+
+                Users users = new Users
+                {
                     FullName = model.Name,
                     Email = model.Email,
                     UserName = model.Email,

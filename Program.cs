@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
 using TVOnline.Models;
 using TVOnline.Helper;
+using CloudinaryDotNet;
 
 namespace TVOnline
 {
