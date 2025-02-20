@@ -1,38 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TVOnline.Models {
-    public class Users : IdentityUser{
-        [Key]
-        public int UserID { get; set; }
+    public class Users : IdentityUser {
+        public string? FullName { get; set; }
+        public string? UserCity { get; set; }
+        public string? UserJob { get; set; }
+        public DateTime? Age { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string FullName { get; set; } 
-
-        [Required]
-        [EmailAddress]
-        [StringLength(100)]
-        public string Email { get; set; }
-
-        [Required]
-        [Phone]
-        [StringLength(15)]
-        public string PhoneNumber { get; set; } 
-
-        [Required]
-        public int Age { get; set; } 
-
-        [ForeignKey("City")]
-        public int CityID { get; set; }
-        public virtual City City { get; set; }
-
-        public virtual UserCV UserCVs { get; set; }
-        public virtual PremiumUser PremiumUser { get; set; }
-        public virtual ICollection<Payments> Payments { get; set; }
-        public virtual ICollection<Feedback> Feedbacks { get; set; } // Feedbacks mà User đưa ra
-        public virtual ICollection<InterviewInvitations> InterviewInvitations { get; set; }
-
+        [InverseProperty("User")]
+        public virtual PremiumUser? PremiumUser { get; set; }
+        
+        public virtual ICollection<InterviewInvitation>? InterviewInvitations { get; set; }
+        public virtual ICollection<Feedbacks>? Feedbacks { get; set; }
+        public virtual ICollection<Payment>? Payments { get; set; }
+        public virtual ICollection<UserCV>? UserCVs { get; set; }
     }
-}   
+}

@@ -324,9 +324,8 @@ namespace TVOnline.Controllers.Account {
                 Age = userCur.Age,
                 Email = userCur.Email,
                 PhoneNumber = userCur.PhoneNumber,
-                City = userCur.City.CityName,
-                CvFileUrl = userCur.UserCVs.CVFileUrl,
-                JobIndustry = ""
+                City = userCur.UserCity,
+                Job = userCur.UserJob
             };
             return View(editProfileViewModel);
         }
@@ -350,10 +349,8 @@ namespace TVOnline.Controllers.Account {
             user.FullName = model.Name;
             user.PhoneNumber = model.PhoneNumber;
             user.Age = model.Age;
-            user.City.CityName = model.City;
-            if (model.CvFileUrl != null) {
-                user.UserCVs.CVFileUrl = model.CvFileUrl;
-            }
+            user.UserCity = model.City;
+            user.UserJob = model.Job;
 
             // Lưu thay đổi sử dụng UserManager
             var result = await userManager.UpdateAsync(user);

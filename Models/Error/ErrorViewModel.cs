@@ -1,7 +1,5 @@
-namespace TVOnline.Models
-{
-    public class ErrorViewModel
-    {
+namespace TVOnline.Models.Error {
+    public class ErrorViewModel {
         public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
