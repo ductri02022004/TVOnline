@@ -5,9 +5,12 @@ using TVOnline.Data;
 using TVOnline.Models;
 using TVOnline.Helper;
 
-namespace TVOnline {
-    public class Program {
-        public static void Main(string[] args) {
+namespace TVOnline
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -16,7 +19,8 @@ namespace TVOnline {
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-            builder.Services.AddIdentity<Users, IdentityRole>(options => {
+            builder.Services.AddIdentity<Users, IdentityRole>(options =>
+            {
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequireUppercase = false;
@@ -34,7 +38,8 @@ namespace TVOnline {
 
             //Google login
             builder.Services.AddAuthentication()
-            .AddGoogle(googleOptions => {
+            .AddGoogle(googleOptions =>
+            {
                 var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
                 googleOptions.ClientId = googleAuthNSection.GetValue<string>("ClientId") ?? throw new InvalidOperationException("Google ClientId is not configured");
                 googleOptions.ClientSecret = googleAuthNSection.GetValue<string>("ClientSecret") ?? throw new InvalidOperationException("Google ClientSecret is not configured");
@@ -44,7 +49,8 @@ namespace TVOnline {
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment()) {
+            if (!app.Environment.IsDevelopment())
+            {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
@@ -56,6 +62,8 @@ namespace TVOnline {
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+
 
             app.MapControllerRoute(
                 name: "default",

@@ -155,7 +155,8 @@ namespace TVOnline.Controllers.Account {
                     Email = model.Email,
                     UserName = model.Email,
                     PhoneNumber = string.IsNullOrEmpty(model.PhoneNumber) ? null : model.PhoneNumber,
-                    City = string.IsNullOrEmpty(model.City) ? null : model.City
+                    City = new City(),
+                    //City = string.IsNullOrEmpty(model.City) ? null : model.City
                     // Chỗ này phải tìm City theo CityName trong database
                 };
                 var result = await userManager.CreateAsync(users, model.Password);

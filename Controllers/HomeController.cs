@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace TVOnline.Controllers
 {
+    [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -15,6 +16,8 @@ namespace TVOnline.Controllers
             _logger = logger;
         }
 
+        [Route("[action]")]
+        [Route("/")]
         public IActionResult Index() {
         
             // Tạo danh sách tạm thời các bài đăng
