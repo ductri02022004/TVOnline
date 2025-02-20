@@ -113,26 +113,26 @@
     </div> *@
 
     <div class="row justify-content-center mt-4">
-        @* <div class="col-md-8">
-            @if (signInManager.IsSignedIn(User))
-            {
-                <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="cvFile">Tải lên CV của bạn</label>
-                        <input type="file" class="form-control" id="cvFile" name="cvFile" required>
-                    </div>
-                    <input type="hidden" name="postId" value="@Model.PostId" />
-                    <button type="submit" class="btn btn-primary mt-3">Ứng tuyển ngay</button>
-                </form>
-            }
-            else
-            {
-                <div class="alert alert-warning" role="alert">
-                    Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để ứng tuyển.
-                </div>
-                <a asp-controller="Account" asp-action="Login" class="btn btn-primary mt-3">Đăng nhập để ứng tuyển</a>
-            }
-        </div> *@
+        @* <div class="col-md-8"> *@
+        @*     @if (signInManager.IsSignedIn(User)) *@
+        @*     { *@
+        @*         <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data"> *@
+        @*             <div class="form-group"> *@
+        @*                 <label for="cvFile">Tải lên CV của bạn</label> *@
+        @*                 <input type="file" class="form-control" id="cvFile" name="cvFile" required> *@
+        @*             </div> *@
+        @*             <input type="hidden" name="postId" value="@Model.PostId" /> *@
+        @*             <button type="submit" class="btn btn-primary mt-3">Ứng tuyển ngay</button> *@
+        @*         </form> *@
+        @*     } *@
+        @*     else *@
+        @*     { *@
+        @*         <div class="alert alert-warning" role="alert"> *@
+        @*             Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để ứng tuyển. *@
+        @*         </div> *@
+        @*         <a asp-controller="Account" asp-action="Login" class="btn btn-primary mt-3">Đăng nhập để ứng tuyển</a> *@
+        @*     } *@
+        </div>
 
         <nav class="mt-5">
             <ul class="pagination justify-content-center">

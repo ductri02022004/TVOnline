@@ -1,4 +1,7 @@
 ﻿@model TVOnline.Models.Post
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Users> signInManager
+
 
 @{
     ViewBag.Title = "Chi tiết công việc";
@@ -51,31 +54,43 @@
                 </div>
             </div>
             <div class="col-lg-4 align-self-baseline">
-                <div class="card p-4 mb-4">
-                    <h4 class="mb-4">Ứng tuyển ngay</h4>
-                    <form>
-                        <div class="mb-3">
-                            <label class="form-label">Họ và tên</label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Số điện thoại</label>
-                            <input type="tel" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Tải lên CV</label>
-                            <input type="file" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Thư giới thiệu</label>
-                            <textarea class="form-control" rows="4"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Gửi hồ sơ ứng tuyển</button>
-                    </form>
+                @if (signInManager.IsSignedIn(User))
+                {
+                    <div class="card p-4 mb-4">
+                        <h4 class="mb-4">Ứng tuyển ngay</h4>
+                        <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" name="FullName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="Email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" name="PhoneNumber" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tải lên CV</label>
+                                <input type="file" class="form-control" name="cvFile" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Thư giới thiệu</label>
+                                <textarea class="form-control" rows="4" name="CoverLetter"></textarea>
+                            </div>
+                            <input type="hidden" name="postId" value="@Model.PostId" />
+                            <button type="submit" class="btn btn-primary w-100">Gửi hồ sơ ứng tuyển</button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="alert">
+                        Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để ứng tuyển.
+                    </div>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary w-100">Đăng nhập để ứng tuyển</a>
+                }
                 </div>
             </div>
         </div>
