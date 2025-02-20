@@ -4,10 +4,14 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
 using TVOnline.Models;
 using TVOnline.Helper;
+using CloudinaryDotNet;
 
-namespace TVOnline {
-    public class Program {
-        public static void Main(string[] args) {
+namespace TVOnline
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -44,7 +48,8 @@ namespace TVOnline {
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment()) {
+            if (!app.Environment.IsDevelopment())
+            {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }

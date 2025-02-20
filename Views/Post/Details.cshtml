@@ -1,4 +1,7 @@
+@using Microsoft.AspNetCore.Identity;
+
 @model TVOnline.Models.Post
+@inject SignInManager<Users> signInManager;
 
 @{
     ViewData["Title"] = "Chi tiết bài đăng";
@@ -9,7 +12,6 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                @* <img src="@Model.ImageUrl" class="card-img-top" alt="Ảnh bài đăng"> *@
                 <div class="card-body">
                     <h5 class="card-title">Bài đăng @Model.PostId</h5>
                     <p class="card-text">@Model.Description</p>
@@ -21,14 +23,24 @@
     </div>
     <div class="row justify-content-center mt-4">
         <div class="col-md-8">
-            <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="cvFile">Tải lên CV của bạn</label>
-                    <input type="file" class="form-control" id="cvFile" name="cvFile" required>
+            @if (signInManager.IsSignedIn(User))
+            {
+                <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="cvFile">Tải lên CV của bạn</label>
+                        <input type="file" class="form-control" id="cvFile" name="cvFile" required>
+                    </div>
+                    <input type="hidden" name="postId" value="@Model.PostId" />
+                    <button type="submit" class="btn btn-primary mt-3">Ứng tuyển ngay</button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để ứng tuyển.
                 </div>
-                <input type="hidden" name="postId" value="@Model.PostId" />
-                <button type="submit" class="btn btn-primary mt-3">Ứng tuyển ngay</button>
-            </form>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary mt-3">Đăng nhập để ứng tuyển</a>
+            }
         </div>
     </div>
 </div>

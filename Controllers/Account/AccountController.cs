@@ -149,14 +149,21 @@ namespace TVOnline.Controllers.Account {
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model) {
-            if (ModelState.IsValid) {
-                Users users = new Users {
+            if (ModelState.IsValid)
+            {
+                City city = null;
+                if (!string.IsNullOrEmpty(model.City))
+                {
+                    city = await _context.Cities.FirstOrDefaultAsync(c => c.CityName == model.City);
+                }
+
+                Users users = new Users
+                {
                     FullName = model.Name,
                     Email = model.Email,
                     UserName = model.Email,
                     PhoneNumber = string.IsNullOrEmpty(model.PhoneNumber) ? null : model.PhoneNumber,
-                    City = string.IsNullOrEmpty(model.City) ? null : model.City
-                    // Chỗ này phải tìm City theo CityName trong database
+                    City = city
                 };
                 var result = await userManager.CreateAsync(users, model.Password);
                 if (result.Succeeded) {
