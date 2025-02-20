@@ -1,34 +1,135 @@
-@model TVOnline.Models.Post
+@model List<TVOnline.Models.Post>
 
 @{
     ViewData["Title"] = "Chi tiết bài đăng";
 }
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Chi tiết bài đăng</h2>
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                @* <img src="@Model.ImageUrl" class="card-img-top" alt="Ảnh bài đăng"> *@
-                <div class="card-body">
-                    <h5 class="card-title">Bài đăng @Model.PostId</h5>
-                    <p class="card-text">@Model.Description</p>
-                    <p class="card-text"><small class="text-muted">Nhà tuyển dụng: @Model.EmployerId</small></p>
-                    <p class="card-text"><small class="text-muted">Ngày đăng: @Model.Date.ToString("dd/MM/yyyy")</small></p>
-                </div>
+<section class="job-filters py-4 bg-light">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option selected>Ngành Nghề</option>
+                    <option>Công Nghệ Thông Tin</option>
+                    <option>Tài Chính - Ngân Hàng</option>
+                    <option>Marketing</option>
+                    <option>Y Tế</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option selected>Kinh Nghiệm</option>
+                    <option>Chưa có kinh nghiệm</option>
+                    <option>1-2 năm</option>
+                    <option>3-5 năm</option>
+                    <option>Trên 5 năm</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option selected>Mức Lương</option>
+                    <option>Dưới 10 triệu</option>
+                    <option>10-20 triệu</option>
+                    <option>20-30 triệu</option>
+                    <option>Trên 30 triệu</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100">Lọc Kết Quả</button>
             </div>
         </div>
     </div>
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-8">
-            <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="cvFile">Tải lên CV của bạn</label>
-                    <input type="file" class="form-control" id="cvFile" name="cvFile" required>
+</section>
+
+<section class="job-listings py-5">
+    <div class="container">
+        <div class="row g-4">
+            @foreach (var post in Model)
+            {
+                <div class="col-12">
+                    <div class="job-list-card p-4 bg-white rounded shadow-sm">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 col-sm-3 mb-3 mb-md-0">
+                                <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo-lg" alt="Company">
+                            </div>
+                            <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
+                                <a asp-controller="Post" asp-action="Details" asp-route-postID="@post.PostId"><h4>Senior Frontend Developer</h4></a>
+                                <p class="company-name mb-2">@post.EmployerId</p>
+                                <div class="job-meta">
+                                    <span class="me-3"><i class="bi bi-geo-alt me-1"></i>Hà Nội</span>
+                                    <span class="me-3"><i class="bi bi-cash me-1"></i>20-30 triệu</span>
+                                    <span><i class="bi bi-briefcase me-1"></i>3-5 năm</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-md-end">
+                                <button class="btn btn-primary">Ứng Tuyển Ngay</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <input type="hidden" name="postId" value="@Model.PostId" />
-                <button type="submit" class="btn btn-primary mt-3">Ứng tuyển ngay</button>
-            </form>
+            }
+            <div class="col-12">
+                <div class="job-list-card p-4 bg-white rounded shadow-sm">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 col-sm-3 mb-3 mb-md-0">
+                            <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623" class="company-logo-lg" alt="Company">
+                        </div>
+                        <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
+                            <h4>Marketing Manager</h4>
+                            <p class="company-name mb-2">Digital Brands Co.</p>
+                            <div class="job-meta">
+                                <span class="me-3"><i class="bi bi-geo-alt me-1"></i>TP. Hồ Chí Minh</span>
+                                <span class="me-3"><i class="bi bi-cash me-1"></i>25-35 triệu</span>
+                                <span><i class="bi bi-briefcase me-1"></i>5+ năm</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-md-end">
+                            <button class="btn btn-primary">Ứng Tuyển Ngay</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+            </ul>
+        </nav>
     </div>
+</section>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Chi tiết bài đăng</h2>
+    @foreach (var post in Model)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    @* <img src="@Model.ImageUrl" class="card-img-top" alt="Ảnh bài đăng"> *@
+                    <div class="card-body">
+                        <h5 class="card-title">Bài đăng @post.PostId</h5>
+                        <p class="card-text">@post.Description</p>
+                        <p class="card-text"><small class="text-muted">Nhà tuyển dụng: @post.EmployerId</small></p>
+                        <p class="card-text"><small class="text-muted">Ngày đăng: @post.Date.ToString("dd/MM/yyyy")</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="cvFile">Tải lên CV của bạn</label>
+                        <input type="file" class="form-control" id="cvFile" name="cvFile" required>
+                    </div>
+                    <input type="hidden" name="postId" value="@post.PostId" />
+                    <button type="submit" class="btn btn-primary mt-3">Ứng tuyển ngay</button>
+                </form>
+            </div>
+        </div>
+    }
 </div>

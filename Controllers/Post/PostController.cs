@@ -8,6 +8,7 @@ using System;
 
 namespace TVOnline.Controllers
 {
+    [Route("[controller]")]
     public class PostController : Controller
     {
         private static List<Post> posts =
@@ -23,14 +24,21 @@ namespace TVOnline.Controllers
             new() { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103, Date = DateTime.Now.AddDays(-3) }
         ];
 
-        public IActionResult Details(string id)
+        [Route("[action]")]
+        public IActionResult Index()
         {
-            var post = posts.FirstOrDefault(p => p.PostId.ToString() == id);
+            return View("Details", posts);
+        }
+
+        [Route("[action]/{postID}")]
+        public IActionResult Details(string postID)
+        {
+            var post = posts.FirstOrDefault(p => p.PostId.ToString() == postID);
             if (post == null)
             {
                 return NotFound();
             }
-            return View(post);
+            return View("JobDetails");
         }
 
         [HttpPost]

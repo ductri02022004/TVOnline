@@ -33,5 +33,6 @@ namespace TVOnline.Models {
         public virtual ICollection<Payments> Payments { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; } // Feedbacks mà User đưa ra
         public virtual ICollection<InterviewInvitations> InterviewInvitations { get; set; }
+
     }
 }   

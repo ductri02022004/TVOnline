@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TVOnline.Models
 {
@@ -9,6 +10,7 @@ namespace TVOnline.Models
         [Key]
         public int PostId { get; set; }
 
+        [ValidateNever]
         public DateTime Date { get; set; }
         [Required]
         public string Description { get; set; }
