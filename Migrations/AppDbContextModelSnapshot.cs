@@ -157,9 +157,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Employers", b =>
                 {
-                    b.Property<string>("EmployerId")
+                    b.Property<int>("EmployerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployerId"));
 
                     b.Property<int?>("CityId")
                         .HasColumnType("int");
@@ -207,8 +209,8 @@ namespace TVOnline.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EmployerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -230,8 +232,8 @@ namespace TVOnline.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvitationId"));
 
-                    b.Property<string>("EmployerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("InvitationDate")
                         .HasColumnType("datetime2");
@@ -345,8 +347,8 @@ namespace TVOnline.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EmployerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.HasKey("PostId");
 
@@ -573,7 +575,9 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("Feedbacks")
@@ -588,7 +592,9 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("InterviewInvitations")
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("InterviewInvitations")
@@ -623,7 +629,9 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Posts")
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employer");
                 });
