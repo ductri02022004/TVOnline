@@ -5,6 +5,12 @@ using TVOnline.Data;
 using TVOnline.Models;
 using TVOnline.Helper;
 using CloudinaryDotNet;
+using TVOnline.Repository.Job;
+using TVOnline.Repository.Posts;
+using TVOnline.Repository.UserCVs;
+using TVOnline.Service.Jobs;
+using TVOnline.Service.Post;
+using TVOnline.Service.UserCVs;
 
 namespace TVOnline
 {
@@ -17,23 +23,31 @@ namespace TVOnline
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            // Add services into IoC container
+            builder.Services.AddScoped<IJobsRepository, JobsRepository>();
+            builder.Services.AddScoped<IUserCvRepository, UserCvRepository>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
+            builder.Services.AddScoped<IJobsService, JobsService>();
+            builder.Services.AddScoped<IUserCvService, UserCvService>();
+            builder.Services.AddScoped<IPostService, PostService>();
+
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
             builder.Services.AddIdentity<Users, IdentityRole>(options =>
-            {
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-                options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedAccount = true;
-                options.SignIn.RequireConfirmedEmail = true;
-                options.SignIn.RequireConfirmedPhoneNumber = false;
-            })
+                {
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                    options.User.RequireUniqueEmail = true;
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.SignIn.RequireConfirmedEmail = true;
+                    options.SignIn.RequireConfirmedPhoneNumber = false;
+                })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
-
             // Configure Email Service
             builder.Services.AddScoped<IEmailSender, EmailSender>();
 

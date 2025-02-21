@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
 using System.Collections.Generic;
+using TVOnline.Models.Error;
 
 
 namespace TVOnline.Controllers
@@ -24,12 +25,12 @@ namespace TVOnline.Controllers
             // Tạo danh sách tạm thời các bài đăng
             var posts = new List<Post>
             {
-                new Post { PostId = 1, Description = "Đây là bài đăng 1", EmployerId = 101, Date = DateTime.Now.AddDays(-1) },
-                new Post { PostId = 2, Description = "Mô tả bài đăng 2", EmployerId = 102, Date = DateTime.Now.AddDays(-2) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103, Date = DateTime.Now.AddDays(-3) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103, Date = DateTime.Now.AddDays(-3) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103, Date = DateTime.Now.AddDays(-3) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103, Date = DateTime.Now.AddDays(-3) },
+                new Post { PostId = 1, Description = "Đây là bài đăng 1", EmployerId = 101.ToString(), Date = DateTime.Now.AddDays(-1) },
+                new Post { PostId = 2, Description = "Mô tả bài đăng 2", EmployerId = 102.ToString(), Date = DateTime.Now.AddDays(-2) },
+                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
+                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
+                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
+                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
             };
 
             return View(posts);

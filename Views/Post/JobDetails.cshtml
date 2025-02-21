@@ -1,6 +1,6 @@
 ﻿@model TVOnline.Models.Post
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<Users> signInManager
+@inject SignInManager<Users> SignInManager
 
 
 @{
@@ -54,11 +54,11 @@
                 </div>
             </div>
             <div class="col-lg-4 align-self-baseline">
-                @if (signInManager.IsSignedIn(User))
+                @if (SignInManager.IsSignedIn(User))
                 {
                     <div class="card p-4 mb-4">
                         <h4 class="mb-4">Ứng tuyển ngay</h4>
-                        <form asp-action="Apply" asp-controller="Post" method="post" enctype="multipart/form-data">
+                        <form asp-action="Apply" asp-controller="Post" asp-route-postId="@Model.PostId" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label class="form-label">Họ và tên</label>
                                 <input type="text" class="form-control" name="FullName" required>
@@ -83,6 +83,18 @@
                             <button type="submit" class="btn btn-primary w-100">Gửi hồ sơ ứng tuyển</button>
                         </form>
                     </div>
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
                 }
                 else
                 {
@@ -91,7 +103,6 @@
                     </div>
                     <a asp-controller="Account" asp-action="Login" class="btn btn-primary w-100">Đăng nhập để ứng tuyển</a>
                 }
-                </div>
             </div>
         </div>
     </div>
