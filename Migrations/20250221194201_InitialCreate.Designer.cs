@@ -12,7 +12,7 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250219174305_InitialCreate")]
+    [Migration("20250221194201_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -170,10 +170,16 @@ namespace TVOnline.Migrations
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LogoURL")
@@ -189,7 +195,9 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.HasIndex("ZoneId");
 
@@ -432,12 +440,12 @@ namespace TVOnline.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Age")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -446,6 +454,9 @@ namespace TVOnline.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("EmployerId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
@@ -560,8 +571,8 @@ namespace TVOnline.Migrations
                         .HasForeignKey("CityId");
 
                     b.HasOne("TVOnline.Models.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne("Employer")
+                        .HasForeignKey("TVOnline.Models.Employers", "UserId");
 
                     b.HasOne("TVOnline.Models.Location+Zone", null)
                         .WithMany("Employers")
@@ -686,6 +697,8 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Users", b =>
                 {
+                    b.Navigation("Employer");
+
                     b.Navigation("Feedbacks");
 
                     b.Navigation("InterviewInvitations");

@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Truy cập bị từ chối";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="display-4 text-danger">Truy cập bị từ chối</h1>
+            <p class="lead">Bạn không có quyền truy cập vào trang này.</p>
+            @if (ViewBag.ReturnUrl != null)
+            {
+                <p>Bạn đang cố gắng truy cập: @ViewBag.ReturnUrl</p>
+            }
+            <div class="mt-4">
+                <a href="/" class="btn btn-primary">Quay về trang chủ</a>
+            </div>
+        </div>
+    </div>
+</div>
