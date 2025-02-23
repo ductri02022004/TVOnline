@@ -18,7 +18,7 @@ namespace TVOnline.Data {
         public DbSet<PremiumUser> PremiumUsers { get; set; }
         public DbSet<Template> Templates { get; set; }
 
-        public AppDbContext(DbContextOptions options) : base(options) {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
@@ -40,6 +40,10 @@ namespace TVOnline.Data {
                 .HasMany(e => e.Posts)
                 .WithOne(p => p.Employer)
                 .HasForeignKey(p => p.EmployerId);
+            modelBuilder.Entity<Users>()
+                .HasOne(u => u.Employer)
+                .WithOne(e => e.User)
+                .HasForeignKey<Employers>(e => e.EmployerId);
 
             // Cities and Zone relationships
             modelBuilder.Entity<Cities>()
@@ -102,10 +106,6 @@ namespace TVOnline.Data {
 
             modelBuilder.Entity<Template>()
                 .Property(t => t.TemplateId)
-                .ValueGeneratedOnAdd();
-
-            modelBuilder.Entity<Employers>()
-                .Property(t => t.EmployerId)
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<PremiumUser>()

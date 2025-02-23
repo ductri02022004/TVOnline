@@ -17,7 +17,7 @@ namespace TVOnline.Models {
         public string? Email { get; set; }
         public string? CompanyName { get; set; }
         public string? Description { get; set; }
-
+        public string? Field { get; set; }
         [NotMapped]
         public IFormFile? Logo { get; set; }
         public string? LogoURL { get; set; }
@@ -26,6 +26,8 @@ namespace TVOnline.Models {
         [ValidateNever]
         public Location.Cities? City { get; set; }
         public int? CityId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
 
         public virtual ICollection<Post>? Posts { get; set; }
         public virtual ICollection<Feedbacks>? Feedbacks { get; set; }

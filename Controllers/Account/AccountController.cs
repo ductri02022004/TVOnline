@@ -17,7 +17,6 @@ namespace TVOnline.Controllers.Account {
         private readonly IEmailSender emailSender;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly AppDbContext _context;
 
         public AccountController(
             SignInManager<Users> signInManager,
@@ -162,8 +161,9 @@ namespace TVOnline.Controllers.Account {
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(users);
                     var encodedToken = WebUtility.UrlEncode(token);
 
-                    var appDomain = _configuration["Application:AppDomain"];
-                    var confirmationLink = $"{appDomain}/Account/ConfirmEmail?uid={users.Id}&token={encodedToken}";
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                        new { uid = users.Id, token = encodedToken },
+                        protocol: Request.Scheme);
 
                     var emailBody = $@"
                         <h2>Xác nhận đăng ký tài khoản</h2>
@@ -188,16 +188,49 @@ namespace TVOnline.Controllers.Account {
             return await userManager.ConfirmEmailAsync(await userManager.FindByIdAsync(uid), token);
         }
 
-        [HttpGet("confirm-email")]
+        [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string uid, string token) {
-            if (!string.IsNullOrEmpty(uid) && !string.IsNullOrEmpty(token)) {
-                token = token.Replace(" ", "");
-                string decodedToken = WebUtility.UrlDecode(token);
+            try {
+                if (!string.IsNullOrEmpty(uid) && !string.IsNullOrEmpty(token)) {
+                    // Clean up token
+                    token = token.Replace(" ", "+"); // Replace spaces with + that might have been converted in URL
+                    string decodedToken = WebUtility.UrlDecode(token);
 
-                var result = await ConfirmEmailAsync(uid, decodedToken);
-                if (result.Succeeded) {
-                    ViewBag.IsSuccess = true;
+                    var user = await userManager.FindByIdAsync(uid);
+                    if (user == null) {
+                        ViewBag.IsSuccess = false;
+                        ViewBag.Message = "Không tìm thấy tài khoản này.";
+                        return View();
+                    }
+
+                    if (user.EmailConfirmed) {
+                        ViewBag.IsSuccess = true;
+                        ViewBag.Message = "Email của bạn đã được xác nhận trước đó. Bạn có thể đăng nhập vào tài khoản của mình.";
+                        return View();
+                    }
+
+                    var result = await userManager.ConfirmEmailAsync(user, decodedToken);
+                    if (result.Succeeded) {
+                        ViewBag.IsSuccess = true;
+                        ViewBag.Message = "Email của bạn đã được xác nhận thành công. Bây giờ bạn có thể đăng nhập vào tài khoản của mình.";
+                        return View();
+                    } else {
+                        ViewBag.IsSuccess = false;
+                        ViewBag.Message = "Xác nhận email không thành công. Link xác nhận có thể đã hết hạn hoặc không hợp lệ.";
+                        // Log the error for debugging
+                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                        Console.WriteLine($"Email confirmation failed for user {uid}. Errors: {errors}");
+                    }
+                } else {
+                    ViewBag.IsSuccess = false;
+                    ViewBag.Message = "Link xác nhận không hợp lệ.";
                 }
+            } catch (Exception ex) {
+                ViewBag.IsSuccess = false;
+                ViewBag.Message = "Đã xảy ra lỗi trong quá trình xác nhận email. Vui lòng thử lại sau.";
+                // Log the exception for debugging
+                Console.WriteLine($"Exception during email confirmation: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
             }
             return View();
         }
@@ -227,8 +260,9 @@ namespace TVOnline.Controllers.Account {
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var encodedToken = WebUtility.UrlEncode(token);
 
-            var appDomain = _configuration["Application:AppDomain"];
-            var confirmationLink = $"{appDomain}/Account/ConfirmEmail?uid={user.Id}&token={encodedToken}";
+            var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                new { uid = user.Id, token = encodedToken },
+                protocol: Request.Scheme);
 
             var emailBody = $@"
                 <h2>Xác nhận đăng ký tài khoản</h2>
@@ -298,63 +332,10 @@ namespace TVOnline.Controllers.Account {
             return RedirectToAction("Index", "Home");
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> EditProfile() {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userCur = await userManager.FindByIdAsync(userId);
-
-            if (userCur == null) {
-                return View("Error");
-            }
-
-            var editProfileViewModel = new EditProfileViewModel() {
-                Id = userId,
-                Name = userCur.FullName,
-                Age = userCur.Age,
-                Email = userCur.Email,
-                PhoneNumber = userCur.PhoneNumber,
-                City = userCur.UserCity,
-                Job = userCur.UserJob
-            };
-            return View(editProfileViewModel);
+        public IActionResult AccessDenied(string returnUrl = null)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
         }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> EditProfile(EditProfileViewModel model) {
-            if (!ModelState.IsValid) {
-                ModelState.AddModelError("", "Vui lòng kiểm tra lại thông tin");
-                return View(model);
-            }
-
-            // Lấy user hiện tại
-            var user = await userManager.FindByIdAsync(model.Id);
-            if (user == null) {
-                ModelState.AddModelError("", "Không tìm thấy người dùng");
-                return View(model);
-            }
-
-            // Cập nhật thông tin
-            user.FullName = model.Name;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Age = model.Age;
-            user.UserCity = model.City;
-            user.UserJob = model.Job;
-
-            // Lưu thay đổi sử dụng UserManager
-            var result = await userManager.UpdateAsync(user);
-            if (result.Succeeded) {
-                TempData["SuccessMessage"] = "Cập nhật thông tin thành công!";
-                return RedirectToAction("Index", "Home");
-            }
-
-            foreach (var error in result.Errors) {
-                ModelState.AddModelError("", error.Description);
-            }
-
-            return View(model);
-        }
-
     }
 }

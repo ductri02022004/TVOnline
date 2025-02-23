@@ -1,0 +1,89 @@
+@model TVOnline.ViewModels.Post.CreatePostViewModel
+
+@{
+    ViewData["Title"] = "Đăng bài tuyển dụng";
+}
+
+<div class="container">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Tiêu đề</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Mô tả công việc</label>
+                    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Requirements" class="form-label">Yêu cầu</label>
+                    <textarea asp-for="Requirements" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Requirements" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Benefits" class="form-label">Quyền lợi</label>
+                    <textarea asp-for="Benefits" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Benefits" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Salary" class="form-label">Mức lương (VNĐ)</label>
+                        <input asp-for="Salary" class="form-control" type="number" />
+                        <span asp-validation-for="Salary" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="JobType" class="form-label">Loại công việc</label>
+                        <select asp-for="JobType" asp-items="Model.JobTypes" class="form-select">
+                            <option value="">-- Chọn loại công việc --</option>
+                        </select>
+                        <span asp-validation-for="JobType" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Experience" class="form-label">Kinh nghiệm</label>
+                        <select asp-for="Experience" asp-items="Model.ExperienceLevels" class="form-select">
+                            <option value="">-- Chọn kinh nghiệm --</option>
+                        </select>
+                        <span asp-validation-for="Experience" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="CityId" class="form-label">Địa điểm</label>
+                        <select asp-for="CityId" asp-items="Model.Cities" class="form-select">
+                            <option value="">-- Chọn địa điểm --</option>
+                        </select>
+                        <span asp-validation-for="CityId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Đăng tin
+                    </button>
+                    <a asp-controller="EmployerDashboard" asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

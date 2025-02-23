@@ -167,10 +167,16 @@ namespace TVOnline.Migrations
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LogoURL")
@@ -186,11 +192,13 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.HasIndex("ZoneId");
 
-                    b.ToTable("Employers");
+                    b.ToTable("Employers", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Feedbacks", b =>
@@ -219,7 +227,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.InterviewInvitation", b =>
@@ -245,7 +253,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("InterviewInvitations");
+                    b.ToTable("InterviewInvitations", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Job", b =>
@@ -262,7 +270,7 @@ namespace TVOnline.Migrations
 
                     b.HasKey("JobId");
 
-                    b.ToTable("Jobs");
+                    b.ToTable("Jobs", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Location+Cities", b =>
@@ -284,7 +292,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("ZoneId");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Location+Zone", b =>
@@ -301,7 +309,7 @@ namespace TVOnline.Migrations
 
                     b.HasKey("ZoneId");
 
-                    b.ToTable("Zones");
+                    b.ToTable("Zones", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Payment", b =>
@@ -328,7 +336,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
@@ -352,7 +360,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("EmployerId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.PremiumUser", b =>
@@ -370,7 +378,7 @@ namespace TVOnline.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("PremiumUsers");
+                    b.ToTable("PremiumUsers", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Template", b =>
@@ -394,7 +402,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("PremiumUserId");
 
-                    b.ToTable("Templates");
+                    b.ToTable("Templates", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.UserCV", b =>
@@ -418,7 +426,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserCVs");
+                    b.ToTable("UserCVs", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Users", b =>
@@ -429,12 +437,12 @@ namespace TVOnline.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Age")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -443,6 +451,9 @@ namespace TVOnline.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("EmployerId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
@@ -557,8 +568,8 @@ namespace TVOnline.Migrations
                         .HasForeignKey("CityId");
 
                     b.HasOne("TVOnline.Models.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne("Employer")
+                        .HasForeignKey("TVOnline.Models.Employers", "UserId");
 
                     b.HasOne("TVOnline.Models.Location+Zone", null)
                         .WithMany("Employers")
@@ -683,6 +694,8 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Users", b =>
                 {
+                    b.Navigation("Employer");
+
                     b.Navigation("Feedbacks");
 
                     b.Navigation("InterviewInvitations");

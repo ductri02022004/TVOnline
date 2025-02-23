@@ -1,0 +1,92 @@
+@model TVOnline.ViewModels.Employer.EmployerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Trang chủ nhà tuyển dụng";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Thông tin công ty -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Thông tin công ty</h4>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title">@Model.CompanyName</h2>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong> @Model.Email</p>
+                            <p><strong>Khu vực:</strong> @Model.City (@Model.Zone)</p>
+                            <p><strong>Lĩnh vực:</strong> @Model.Field</p>
+                            <p><strong>Ngày tham gia:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Mô tả:</strong></p>
+                            <p class="text-muted">@Model.Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thống kê -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Thống kê</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column">
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h5 class="mb-0">Tin tuyển dụng</h5>
+                            <p class="display-6 mb-0">@Model.TotalPosts</p>
+                        </div>
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h5 class="mb-0">Lời mời phỏng vấn</h5>
+                            <p class="display-6 mb-0">@Model.TotalInterviews</p>
+                        </div>
+                        <div class="p-3 bg-light rounded">
+                            <h5 class="mb-0">Đánh giá</h5>
+                            <p class="display-6 mb-0">@Model.TotalFeedbacks</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu chức năng -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Quản lý tuyển dụng</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <a asp-controller="Post" asp-action="Create" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Đăng tin tuyển dụng
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-list"></i> Quản lý tin đăng
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-users"></i> Quản lý ứng viên
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+}
