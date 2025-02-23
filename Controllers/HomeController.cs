@@ -29,12 +29,14 @@ namespace TVOnline.Controllers
         {
             var posts = await _context.Posts
                 .Include(p => p.Employer)
+                .Include(p => p.City)
                 .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new PostListViewModel
                 {
+                    PostId = p.PostId.ToString(),
                     Title = p.Title,
                     CompanyName = p.Employer.CompanyName,
-                    Location = p.CityName,
+                    Location = p.City.CityName,
                     Salary = p.Salary,
                     JobType = p.JobType,
                     Experience = p.Experience,

@@ -56,9 +56,7 @@ namespace TVOnline {
                 var context = services.GetRequiredService<AppDbContext>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = services.GetRequiredService<UserManager<Users>>();
-                
-                context.Database.Migrate();
-                
+                                
                 // Đảm bảo roles được tạo trước
                 await DbSeeder.SeedRolesAsync(roleManager);
                 // Sau đó mới seed data
