@@ -24,7 +24,6 @@ namespace TVOnline.Data {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
 
-
             modelBuilder.Entity<Users>()
                 .HasMany(u => u.UserCVs)          // Một User có nhiều UserCV  
                 .WithOne(cv => cv.Users)         // Một UserCV thuộc về một User  
@@ -40,10 +39,12 @@ namespace TVOnline.Data {
                 .HasMany(e => e.Posts)
                 .WithOne(p => p.Employer)
                 .HasForeignKey(p => p.EmployerId);
+
+            // Users - Employers one-to-one relationship
             modelBuilder.Entity<Users>()
                 .HasOne(u => u.Employer)
                 .WithOne(e => e.User)
-                .HasForeignKey<Employers>(e => e.EmployerId);
+                .HasForeignKey<Employers>(e => e.UserId);
 
             // Cities and Zone relationships
             modelBuilder.Entity<Cities>()
@@ -56,7 +57,6 @@ namespace TVOnline.Data {
                 .HasOne(f => f.User)
                 .WithMany(u => u.Feedbacks)
                 .HasForeignKey(f => f.UserId);
-
 
             // Thiết lập các ràng buộc
             modelBuilder.Entity<Users>()
@@ -73,6 +73,23 @@ namespace TVOnline.Data {
 
             modelBuilder.Entity<Job>()
                 .Property(j => j.JobName)
+                .IsRequired();
+
+            // Employer properties
+            modelBuilder.Entity<Employers>()
+                .Property(e => e.CompanyName)
+                .IsRequired();
+
+            modelBuilder.Entity<Employers>()
+                .Property(e => e.Email)
+                .IsRequired();
+
+            modelBuilder.Entity<Employers>()
+                .Property(e => e.Description)
+                .IsRequired();
+
+            modelBuilder.Entity<Employers>()
+                .Property(e => e.Field)
                 .IsRequired();
 
             // cấu hình tự tạo id
@@ -100,20 +117,20 @@ namespace TVOnline.Data {
                 .Property(i => i.InvitationId)
                 .ValueGeneratedOnAdd();
 
+            modelBuilder.Entity<UserCV>()
+                .Property(cv => cv.CvID)
+                .ValueGeneratedOnAdd();
+
             modelBuilder.Entity<Payment>()
                 .Property(p => p.PaymentId)
                 .ValueGeneratedOnAdd();
 
+            modelBuilder.Entity<PremiumUser>()
+                .Property(pu => pu.PremiumUserId)
+                .ValueGeneratedOnAdd();
+
             modelBuilder.Entity<Template>()
                 .Property(t => t.TemplateId)
-                .ValueGeneratedOnAdd();
-
-            modelBuilder.Entity<PremiumUser>()
-                .Property(t => t.PremiumUserId)
-                .ValueGeneratedOnAdd();
-
-            modelBuilder.Entity<UserCV>()
-                .Property(t => t.CvID)
                 .ValueGeneratedOnAdd();
         }
     }
