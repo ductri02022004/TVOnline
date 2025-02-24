@@ -378,7 +378,7 @@ namespace TVOnline.Controllers.Account
             {
                 Id = userId,
                 Name = userCur.FullName,
-                Age = DateTime.Now.Year - userCur.Age!.Value.Year,
+                Age = userCur.Age,
                 Email = userCur.Email,
                 PhoneNumber = userCur.PhoneNumber,
                 City = userCur.UserCity,

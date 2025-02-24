@@ -31,7 +31,6 @@ namespace TVOnline
             builder.Services.AddScoped<IUserCvService, UserCvService>();
             builder.Services.AddScoped<IPostService, PostService>();
 
-
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
@@ -77,7 +76,6 @@ namespace TVOnline
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
 
             app.MapControllerRoute(
