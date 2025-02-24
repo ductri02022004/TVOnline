@@ -1,9 +1,12 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
 using System.Collections.Generic;
 using TVOnline.Models.Error;
+using Microsoft.AspNetCore.Identity;
+using TVOnline.Data;
+using Microsoft.EntityFrameworkCore;
+using TVOnline.ViewModels.Post;
 
 
 namespace TVOnline.Controllers
@@ -12,31 +15,39 @@ namespace TVOnline.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<Users> _userManager;
+        private readonly AppDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            ILogger<HomeController> logger, 
+            UserManager<Users> userManager, 
+            AppDbContext context)
         {
             _logger = logger;
+            _userManager = userManager;
+            _context = context;
         }
-
-        [Route("[action]")]
-        [Route("/")]
-        public IActionResult Index() {
-        
-            // Tạo danh sách tạm thời các bài đăng
-            var posts = new List<Post>
-            {
-                new Post { PostId = 1, Description = "Đây là bài đăng 1", EmployerId = 101.ToString(), Date = DateTime.Now.AddDays(-1) },
-                new Post { PostId = 2, Description = "Mô tả bài đăng 2", EmployerId = 102.ToString(), Date = DateTime.Now.AddDays(-2) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
-                new Post { PostId = 3, Description = "Mô tả bài đăng 3", EmployerId = 103.ToString(), Date = DateTime.Now.AddDays(-3) },
-            };
-
+        public async Task<IActionResult> Index()
+        {
+            var posts = await _context.Posts
+                .Include(p => p.Employer)
+                .Include(p => p.City)
+                .OrderByDescending(p => p.CreatedAt)
+                .Select(p => new PostListViewModel
+                {
+                    PostId = p.PostId.ToString(),
+                    Title = p.Title,
+                    CompanyName = p.Employer.CompanyName,
+                    Location = p.City.CityName,
+                    Salary = p.Salary,
+                    JobType = p.JobType,
+                    Experience = p.Experience,
+                    CreatedAt = p.CreatedAt
+                })
+                .ToListAsync();
             return View(posts);
         }
 
-        [Authorize]
         public IActionResult Privacy()
         {
             return View();
@@ -46,6 +57,32 @@ namespace TVOnline.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public async Task<IActionResult> BecomeEmployer()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Kiểm tra xem người dùng đã là nhà tuyển dụng chưa
+            var existingEmployer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == user.Id);
+            
+            if (existingEmployer != null)
+            {
+                // Nếu đã là employer, chuyển thẳng đến dashboard
+                return RedirectToAction("Index", "EmployerDashboard");
+            }
+
+            // Nếu chưa là employer, chuyển đến trang đăng ký
+            return RedirectToAction("Register", "EmployerRegistration");
         }
     }
 }
