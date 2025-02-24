@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
     <Folder Include="Controllers\Employer\" />
     <Folder Include="Repository\" />
     <Folder Include="Service\" />

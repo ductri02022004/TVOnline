@@ -218,8 +218,8 @@ namespace TVOnline.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EmployerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -241,8 +241,8 @@ namespace TVOnline.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvitationId"));
 
-                    b.Property<string>("EmployerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("InvitationDate")
                         .HasColumnType("datetime2");
@@ -364,8 +364,8 @@ namespace TVOnline.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EmployerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Experience")
                         .IsRequired()
@@ -625,7 +625,9 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("Feedbacks")
@@ -640,7 +642,9 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("InterviewInvitations")
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("InterviewInvitations")
@@ -681,7 +685,9 @@ namespace TVOnline.Migrations
 
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Posts")
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("City");
 

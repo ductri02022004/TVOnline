@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TVOnline.Migrations;
 using TVOnline.Models;
 using static TVOnline.Models.Location;
 

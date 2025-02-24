@@ -1,14 +1,17 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
+using System.Collections.Generic;
 using TVOnline.Models.Error;
 using Microsoft.AspNetCore.Identity;
 using TVOnline.Data;
 using Microsoft.EntityFrameworkCore;
 using TVOnline.ViewModels.Post;
 
+
 namespace TVOnline.Controllers
 {
+    [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -25,6 +28,7 @@ namespace TVOnline.Controllers
             _context = context;
         }
 
+        [Route("/")]
         public async Task<IActionResult> Index()
         {
             var posts = await _context.Posts
@@ -43,7 +47,6 @@ namespace TVOnline.Controllers
                     CreatedAt = p.CreatedAt
                 })
                 .ToListAsync();
-
             return View(posts);
         }
 
