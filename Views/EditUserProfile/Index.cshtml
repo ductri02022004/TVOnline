@@ -1,0 +1,162 @@
+@using TVOnline.ViewModels.UserProfile;
+@model EditUserProfileViewModel;
+
+@{
+    ViewData["Title"] = "Chỉnh sửa thông tin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var hasPassword = ViewBag.HasPassword;
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Chỉnh sửa thông tin</h2>
+
+    @if (!string.IsNullOrEmpty(Context.Request.Query["error"]))
+    {
+        <div class="alert alert-danger">
+            @Context.Request.Query["error"]
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Context.Request.Query["success"]))
+    {
+        <div class="alert alert-success">
+            @Context.Request.Query["success"]
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">
+                        <i class="bi bi-person-fill"></i> Thông tin cá nhân
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab" aria-controls="password" aria-selected="false">
+                        <i class="bi bi-key-fill"></i> @(hasPassword ? "Đổi mật khẩu" : "Tạo mật khẩu")
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-4" id="profileTabsContent">
+                <!-- Tab Thông tin cá nhân -->
+                <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                    <form asp-action="UpdateProfile" method="post">
+                        <input type="hidden" id="Id" asp-for="Id" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Name" class="form-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Dob" class="form-label"></label>
+                                    <input asp-for="Dob" class="form-control" type="date" />
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="City" class="form-label"></label>
+                                    <input asp-for="City" class="form-control" data-val="false" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label"></label>
+                                    <input asp-for="PhoneNumber" class="form-control" data-val="false" />
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label"></label>
+                                    <input asp-for="Email" class="form-control" readonly />
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Job" class="form-label"></label>
+                                    <input asp-for="Job" class="form-control" data-val="false" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button style="background-color: #0866FF" type="submit" class="btn btn-success px-5">
+                                <i class="bi bi-save"></i> Lưu thông tin
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab Đổi mật khẩu -->
+                <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+                    <form asp-action="ChangePassword" method="post">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                @if (hasPassword)
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label">Mật khẩu hiện tại</label>
+                                        <div class="input-group">
+                                            <input type="password" id="currentPassword" name="CurrentPassword" class="form-control" required />
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('currentPassword', 'currentPasswordIcon')">
+                                                <i id="currentPasswordIcon" class="bi bi-eye-slash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="mb-3">
+                                    <label class="form-label">@(hasPassword ? "Mật khẩu mới" : "Mật khẩu")</label>
+                                    <div class="input-group">
+                                        <input type="password" id="newPassword" name="NewPassword" class="form-control" required minlength="6" />
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('newPassword', 'newPasswordIcon')">
+                                            <i id="newPasswordIcon" class="bi bi-eye-slash"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Mật khẩu phải có ít nhất 6 ký tự</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Xác nhận @(hasPassword ? "mật khẩu mới" : "mật khẩu")</label>
+                                    <div class="input-group">
+                                        <input type="password" id="confirmPassword" name="ConfirmNewPassword" class="form-control" required />
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmPassword', 'confirmPasswordIcon')">
+                                            <i id="confirmPasswordIcon" class="bi bi-eye-slash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button style="background-color: #0866FF" type="submit" class="btn btn-success px-5">
+                                        <i class="bi bi-key"></i> @(hasPassword ? "Đổi mật khẩu" : "Tạo mật khẩu")
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function togglePassword(inputId, iconId) {
+            var passwordField = document.getElementById(inputId);
+            var toggleIcon = document.getElementById(iconId);
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("bi-eye-slash");
+                toggleIcon.classList.add("bi-eye");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("bi-eye");
+                toggleIcon.classList.add("bi-eye-slash");
+            }
+        }
+
+        // Nếu có lỗi liên quan đến mật khẩu, chuyển sang tab mật khẩu
+        if (window.location.search.includes('error')) {
+            document.querySelector('#password-tab').click();
+        }
+    </script>
+}

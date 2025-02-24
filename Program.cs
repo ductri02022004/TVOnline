@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
@@ -12,12 +12,9 @@ using TVOnline.Service.Jobs;
 using TVOnline.Service.Post;
 using TVOnline.Service.UserCVs;
 
-namespace TVOnline
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+namespace TVOnline {
+    public class Program {
+        public static async Task Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -69,11 +66,26 @@ namespace TVOnline
                 app.UseHsts();
             }
 
+            // Seed data
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<AppDbContext>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = services.GetRequiredService<UserManager<Users>>();
+                                
+                // Đảm bảo roles được tạo trước
+                await DbSeeder.SeedRolesAsync(roleManager);
+                // Sau đó mới seed data
+                DbSeeder.SeedData(context);
+            }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            // Đảm bảo thứ tự đúng: Authentication trước, Authorization sau
             app.UseAuthentication();
             app.UseAuthorization();
 

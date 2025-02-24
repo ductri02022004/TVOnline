@@ -1,26 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels.Account {
-    public class EditProfileViewModel {
+namespace TVOnline.ViewModels.UserProfile {
+    public class EditUserProfileViewModel {
         public string Id { get; set; }
-        [Required(ErrorMessage = "Không được để trống")]
+
         [Display(Name = "Họ và tên")]
         public string? Name { get; set; }
 
-        [Display(Name = "Năm sinh")]
+        [Display(Name = "Ngày sinh")]
         [DataType(DataType.Date)]
-        public DateTime? Age { get; set; }
+        public DateTime? Dob { get; set; }
 
         [Display(Name = "Thành phố")]
         public string? City { get; set; }
 
         [Display(Name = "Số điện thoại")]
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
         public string? PhoneNumber { get; set; }
 
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Ngành")]
+        [Display(Name = "Chuyên ngành")]
         public string? Job { get; set; }
     }
 }
