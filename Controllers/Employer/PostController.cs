@@ -90,7 +90,7 @@ namespace TVOnline.Controllers.Employer
                 
                 var post = new Post
                 {
-                    PostId = Int32.Parse( Guid.NewGuid().ToString()),
+                    PostId = Guid.NewGuid().ToString(),
                     Title = model.Title,
                     Description = model.Description,
                     Requirements = model.Requirements,
