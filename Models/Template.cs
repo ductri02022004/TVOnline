@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace TVOnline.Models {
     public class Template {
         [Key]
-        public int TemplateId { get; set; }
+        public string TemplateId { get; set; }
         public string? TemplateName { get; set; }
         
         [NotMapped]

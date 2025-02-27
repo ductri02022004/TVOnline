@@ -92,10 +92,11 @@ namespace TVOnline.Data {
                 .Property(e => e.Field)
                 .IsRequired();
 
-            // cấu hình tự tạo id
+            // cấu hình cho các khóa chính là string
             modelBuilder.Entity<Job>()
                 .Property(j => j.JobId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<Cities>()
                 .Property(c => c.CityId)
@@ -111,19 +112,23 @@ namespace TVOnline.Data {
 
             modelBuilder.Entity<Feedbacks>()
                 .Property(f => f.FeedbackId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<InterviewInvitation>()
                 .Property(i => i.InvitationId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<UserCV>()
                 .Property(cv => cv.CvID)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<Payment>()
                 .Property(p => p.PaymentId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<PremiumUser>()
                 .Property(pu => pu.PremiumUserId)
@@ -131,7 +136,8 @@ namespace TVOnline.Data {
 
             modelBuilder.Entity<Template>()
                 .Property(t => t.TemplateId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
         }
     }
 }
