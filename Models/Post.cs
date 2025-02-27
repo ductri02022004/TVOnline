@@ -6,7 +6,7 @@ using static TVOnline.Models.Location;
 namespace TVOnline.Models {
     public class Post {
         [Key]
-        public string PostId { get; set; }
+        public int PostId { get; set; }
 
         [ForeignKey("EmployerId")]
         [ValidateNever]
@@ -24,6 +24,9 @@ namespace TVOnline.Models {
 
         [Required]
         public decimal Salary { get; set; }
+
+        [Required]
+        public string Position { get; set; }
 
         [Required]
         public string Experience { get; set; }

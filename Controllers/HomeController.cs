@@ -24,7 +24,7 @@ namespace TVOnline.Controllers
             _userManager = userManager;
             _context = context;
         }
-        [HttpGet]
+
         public async Task<IActionResult> Index()
         {
             var posts = await _context.Posts
