@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Company";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="mb-4">Danh Sách Công Ty Hàng Đầu</h2>
+                <div class="search-filters p-4 bg-light rounded mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Tên công ty...">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option selected>Lĩnh vực</option>
+                                <option>Công nghệ</option>
+                                <option>Tài chính</option>
+                                <option>Giáo dục</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option selected>Địa điểm</option>
+                                <option>Hà Nội</option>
+                                <option>TP.HCM</option>
+                                <option>Đà Nẵng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100">Tìm kiếm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card company-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo-md me-3" alt="Company Logo">
+                            <div>
+                                <h5 class="card-title mb-1"><a href="#" class="text-decoration-none">Tech Solutions Inc.</a></h5>
+                                <span class="text-muted">Công nghệ thông tin</span>
+                            </div>
+                        </div>
+                        <p class="card-text">Công ty hàng đầu về giải pháp phần mềm và chuyển đổi số...</p>
+                        <div class="company-stats">
+                            <span class="badge bg-light text-dark me-2"><i class="bi bi-people me-1"></i>500+ nhân viên</span>
+                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>Hà Nội</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <small class="text-muted"><i class="bi bi-briefcase me-1"></i>15 vị trí đang tuyển</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card company-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623" class="company-logo-md me-3" alt="Company Logo">
+                            <div>
+                                <h5 class="card-title mb-1"><a href="#" class="text-decoration-none">FinBank Group</a></h5>
+                                <span class="text-muted">Tài chính - Ngân hàng</span>
+                            </div>
+                        </div>
+                        <p class="card-text">Ngân hàng số hàng đầu với các giải pháp tài chính hiện đại...</p>
+                        <div class="company-stats">
+                            <span class="badge bg-light text-dark me-2"><i class="bi bi-people me-1"></i>1000+ nhân viên</span>
+                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>TP.HCM</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <small class="text-muted"><i class="bi bi-briefcase me-1"></i>20 vị trí đang tuyển</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card company-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab" class="company-logo-md me-3" alt="Company Logo">
+                            <div>
+                                <h5 class="card-title mb-1"><a href="#" class="text-decoration-none">EduTech Vietnam</a></h5>
+                                <span class="text-muted">Giáo dục</span>
+                            </div>
+                        </div>
+                        <p class="card-text">Nền tảng học trực tuyến hàng đầu Việt Nam...</p>
+                        <div class="company-stats">
+                            <span class="badge bg-light text-dark me-2"><i class="bi bi-people me-1"></i>200+ nhân viên</span>
+                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>Đà Nẵng</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <small class="text-muted"><i class="bi bi-briefcase me-1"></i>8 vị trí đang tuyển</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Trước</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Tiếp</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
