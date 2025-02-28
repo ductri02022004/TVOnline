@@ -1,43 +1,11 @@
-﻿@model List<TVOnline.Models.Post>
+﻿@model List<TVOnline.ViewModels.Post.PostListViewModel>
+
 @{
-    ViewData["Title"] = "Homepage";
+    ViewData["Title"] = "Trang chủ";
 }
 
-<header class="hero-section py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold">Tìm Công Việc Mơ Ước</h1>
-                <p class="lead">Tìm kiếm trong hàng nghìn cơ hội việc làm</p>
-                <div class="search-box p-3 bg-white rounded shadow-sm">
-                    <form class="row g-3">
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" placeholder="Tên công việc hoặc từ khóa">
-                        </div>
-                        <div class="col-md-4">
-                            <select class="form-select">
-                                <option selected>Chọn địa điểm</option>
-                                <option>Hà Nội</option>
-                                <option>TP. Hồ Chí Minh</option>
-                                <option>Đà Nẵng</option>
-                                <option>Cần Thơ</option>
-                                <option>Hải Phòng</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary w-100">Tìm Kiếm</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998" class="img-fluid rounded" alt="Job Search">
-            </div>
-        </div>
-    </div>
-</header>
-
-
+<div class="container">
+    <h1 class="text-center mb-4">Việc làm mới nhất</h1>
 <section class="categories py-5">
     <div class="container">
         <h2 class="section-title text-center mb-4">Danh Mục Phổ Biến</h2>
@@ -76,29 +44,64 @@
                     <h2 class="section-title text-center mb-4">Việc Làm Nổi Bật</h2>
                     <div class="row g-4">
                         @foreach (var post in Model)
-                        {
-                            <div class="col-lg-4 col-md-6">
-                                <div class="job-card p-4 bg-white rounded shadow-sm">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo me-3" alt="Company">
-                                        <div>
-                                            <h5 class="mb-1">@post.Title</h5>
-                                            <p class="text-muted mb-0">@post.Employer?.CompanyName</p>
+                            {
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="job-card p-4 bg-white rounded shadow-sm">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo me-3" alt="Company">
+                                            <div>
+                                                <h5 class="mb-1">@post.Title</h5>
+                                                <p class="text-muted mb-0">@post.CompanyName</p>
+                                            </div>
                                         </div>
+                                        <div class="job-tags mb-3">
+                                            <span class="badge bg-light text-dark me-2">@post.JobType</span>
+                                            <span class="badge bg-light text-dark">@post.Location</span>
+                                        </div>
+                                        <p class="mb-3">@post.Description</p>
+                                        <a asp-controller="Post" asp-action="Details" asp-route-id="@post.PostId" class="btn btn-outline-primary">Ứng Tuyển Ngay</a>
                                     </div>
-                                    <div class="job-tags mb-3">
-                                        <span class="badge bg-light text-dark me-2">@post.JobType</span>
-                                        <span class="badge bg-light text-dark">@post.City?.CityName</span>
-                                    </div>
-                                    <p class="mb-3">@post.Description</p>
-                                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.PostId" class="btn btn-outline-primary">Ứng Tuyển Ngay</a>
                                 </div>
-                            </div>
-                        }
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-cash me-2"></i>
+                                    <span>@post.Salary.ToString("N0") VNĐ</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-briefcase me-2"></i>
+                                    <span>@post.JobType</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person-workspace me-2"></i>
+                                    <span>@post.Experience</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-calendar me-2"></i>
+                                    <span>Hạn nộp: @post.Deadline.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                <a href="#" class="btn btn-primary">
+                                    <i class="bi bi-eye"></i> Xem chi tiết
+                                </a>
+                                <div class="card-footer text-muted">
+                                    <small>Đăng ngày: @post.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                            }
+                        </div>
                     </div>
-
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        // Format all salary numbers
+        document.addEventListener('DOMContentLoaded', function() {
+            const salaryElements = document.querySelectorAll('.salary');
+            salaryElements.forEach(function(element) {
+                const value = parseInt(element.textContent);
+                element.textContent = value.toLocaleString('vi-VN') + ' VNĐ';
+            });
+        });
+    </script>
+}

@@ -1,5 +1,7 @@
-﻿@using Microsoft.AspNetCore.Identity;
-@inject SignInManager<Users> signInManager;
+@using Microsoft.AspNetCore.Identity
+@using TVOnline.Models
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
 <ul class="ms-auto d-flex">
     @if (signInManager.IsSignedIn(User))
     {

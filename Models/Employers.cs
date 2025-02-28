@@ -14,10 +14,14 @@ namespace TVOnline.Models {
         public Users? User { get; set; }
         public string? UserId { get; set; }
 
-        public string? Email { get; set; }
-        public string? CompanyName { get; set; }
-        public string? Description { get; set; }
-
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string CompanyName { get; set; }
+        [Required]
+        public string Description { get; set; }
+        [Required]
+        public string Field { get; set; }
         [NotMapped]
         public IFormFile? Logo { get; set; }
         public string? LogoURL { get; set; }
@@ -25,7 +29,10 @@ namespace TVOnline.Models {
         [ForeignKey("CityId")]
         [ValidateNever]
         public Location.Cities? City { get; set; }
-        public int? CityId { get; set; }
+        [Required]
+        public int CityId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
 
         public virtual ICollection<Post>? Posts { get; set; }
         public virtual ICollection<Feedbacks>? Feedbacks { get; set; }

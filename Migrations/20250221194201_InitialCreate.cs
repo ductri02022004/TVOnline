@@ -33,7 +33,8 @@ namespace TVOnline.Migrations
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserCity = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserJob = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Age = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Dob = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EmployerId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
@@ -293,8 +294,10 @@ namespace TVOnline.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Field = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LogoURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CityId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ZoneId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -440,7 +443,9 @@ namespace TVOnline.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Employers_UserId",
                 table: "Employers",
-                column: "UserId");
+                column: "UserId",
+                unique: true,
+                filter: "[UserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employers_ZoneId",
