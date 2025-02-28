@@ -144,18 +144,19 @@ namespace TVOnline
 
         private static async Task SeedDataAsync(WebApplication app)
         {
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<AppDbContext>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = services.GetRequiredService<UserManager<Users>>();
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<AppDbContext>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = services.GetRequiredService<UserManager<Users>>();
 
-                // Ensure roles are created first
-                await DbSeeder.SeedRolesAsync(roleManager);
-                // Then seed data
-                DbSeeder.SeedData(context);
-            }
+            // Ensure roles are created first
+            await DbSeeder.SeedRolesAsync(roleManager);
+            await DbSeeder.SeedUsersAsync(userManager);
+            // Then seed data
+            DbSeeder.SeedData(context);
+            await DbSeeder.SeedEmployersAsync(context);
+            await DbSeeder.SeedPostsAsync(context);
         }
     }
 }

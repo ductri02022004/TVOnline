@@ -100,7 +100,7 @@ namespace TVOnline.Controllers.Employer {
             }
 
             // Tạo mới nhà tuyển dụng
-            var employer = new Employers {
+            var employer = new Models.Employers {
                 EmployerId = Guid.NewGuid().ToString(),
                 UserId = user.Id,
                 CompanyName = model.CompanyName,
