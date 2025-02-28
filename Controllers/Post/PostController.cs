@@ -18,10 +18,8 @@ namespace TVOnline.Controllers
         private readonly IPostService _postService = postService;
         private readonly UserManager<Users> _userManager = userManager;
 
-
-        List<Post> posts =
-[
-  new()
+        List<Post> posts = [
+            new()
     {
         PostId = 1,
         Title = "Lập trình viên Backend",
@@ -272,7 +270,6 @@ namespace TVOnline.Controllers
 
 ];
 
-
         [Route("[action]")]
         public IActionResult Index(int page = 1)
         {
@@ -288,9 +285,6 @@ namespace TVOnline.Controllers
 
             return View("Details", pagedPosts);
         }
-
-
-
 
         [Route("[action]/{postID}")]
         public IActionResult Details(string postID)

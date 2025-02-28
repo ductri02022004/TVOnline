@@ -1,5 +1,5 @@
-﻿@using TVOnline.ViewModels.Account;
-@model EditProfileViewModel;
+﻿@using TVOnline.ViewModels.UserProfile;
+@model EditUserProfileViewModel;
 
 @{
 	ViewData["Title"] = "View Profile";
@@ -18,8 +18,8 @@
 		<span asp-validation-for="Name" class="text-danger"></span>
 	</div>
 	<div class="mb-3">
-		<label asp-for="Age" class="form-label"></label>
-		<input asp-for="Age" class="form-control" />
+		<label asp-for="Dob" class="form-label"></label>
+		<input asp-for="Dob" class="form-control" />
 	</div>
 	<div class="mb-3">
 		<label asp-for="City" class="form-label"></label>

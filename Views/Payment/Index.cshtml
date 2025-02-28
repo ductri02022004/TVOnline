@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Thanh toán với VNPay";
+}
+
+<h2>Thanh toán với VNPay</h2>
+
+<form method="POST" asp-action="CreatePaymentUrlVnpay" asp-controller="Payment">
+    <input type="hidden" name="Name" value="Nguyen Van A" />
+    <input type="hidden" name="Amount" value="500000" />
+    <input type="hidden" name="OrderDescription" value="Thanh toán đơn hàng #123456 qua VNPay" />
+    <input type="hidden" name="OrderType" value="order" />
+
+    <button class="btn btn-success" type="submit">Pay with VNPay</button>
+</form>
