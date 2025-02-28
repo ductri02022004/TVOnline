@@ -9,6 +9,7 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using TVOnline.ViewModels.Account;
+using TVOnline.ViewModels.UserProfile;
 
 namespace TVOnline.Controllers.Account
 {
@@ -398,47 +399,6 @@ namespace TVOnline.Controllers.Account
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Vui lòng kiểm tra lại thông tin");
-                return View(model);
-            }
-
-            // Lấy user hiện tại
-            var user = await userManager.FindByIdAsync(model.Id);
-            if (user == null)
-            {
-                ModelState.AddModelError("", "Không tìm thấy người dùng");
-                return View(model);
-            }
-
-            // Cập nhật thông tin
-            user.FullName = model.Name;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Age = DateTime.Now; //model.Age;
-            user.UserCity = model.City;
-            user.UserJob = model.Job;
-
-            // Lưu thay đổi sử dụng UserManager
-            var result = await userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                TempData["SuccessMessage"] = "Cập nhật thông tin thành công!";
-                return RedirectToAction("Index", "Home");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error.Description);
-            }
-
-            return View(model);
         }
 
         [HttpGet]

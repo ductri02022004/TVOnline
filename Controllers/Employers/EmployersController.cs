@@ -1,12 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TVOnline.Data;
+using TVOnline.Models;
 
 namespace TVOnline.Controllers.Employers
 {
-    public class EmployersController : Controller
+    public class EmployersController(UserManager<Users> userManager, AppDbContext context) : Controller
     {
-        public IActionResult Index()
+        private readonly UserManager<Users> _userManager = userManager;
+        private readonly AppDbContext _context = context;
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var employers = await _context.Employers.Include(em => em.City).Include(em => em.User).ToListAsync();
+            return View(employers);
         }
     }
 }

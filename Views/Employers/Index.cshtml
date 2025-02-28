@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<TVOnline.Models.Employers>
+
+@{
     ViewData["Title"] = "Company";
 }
 
@@ -37,71 +39,27 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="card company-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo-md me-3" alt="Company Logo">
-                            <div>
-                                <h5 class="card-title mb-1"><a href="#" class="text-decoration-none">Tech Solutions Inc.</a></h5>
-                                <span class="text-muted">Công nghệ thông tin</span>
+            @foreach (var employer in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card company-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="@employer.LogoURL" class="company-logo-md me-3" alt="Company Logo">
+                                <div>
+                                    <h5 class="card-title mb-1"><a href="#" class="text-decoration-none">@employer.CompanyName</a></h5>
+                                    <span class="text-muted">@employer.Field</span>
+                                </div>
+                            </div>
+                            <p class="card-text">@employer.Description</p>
+                            <div class="company-stats">
+                                <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>@employer.City.CityName</span>
                             </div>
                         </div>
-                        <p class="card-text">Công ty hàng đầu về giải pháp phần mềm và chuyển đổi số...</p>
-                        <div class="company-stats">
-                            <span class="badge bg-light text-dark me-2"><i class="bi bi-people me-1"></i>500+ nhân viên</span>
-                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>Hà Nội</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <small class="text-muted"><i class="bi bi-briefcase me-1"></i>15 vị trí đang tuyển</small>
                     </div>
                 </div>
-            </div>
+            }
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card company-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623" class="company-logo-md me-3" alt="Company Logo">
-                            <div>
-                                <h5 class="card-title mb-1"><a href="#" class="text-decoration-none">FinBank Group</a></h5>
-                                <span class="text-muted">Tài chính - Ngân hàng</span>
-                            </div>
-                        </div>
-                        <p class="card-text">Ngân hàng số hàng đầu với các giải pháp tài chính hiện đại...</p>
-                        <div class="company-stats">
-                            <span class="badge bg-light text-dark me-2"><i class="bi bi-people me-1"></i>1000+ nhân viên</span>
-                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>TP.HCM</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <small class="text-muted"><i class="bi bi-briefcase me-1"></i>20 vị trí đang tuyển</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card company-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab" class="company-logo-md me-3" alt="Company Logo">
-                            <div>
-                                <h5 class="card-title mb-1"><a href="#" class="text-decoration-none">EduTech Vietnam</a></h5>
-                                <span class="text-muted">Giáo dục</span>
-                            </div>
-                        </div>
-                        <p class="card-text">Nền tảng học trực tuyến hàng đầu Việt Nam...</p>
-                        <div class="company-stats">
-                            <span class="badge bg-light text-dark me-2"><i class="bi bi-people me-1"></i>200+ nhân viên</span>
-                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>Đà Nẵng</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <small class="text-muted"><i class="bi bi-briefcase me-1"></i>8 vị trí đang tuyển</small>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="row mt-5">
