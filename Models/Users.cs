@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
+using TVOnline.Models.Vnpay;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TVOnline.Models {
@@ -17,7 +18,7 @@ namespace TVOnline.Models {
         public string? EmployerId { get; set; }
         public virtual ICollection<InterviewInvitation>? InterviewInvitations { get; set; }
         public virtual ICollection<Feedbacks>? Feedbacks { get; set; }
-        public virtual ICollection<Payment>? Payments { get; set; }
+        public virtual ICollection<PaymentInformationModel>? Payments { get; set; }
         public virtual ICollection<UserCV>? UserCVs { get; set; }
     }
 }

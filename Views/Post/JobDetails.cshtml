@@ -2,7 +2,6 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<Users> SignInManager
 
-
 @{
     ViewBag.Title = "Chi tiết công việc";
 }
@@ -51,12 +50,24 @@
                             <li class="mb-2"><i class="bi bi-gift me-2 text-primary"></i>Làm việc từ xa 2 ngày/tuần</li>
                         </ul>
                     </div>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <div class="text-center">
+                            <a href="#applyForm" class="btn btn-primary">Ứng tuyển ngay</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning text-center" role="alert">
+                            Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để ứng tuyển.
+                        </div>
+                    }
                 </div>
             </div>
             <div class="col-lg-4 align-self-baseline">
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <div class="card p-4 mb-4">
+                    <div class="card p-4 mb-4" id="applyForm">
                         <h4 class="mb-4">Ứng tuyển ngay</h4>
                         <form asp-action="Apply" asp-controller="Post" asp-route-postId="@Model.PostId" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
@@ -81,6 +92,9 @@
                             </div>
                             <input type="hidden" name="postId" value="@Model.PostId" />
                             <button type="submit" class="btn btn-primary w-100">Gửi hồ sơ ứng tuyển</button>
+                        </form>
+                        <form method="get" asp-action="Index" asp-controller="Payment" class="mt-3">
+                            <button type="submit" class="btn btn-success w-100">Thanh toán</button>
                         </form>
                     </div>
                     @if (TempData["SuccessMessage"] != null)

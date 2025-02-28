@@ -3,9 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using TVOnline.Migrations;
 using TVOnline.Models;
 using static TVOnline.Models.Location;
+using TVOnline.Models.Vnpay;
 
-namespace TVOnline.Data {
-    public class AppDbContext : IdentityDbContext<Users> {
+namespace TVOnline.Data
+{
+    public class AppDbContext : IdentityDbContext<Users>
+    {
 
         public DbSet<Employers> Employers { get; set; }
         public DbSet<Zone> Zones { get; set; }
@@ -15,14 +18,16 @@ namespace TVOnline.Data {
         public DbSet<Feedbacks> Feedbacks { get; set; }
         public DbSet<InterviewInvitation> InterviewInvitations { get; set; }
         public DbSet<UserCV> UserCVs { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentInformationModel> Payments { get; set; }
         public DbSet<PremiumUser> PremiumUsers { get; set; }
         public DbSet<Template> Templates { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Users>()
@@ -122,8 +127,8 @@ namespace TVOnline.Data {
                 .Property(cv => cv.CvID)
                 .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Payment>()
-                .Property(p => p.PaymentId)
+            modelBuilder.Entity<PaymentInformationModel>()
+                .Property(p => p.OrderType)
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<PremiumUser>()
@@ -133,6 +138,11 @@ namespace TVOnline.Data {
             modelBuilder.Entity<Template>()
                 .Property(t => t.TemplateId)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Post>()
+                .Property(p => p.Salary)
+                .HasColumnType("decimal(18,2)"); // Xác định độ chính xác và số chữ số thập phân
+
         }
     }
 }
