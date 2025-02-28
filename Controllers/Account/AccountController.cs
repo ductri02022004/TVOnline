@@ -428,5 +428,14 @@ namespace TVOnline.Controllers.Account
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpgradeAccount()
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return View("Error");
+            var userCur = await userManager.FindByIdAsync(userId);
+            return userCur == null ? View("Error") : View("Upgrade");
+        }
+
     }
 }

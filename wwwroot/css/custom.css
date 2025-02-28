@@ -316,3 +316,50 @@ body {
         height: 80px;
     }
 }
+
+.company-card {
+    transition: transform 0.3s ease;
+    border: 1px solid var(--border);
+}
+
+    .company-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+.company-logo-md {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+.company-stats .badge {
+    font-weight: normal;
+    padding: 8px 12px;
+}
+
+.search-filters {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+}
+
+.user-dropdown-menu {
+    min-width: 220px;
+    padding: 10px;
+}
+
+    .user-dropdown-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+    }
+
+        .user-dropdown-menu .dropdown-item i {
+            margin-right: 10px;
+        }
+
+.user-info {
+    font-weight: bold;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+}
