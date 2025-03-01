@@ -5,6 +5,7 @@ using TVOnline.Models;
 using TVOnline.ViewModels.UserProfile;
 
 namespace TVOnline.Controllers.EditUserProfile {
+    [Authorize]
     public class EditUserProfileController : Controller {
         private readonly UserManager<Users> _userManager;
         private readonly SignInManager<Users> _signInManager;
@@ -40,8 +41,10 @@ namespace TVOnline.Controllers.EditUserProfile {
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile(EditUserProfileViewModel model) {
             if (!ModelState.IsValid) {
+                ViewBag.HasPassword = await _userManager.HasPasswordAsync(await _userManager.GetUserAsync(User));
                 return View("Index", model);
             }
 
@@ -64,10 +67,12 @@ namespace TVOnline.Controllers.EditUserProfile {
             foreach (var error in result.Errors) {
                 ModelState.AddModelError("", error.Description);
             }
+            ViewBag.HasPassword = await _userManager.HasPasswordAsync(user);
             return View("Index", model);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ProfilePasswordChangeViewModel model) {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) {
@@ -102,20 +107,14 @@ namespace TVOnline.Controllers.EditUserProfile {
                 return RedirectToAction("Index", new { error = "Vui lòng nhập mật khẩu hiện tại" });
             }
 
-            // Thực hiện đổi mật khẩu
-            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (result.Succeeded) {
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (changePasswordResult.Succeeded) {
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", new { success = "Đổi mật khẩu thành công" });
             }
 
-            // Xử lý các lỗi cụ thể
-            var error = result.Errors.FirstOrDefault();
-            if (error != null && error.Code == "PasswordMismatch") {
-                return RedirectToAction("Index", new { error = "Mật khẩu hiện tại không đúng" });
-            }
-
-            return RedirectToAction("Index", new { error = "Không thể đổi mật khẩu. Vui lòng thử lại." });
+            var changePasswordError = changePasswordResult.Errors.FirstOrDefault()?.Description ?? "Không thể đổi mật khẩu. Vui lòng thử lại.";
+            return RedirectToAction("Index", new { error = changePasswordError });
         }
     }
 }

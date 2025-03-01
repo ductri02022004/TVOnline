@@ -13,12 +13,17 @@ namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
 <<<<<<<< HEAD:Migrations/20250227222820_init.Designer.cs
+<<<<<<<< HEAD:Migrations/20250227222820_init.Designer.cs
     [Migration("20250227222820_init")]
     partial class init
 ========
     [Migration("20250223221331_UpdateEmployersUserRelationship")]
     partial class UpdateEmployersUserRelationship
 >>>>>>>> parent of f4527c4 (fixed):Migrations/20250223221331_UpdateEmployersUserRelationship.Designer.cs
+========
+    [Migration("20250224024714_InitialCreate")]
+    partial class InitialCreate
+>>>>>>>> parent of 3a446c4 (Revert "fixed"):Migrations/20250224024714_InitialCreate.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -348,11 +353,9 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<string>("PostId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostId"));
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Benefits")
                         .IsRequired()
@@ -382,10 +385,6 @@ namespace TVOnline.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Requirements")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -395,7 +394,8 @@ namespace TVOnline.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("PostId");
 
