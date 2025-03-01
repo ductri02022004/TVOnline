@@ -74,14 +74,21 @@ namespace TVOnline.Controllers.Employer
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePostViewModel model)
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Check if email is confirmed
+            if (!user.EmailConfirmed)
+            {
+                TempData["ErrorMessage"] = "Bạn cần xác thực email trước khi thêm dữ liệu vào hệ thống.";
+                return RedirectToAction("VerifyEmail", "Account");
+            }
+
             if (ModelState.IsValid)
             {
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
-
                 var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == user.Id);
                 if (employer == null)
                 {
@@ -90,7 +97,7 @@ namespace TVOnline.Controllers.Employer
                 
                 var post = new Post
                 {
-                    PostId = Int32.Parse( Guid.NewGuid().ToString()),
+                    PostId = Guid.NewGuid().ToString(),
                     Title = model.Title,
                     Description = model.Description,
                     Requirements = model.Requirements,
