@@ -13,6 +13,9 @@ namespace TVOnline {
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            // Add Memory Cache for pending registrations
+            builder.Services.AddMemoryCache();
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 

@@ -93,36 +93,6 @@ namespace TVOnline.Data {
                 .IsRequired();
 
             // cấu hình cho các khóa chính là string
-            modelBuilder.Entity<Post>()
-                .Property(p => p.Salary)
-                .HasColumnType("decimal(18,2)");
-
-            modelBuilder.Entity<Post>()
-                .Property(p => p.Title)
-                .IsRequired()
-                .HasMaxLength(200);
-
-            modelBuilder.Entity<Post>()
-                .Property(p => p.Description)
-                .IsRequired();
-
-            modelBuilder.Entity<Post>()
-                .Property(p => p.Requirements)
-                .IsRequired();
-
-            modelBuilder.Entity<Post>()
-                .Property(p => p.Benefits)
-                .IsRequired();
-
-            modelBuilder.Entity<Post>()
-                .Property(p => p.JobType)
-                .IsRequired();
-
-            modelBuilder.Entity<Post>()
-                .Property(p => p.Experience)
-                .IsRequired();
-
-            // cấu hình tự tạo id
             modelBuilder.Entity<Job>()
                 .Property(j => j.JobId)
                 .ValueGeneratedOnAdd()
