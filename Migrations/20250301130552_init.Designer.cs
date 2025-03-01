@@ -12,18 +12,8 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-<<<<<<<< HEAD:Migrations/20250227222820_init.Designer.cs
-<<<<<<<< HEAD:Migrations/20250227222820_init.Designer.cs
-    [Migration("20250227222820_init")]
+    [Migration("20250301130552_init")]
     partial class init
-========
-    [Migration("20250223221331_UpdateEmployersUserRelationship")]
-    partial class UpdateEmployersUserRelationship
->>>>>>>> parent of f4527c4 (fixed):Migrations/20250223221331_UpdateEmployersUserRelationship.Designer.cs
-========
-    [Migration("20250224024714_InitialCreate")]
-    partial class InitialCreate
->>>>>>>> parent of 3a446c4 (Revert "fixed"):Migrations/20250224024714_InitialCreate.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -394,8 +384,7 @@ namespace TVOnline.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PostId");
 

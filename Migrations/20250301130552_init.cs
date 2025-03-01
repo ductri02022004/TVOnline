@@ -372,32 +372,16 @@ namespace TVOnline.Migrations
                 {
                     PostId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     EmployerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-<<<<<<<< HEAD:Migrations/20250227222820_init.cs
-<<<<<<<< HEAD:Migrations/20250227222820_init.cs
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Benefits = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
-========
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Benefits = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
->>>>>>>> parent of 3a446c4 (Revert "fixed"):Migrations/20250224024714_InitialCreate.cs
                     Experience = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CityId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Requirements = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     JobType = table.Column<string>(type: "nvarchar(max)", nullable: false)
-<<<<<<<< HEAD:Migrations/20250227222820_init.cs
-========
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
->>>>>>>> parent of f4527c4 (fixed):Migrations/20250221194201_InitialCreate.cs
-========
->>>>>>>> parent of 3a446c4 (Revert "fixed"):Migrations/20250224024714_InitialCreate.cs
                 },
                 constraints: table =>
                 {
