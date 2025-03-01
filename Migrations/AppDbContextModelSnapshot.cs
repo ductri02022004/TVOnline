@@ -206,11 +206,10 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Feedbacks", b =>
                 {
-                    b.Property<int>("FeedbackId")
+                    b.Property<string>("FeedbackId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -235,11 +234,10 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.InterviewInvitation", b =>
                 {
-                    b.Property<int>("InvitationId")
+                    b.Property<string>("InvitationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvitationId"));
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<int>("EmployerId")
                         .HasColumnType("int");
@@ -261,11 +259,10 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Job", b =>
                 {
-                    b.Property<int>("JobId")
+                    b.Property<string>("JobId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"));
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("JobName")
                         .IsRequired()
@@ -317,11 +314,10 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Payment", b =>
                 {
-                    b.Property<int>("PaymentId")
+                    b.Property<string>("PaymentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<double?>("Amount")
                         .HasColumnType("float");
@@ -344,11 +340,9 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<string>("PostId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostId"));
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Benefits")
                         .IsRequired()
@@ -375,10 +369,6 @@ namespace TVOnline.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("JobType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -422,11 +412,10 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Template", b =>
                 {
-                    b.Property<int>("TemplateId")
+                    b.Property<string>("TemplateId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TemplateId"));
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("PremiumUserId")
                         .HasColumnType("nvarchar(450)");
@@ -446,11 +435,10 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.UserCV", b =>
                 {
-                    b.Property<int>("CvID")
+                    b.Property<string>("CvID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CvID"));
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");

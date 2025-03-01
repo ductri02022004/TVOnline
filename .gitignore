@@ -361,7 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/TVOnline.csproj
-/appsettings.json
-
-
+/Migrations/20250221194201_InitialCreate.Designer.cs
