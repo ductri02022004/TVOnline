@@ -12,8 +12,13 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
+<<<<<<<< HEAD:Migrations/20250227222820_init.Designer.cs
     [Migration("20250227222820_init")]
     partial class init
+========
+    [Migration("20250223221331_UpdateEmployersUserRelationship")]
+    partial class UpdateEmployersUserRelationship
+>>>>>>>> parent of f4527c4 (fixed):Migrations/20250223221331_UpdateEmployersUserRelationship.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -343,9 +348,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
                 {
-                    b.Property<string>("PostId")
+                    b.Property<int>("PostId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostId"));
 
                     b.Property<string>("Benefits")
                         .IsRequired()
