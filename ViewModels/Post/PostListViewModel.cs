@@ -9,6 +9,7 @@ namespace TVOnline.ViewModels.Post
         public decimal Salary { get; set; }
         public string JobType { get; set; }
         public string Experience { get; set; }
+        public string Position { get; set; }
         public string Description { get; set; }
         public string Requirements { get; set; }
         public string Benefits { get; set; }

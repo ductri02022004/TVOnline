@@ -80,13 +80,6 @@ namespace TVOnline.Controllers.Employer
                 return RedirectToAction("Login", "Account");
             }
 
-            // Check if email is confirmed
-            if (!user.EmailConfirmed)
-            {
-                TempData["ErrorMessage"] = "Bạn cần xác thực email trước khi thêm dữ liệu vào hệ thống.";
-                return RedirectToAction("VerifyEmail", "Account");
-            }
-
             if (ModelState.IsValid)
             {
                 var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == user.Id);
@@ -103,6 +96,7 @@ namespace TVOnline.Controllers.Employer
                     Requirements = model.Requirements,
                     Benefits = model.Benefits,
                     Salary = model.Salary,
+                    Position = model.Position,
                     JobType = model.JobType,
                     Experience = model.Experience,
                     CityId = model.CityId,

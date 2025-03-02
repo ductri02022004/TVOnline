@@ -1,8 +1,8 @@
-﻿using TVOnline.Models;
+using TVOnline.Models;
 namespace TVOnline.Repository.Posts
 {
     public interface IPostRepository
     {
-        Post? FindPostById(int id);
+        Post? FindPostById(string id);
     }
 }

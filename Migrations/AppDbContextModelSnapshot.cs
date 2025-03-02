@@ -217,8 +217,8 @@ namespace TVOnline.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployerId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -239,8 +239,8 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<int>("EmployerId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("InvitationDate")
                         .HasColumnType("datetime2");
@@ -358,8 +358,8 @@ namespace TVOnline.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployerId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Experience")
                         .IsRequired()
@@ -369,6 +369,10 @@ namespace TVOnline.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("JobType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -537,6 +541,30 @@ namespace TVOnline.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TVOnline.Models.Vnpay.PaymentInformationModel", b =>
+                {
+                    b.Property<string>("OrderType")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double?>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("OrderType");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PaymentInformationModel");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -613,9 +641,7 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployerId");
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("Feedbacks")
@@ -630,9 +656,7 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("InterviewInvitations")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployerId");
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("InterviewInvitations")
@@ -657,7 +681,7 @@ namespace TVOnline.Migrations
             modelBuilder.Entity("TVOnline.Models.Payment", b =>
                 {
                     b.HasOne("TVOnline.Models.Users", "User")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -673,9 +697,7 @@ namespace TVOnline.Migrations
 
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Posts")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployerId");
 
                     b.Navigation("City");
 
@@ -707,6 +729,13 @@ namespace TVOnline.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("TVOnline.Models.Vnpay.PaymentInformationModel", b =>
+                {
+                    b.HasOne("TVOnline.Models.Users", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("UsersId");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Employers", b =>
