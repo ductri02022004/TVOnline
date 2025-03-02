@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace TVOnline.Models {
     public class Job {
         [Key]

@@ -18,6 +18,8 @@ namespace TVOnline.ViewModels.Post
         [Required(ErrorMessage = "Vui lòng nhập quyền lợi")]
         public string Benefits { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng nhập vị trí công việc")]
+        public string Position { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập mức lương")]
         [Range(0, double.MaxValue, ErrorMessage = "Mức lương phải lớn hơn 0")]

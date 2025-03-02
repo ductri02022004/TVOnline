@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TVOnline.Models;
 using static TVOnline.Models.Location;
+using TVOnline.Models.Vnpay;
 
-namespace TVOnline.Data {
-    public class AppDbContext : IdentityDbContext<Users> {
+namespace TVOnline.Data
+{
+    public class AppDbContext : IdentityDbContext<Users>
+    {
 
         public DbSet<Employers> Employers { get; set; }
         public DbSet<Zone> Zones { get; set; }
@@ -18,10 +21,12 @@ namespace TVOnline.Data {
         public DbSet<PremiumUser> PremiumUsers { get; set; }
         public DbSet<Template> Templates { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Users>()

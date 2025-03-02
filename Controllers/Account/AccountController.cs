@@ -14,8 +14,10 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Collections;
 
-namespace TVOnline.Controllers.Account {
-    public class AccountController : Controller {
+namespace TVOnline.Controllers.Account
+{
+    public class AccountController : Controller
+    {
         private readonly SignInManager<Users> signInManager;
         private readonly UserManager<Users> userManager;
         private readonly IEmailSender emailSender;
@@ -38,21 +40,27 @@ namespace TVOnline.Controllers.Account {
             _memoryCache = memoryCache;
         }
 
-        public IActionResult Login() {
+        public IActionResult Login()
+        {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model) {
-            if (ModelState.IsValid) {
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
                 var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
-                if (result.Succeeded) {
+                if (result.Succeeded)
+                {
                     return RedirectToAction("Index", "Home");
                 }
                 if (result.IsNotAllowed) {
                     ModelState.AddModelError("", "Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác nhận tài khoản.");
                     return View(model);
-                } else {
+                }
+                else
+                {
                     ModelState.AddModelError("", "Tài khoản hoặc mật khẩu không đúng");
                     return View(model);
                 }
@@ -61,7 +69,8 @@ namespace TVOnline.Controllers.Account {
         }
 
         [HttpPost]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null) {
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        {
             // Tạo URL callback sau khi Google xác thực thành công
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
 
@@ -72,15 +81,18 @@ namespace TVOnline.Controllers.Account {
             return new ChallengeResult(provider, properties);
         }
 
-        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl , string? remoteError) {
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl, string? remoteError)
+        {
             // Kiểm tra nếu có lỗi từ provider
-            if (remoteError != null) {
+            if (remoteError != null)
+            {
                 return RedirectToAction("Login", new { error = "Lỗi từ dịch vụ ngoài: " + remoteError });
             }
 
             // Lấy thông tin đăng nhập từ Google
             var info = await signInManager.GetExternalLoginInfoAsync();
-            if (info == null) {
+            if (info == null)
+            {
                 return RedirectToAction("Login");
             }
 
@@ -90,7 +102,8 @@ namespace TVOnline.Controllers.Account {
                 info.ProviderKey,
                 isPersistent: false);
 
-            if (result.Succeeded) {
+            if (result.Succeeded)
+            {
                 // Đăng nhập thành công
                 return RedirectToLocal(returnUrl);
             }
@@ -101,27 +114,35 @@ namespace TVOnline.Controllers.Account {
             // Kiểm tra xem email đã tồn tại chưa
             var existingUser = await userManager.FindByEmailAsync(email);
 
-            if (existingUser != null) {
+            if (existingUser != null)
+            {
                 // Email đã tồn tại, liên kết tài khoản Google với tài khoản hiện có
                 var addLoginResult = await userManager.AddLoginAsync(existingUser, info);
-                if (addLoginResult.Succeeded) {
+                if (addLoginResult.Succeeded)
+                {
                     // Đăng nhập người dùng
                     await signInManager.SignInAsync(existingUser, isPersistent: false);
                     return RedirectToAction("Index", "Home");
-                } else {
+                }
+                else
+                {
                     TempData["ErrorMessage"] = "Không thể liên kết tài khoản Google với tài khoản hiện có.";
                     return RedirectToAction("Login");
                 }
-            } else {
+            }
+            else
+            {
                 // Email chưa tồn tại, tạo tài khoản mới
                 var givenName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
                 var surname = info.Principal.FindFirstValue(ClaimTypes.Surname);
                 var fullName = $"{givenName} {surname}".Trim();
-                if (string.IsNullOrEmpty(fullName)) {
+                if (string.IsNullOrEmpty(fullName))
+                {
                     fullName = email.Split('@')[0];
                 }
 
-                var newUser = new Users {
+                var newUser = new Users
+                {
                     UserName = email,
                     Email = email,
                     EmailConfirmed = true,
@@ -130,26 +151,32 @@ namespace TVOnline.Controllers.Account {
 
 
                 var createResult = await userManager.CreateAsync(newUser);
-                if (createResult.Succeeded) {
+                if (createResult.Succeeded)
+                {
                     // Liên kết tài khoản Google
                     await userManager.AddLoginAsync(newUser, info);
                     await signInManager.SignInAsync(newUser, isPersistent: false);
                     return RedirectToAction("Index", "Home");
-                } else {
+                }
+                else
+                {
                     TempData["ErrorMessage"] = "Lỗi tạo tài khoản mới: " + string.Join(", ", createResult.Errors.Select(e => e.Description));
                     return RedirectToAction("Login");
                 }
             }
         }
 
-        private IActionResult RedirectToLocal(string returnUrl) {
-            if (Url.IsLocalUrl(returnUrl)) {
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
                 return Redirect(returnUrl);
             }
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Register() {
+        public IActionResult Register()
+        {
             return View();
         }
 
@@ -184,9 +211,9 @@ namespace TVOnline.Controllers.Account {
                     RegistrationTime = DateTime.UtcNow
                 };
 
-                // Cache options - expired after 24 hours
+                // Cache options - expired after 1 hours
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromHours(24));
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
 
                 // Store pending registration in cache
                 _memoryCache.Set(PENDING_REGISTRATION_PREFIX + registrationId, pendingUser, cacheOptions);
@@ -276,13 +303,16 @@ namespace TVOnline.Controllers.Account {
             return View();
         }
 
-        public IActionResult VerifyEmail() {
+        public IActionResult VerifyEmail()
+        {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ResendConfirmationEmail(string email) {
-            if (string.IsNullOrEmpty(email)) {
+        public async Task<IActionResult> ResendConfirmationEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
                 TempData["ErrorMessage"] = "Vui lòng nhập địa chỉ email.";
                 return RedirectToAction("VerifyEmail");
             }
@@ -308,9 +338,9 @@ namespace TVOnline.Controllers.Account {
                 // Generate new registration ID
                 var newRegistrationId = Guid.NewGuid().ToString();
                 
-                // Cache options - expired after 24 hours
+                // Cache options - expired after 1 hours
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromHours(24));
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
                 
                 // Store with new ID
                 _memoryCache.Set(PENDING_REGISTRATION_PREFIX + newRegistrationId, pendingRegistration, cacheOptions);
@@ -354,15 +384,19 @@ namespace TVOnline.Controllers.Account {
             }
         }
 
-        public IActionResult CheckEmail() {
+        public IActionResult CheckEmail()
+        {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CheckEmail(CheckEmailViewModel model) {
-            if (ModelState.IsValid) {
+        public async Task<IActionResult> CheckEmail(CheckEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
                 var user = await userManager.FindByEmailAsync(model.Email);
-                if (user == null) {
+                if (user == null)
+                {
                     ModelState.AddModelError("", "Không tìm thấy tài khoản với email này");
                     return View(model);
                 }
@@ -372,8 +406,10 @@ namespace TVOnline.Controllers.Account {
             return View(model);
         }
 
-        public IActionResult ChangePassword(string email) {
-            if (string.IsNullOrEmpty(email)) {
+        public IActionResult ChangePassword(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
                 return RedirectToAction("CheckEmail");
             }
 
@@ -382,31 +418,44 @@ namespace TVOnline.Controllers.Account {
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model) {
-            if (ModelState.IsValid) {
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
                 var user = await userManager.FindByEmailAsync(model.Email);
-                if (user != null) {
+                if (user != null)
+                {
                     var result = await userManager.RemovePasswordAsync(user);
-                    if (result.Succeeded) {
+                    if (result.Succeeded)
+                    {
                         result = await userManager.AddPasswordAsync(user, model.NewPassword);
-                        if (result.Succeeded) {
+                        if (result.Succeeded)
+                        {
                             TempData["SuccessMessage"] = "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.";
                             return RedirectToAction("Login");
-                        } else {
-                            foreach (var error in result.Errors) {
+                        }
+                        else
+                        {
+                            foreach (var error in result.Errors)
+                            {
                                 ModelState.AddModelError("", error.Description);
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         ModelState.AddModelError("", "Không thể đặt lại mật khẩu. Vui lòng thử lại sau.");
                     }
-                } else {
+                }
+                else
+                {
                     ModelState.AddModelError("", "Không tìm thấy tài khoản với email này");
                 }
             }
             return View(model);
         }
-        public async Task<IActionResult> Logout() {
+        public async Task<IActionResult> Logout()
+        {
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
@@ -415,6 +464,15 @@ namespace TVOnline.Controllers.Account {
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpgradeAccount()
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return View("Error");
+            var userCur = await userManager.FindByIdAsync(userId);
+            return userCur == null ? View("Error") : View("Upgrade");
         }
     }
 }

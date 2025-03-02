@@ -26,6 +26,9 @@ namespace TVOnline.Models {
         public decimal Salary { get; set; }
 
         [Required]
+        public string Position { get; set; }
+
+        [Required]
         public string Experience { get; set; }
 
         [Required(ErrorMessage = "Vui lòng chọn địa điểm làm việc")]
