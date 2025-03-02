@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TVOnline.Data;
 
@@ -11,9 +12,11 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250302030845_ThanhToanVnPay")]
+    partial class ThanhToanVnPay
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,10 +209,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Feedbacks", b =>
                 {
-                    b.Property<string>("FeedbackId")
+                    b.Property<int>("FeedbackId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -234,10 +238,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.InterviewInvitation", b =>
                 {
-                    b.Property<string>("InvitationId")
+                    b.Property<int>("InvitationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvitationId"));
 
                     b.Property<string>("EmployerId")
                         .HasColumnType("nvarchar(450)");
@@ -259,10 +264,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Job", b =>
                 {
-                    b.Property<string>("JobId")
+                    b.Property<int>("JobId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"));
 
                     b.Property<string>("JobName")
                         .IsRequired()
@@ -312,37 +318,13 @@ namespace TVOnline.Migrations
                     b.ToTable("Zones");
                 });
 
-            modelBuilder.Entity("TVOnline.Models.Payment", b =>
-                {
-                    b.Property<string>("PaymentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<double?>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("PaymentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Payments");
-                });
-
             modelBuilder.Entity("TVOnline.Models.Post", b =>
                 {
-                    b.Property<string>("PostId")
+                    b.Property<int>("PostId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostId"));
 
                     b.Property<string>("Benefits")
                         .IsRequired()
@@ -416,10 +398,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Template", b =>
                 {
-                    b.Property<string>("TemplateId")
+                    b.Property<int>("TemplateId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TemplateId"));
 
                     b.Property<string>("PremiumUserId")
                         .HasColumnType("nvarchar(450)");
@@ -439,10 +422,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.UserCV", b =>
                 {
-                    b.Property<string>("CvID")
+                    b.Property<int>("CvID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CvID"));
 
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
@@ -543,8 +527,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Vnpay.PaymentInformationModel", b =>
                 {
-                    b.Property<string>("OrderType")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<double?>("Amount")
                         .HasColumnType("float");
@@ -555,14 +542,19 @@ namespace TVOnline.Migrations
                     b.Property<string>("OrderDescription")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrderType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("OrderType");
+                    b.HasKey("OrderId");
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("PaymentInformationModel");
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -641,9 +633,7 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployerId");
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("Feedbacks")
@@ -678,15 +668,6 @@ namespace TVOnline.Migrations
                         .IsRequired();
 
                     b.Navigation("Zone");
-                });
-
-            modelBuilder.Entity("TVOnline.Models.Payment", b =>
-                {
-                    b.HasOne("TVOnline.Models.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
