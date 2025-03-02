@@ -20,7 +20,7 @@ public class PaymentController : Controller
     {
         var model = new PaymentInformationModel
         {
-            Amount = 500000, // Số tiền cần thanh toán     
+            Amount = 0, // Số tiền cần thanh toán     
             OrderDescription = "thanhtoan",
             Name = "zamola",
             OrderType = "other" // Mã đơn hàng
