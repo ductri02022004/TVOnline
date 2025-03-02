@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
+using System.Collections.Generic;
 using TVOnline.Models.Error;
 using Microsoft.AspNetCore.Identity;
 using TVOnline.Data;
 using Microsoft.EntityFrameworkCore;
 using TVOnline.ViewModels.Post;
+
 
 namespace TVOnline.Controllers
 {
@@ -24,7 +26,7 @@ namespace TVOnline.Controllers
             _userManager = userManager;
             _context = context;
         }
-        [HttpGet]
+        
         public async Task<IActionResult> Index()
         {
             var posts = await _context.Posts
@@ -41,9 +43,8 @@ namespace TVOnline.Controllers
                     JobType = p.JobType,
                     Experience = p.Experience,
                     CreatedAt = p.CreatedAt
-                })
+                }).Take(6)
                 .ToListAsync();
-
             return View(posts);
         }
 
