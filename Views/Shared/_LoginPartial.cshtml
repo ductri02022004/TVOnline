@@ -4,24 +4,6 @@
 @inject UserManager<Users> UserManager
 
 <ul class="navbar-nav ms-auto">
-@if (SignInManager.IsSignedIn(User))
-{
-
-
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">
-            <i class="bi bi-person-plus"></i> Đăng ký
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
-            <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
-        </a>
-    </li>
-}
 </ul>
 <ul class="ms-auto d-flex">
     @if (SignInManager.IsSignedIn(User))
@@ -29,11 +11,6 @@ else
         <li class="nav-item">
         <a class="nav-link text-dark" asp-controller="Home" asp-action="BecomeEmployer">
             <i class="bi bi-briefcase"></i> Trở thành nhà tuyển dụng
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="EditUserProfile" asp-action="Index" title="Manage">
-            <i class="bi bi-person"></i> @User.Identity?.Name
         </a>
     </li>
 

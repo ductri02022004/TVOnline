@@ -211,9 +211,9 @@ namespace TVOnline.Controllers.Account
                     RegistrationTime = DateTime.UtcNow
                 };
 
-                // Cache options - expired after 24 hours
+                // Cache options - expired after 1 hours
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromHours(24));
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
 
                 // Store pending registration in cache
                 _memoryCache.Set(PENDING_REGISTRATION_PREFIX + registrationId, pendingUser, cacheOptions);
@@ -338,9 +338,9 @@ namespace TVOnline.Controllers.Account
                 // Generate new registration ID
                 var newRegistrationId = Guid.NewGuid().ToString();
                 
-                // Cache options - expired after 24 hours
+                // Cache options - expired after 1 hours
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromHours(24));
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
                 
                 // Store with new ID
                 _memoryCache.Set(PENDING_REGISTRATION_PREFIX + newRegistrationId, pendingRegistration, cacheOptions);

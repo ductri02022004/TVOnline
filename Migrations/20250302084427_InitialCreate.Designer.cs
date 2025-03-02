@@ -12,8 +12,8 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250301130552_init")]
-    partial class init
+    [Migration("20250302084427_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -375,6 +375,10 @@ namespace TVOnline.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Requirements")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -540,6 +544,30 @@ namespace TVOnline.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TVOnline.Models.Vnpay.PaymentInformationModel", b =>
+                {
+                    b.Property<string>("OrderType")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double?>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("OrderType");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PaymentInformationModel");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -656,7 +684,7 @@ namespace TVOnline.Migrations
             modelBuilder.Entity("TVOnline.Models.Payment", b =>
                 {
                     b.HasOne("TVOnline.Models.Users", "User")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -704,6 +732,13 @@ namespace TVOnline.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("TVOnline.Models.Vnpay.PaymentInformationModel", b =>
+                {
+                    b.HasOne("TVOnline.Models.Users", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("UsersId");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Employers", b =>

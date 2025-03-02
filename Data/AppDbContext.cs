@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TVOnline.Migrations;
 using TVOnline.Models;
 using static TVOnline.Models.Location;
 using TVOnline.Models.Vnpay;
@@ -18,7 +17,7 @@ namespace TVOnline.Data
         public DbSet<Feedbacks> Feedbacks { get; set; }
         public DbSet<InterviewInvitation> InterviewInvitations { get; set; }
         public DbSet<UserCV> UserCVs { get; set; }
-        public DbSet<PaymentInformationModel> Payments { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         public DbSet<PremiumUser> PremiumUsers { get; set; }
         public DbSet<Template> Templates { get; set; }
 

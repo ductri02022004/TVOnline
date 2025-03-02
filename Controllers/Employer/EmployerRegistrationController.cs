@@ -14,17 +14,14 @@ namespace TVOnline.Controllers.Employer {
     public class EmployerRegistrationController : Controller {
         private readonly UserManager<Users> _userManager;
         private readonly AppDbContext _context;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<EmployerRegistrationController> _logger;
 
         public EmployerRegistrationController(
             UserManager<Users> userManager,
             AppDbContext context,
-            RoleManager<IdentityRole> roleManager,
             ILogger<EmployerRegistrationController> logger) {
             _userManager = userManager;
             _context = context;
-            _roleManager = roleManager;
             _logger = logger;
         }
 
