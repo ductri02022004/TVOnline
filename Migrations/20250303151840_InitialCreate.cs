@@ -190,7 +190,9 @@ namespace TVOnline.Migrations
                 name: "PaymentInformationModel",
                 columns: table => new
                 {
-                    OrderType = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: true),
                     OrderDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -198,7 +200,7 @@ namespace TVOnline.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PaymentInformationModel", x => x.OrderType);
+                    table.PrimaryKey("PK_PaymentInformationModel", x => x.OrderId);
                     table.ForeignKey(
                         name: "FK_PaymentInformationModel_AspNetUsers_UsersId",
                         column: x => x.UsersId,

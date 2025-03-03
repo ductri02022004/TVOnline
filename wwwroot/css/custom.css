@@ -16,6 +16,10 @@
     --font-family: system-ui, -apple-system, "Segoe UI", Roboto;
 }
 
+ul {
+    margin-bottom: 0;
+}
+
 li {
     list-style-type: none;
 }

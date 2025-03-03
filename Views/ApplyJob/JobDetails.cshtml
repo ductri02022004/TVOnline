@@ -46,13 +46,7 @@
                             }
                         </ul>
                     </div>
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <div class="text-center">
-                            <a href="#applyForm" class="btn btn-primary">Ứng tuyển ngay</a>
-                        </div>
-                    }
-                    else
+                    @if (!SignInManager.IsSignedIn(User))
                     {
                         <div class="alert alert-warning text-center" role="alert">
                             Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để ứng tuyển.
