@@ -67,18 +67,6 @@
                         <h4 class="mb-4">Ứng tuyển ngay</h4>
                         <form asp-action="Apply" asp-controller="Post" asp-route-postId="@Model.PostId" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label class="form-label">Họ và tên</label>
-                                <input type="text" class="form-control" name="FullName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Số điện thoại</label>
-                                <input type="tel" class="form-control" name="PhoneNumber" required>
-                            </div>
-                            <div class="mb-3">
                                 <label class="form-label">Tải lên CV</label>
                                 <input type="file" class="form-control" name="cvFile" required>
                             </div>
