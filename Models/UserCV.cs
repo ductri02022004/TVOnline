@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace TVOnline.Models {
     public class UserCV {
         [Key]
-        public int CvID { get; set; }
+        public string CvID { get; set; }
 
         [ForeignKey("UserId")]
         [ValidateNever]

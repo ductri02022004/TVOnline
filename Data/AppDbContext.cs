@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TVOnline.Migrations;
 using TVOnline.Models;
 using static TVOnline.Models.Location;
 using TVOnline.Models.Vnpay;
@@ -18,7 +17,7 @@ namespace TVOnline.Data
         public DbSet<Feedbacks> Feedbacks { get; set; }
         public DbSet<InterviewInvitation> InterviewInvitations { get; set; }
         public DbSet<UserCV> UserCVs { get; set; }
-        public DbSet<PaymentInformationModel> Payments { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         public DbSet<PremiumUser> PremiumUsers { get; set; }
         public DbSet<Template> Templates { get; set; }
 
@@ -98,10 +97,11 @@ namespace TVOnline.Data
                 .Property(e => e.Field)
                 .IsRequired();
 
-            // cấu hình tự tạo id
+            // cấu hình cho các khóa chính là string
             modelBuilder.Entity<Job>()
                 .Property(j => j.JobId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<Cities>()
                 .Property(c => c.CityId)
@@ -117,19 +117,23 @@ namespace TVOnline.Data
 
             modelBuilder.Entity<Feedbacks>()
                 .Property(f => f.FeedbackId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<InterviewInvitation>()
                 .Property(i => i.InvitationId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<UserCV>()
                 .Property(cv => cv.CvID)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
-            modelBuilder.Entity<PaymentInformationModel>()
-                .Property(p => p.OrderType)
-                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.PaymentId)
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<PremiumUser>()
                 .Property(pu => pu.PremiumUserId)
@@ -137,12 +141,8 @@ namespace TVOnline.Data
 
             modelBuilder.Entity<Template>()
                 .Property(t => t.TemplateId)
-                .ValueGeneratedOnAdd();
-
-            modelBuilder.Entity<Post>()
-                .Property(p => p.Salary)
-                .HasColumnType("decimal(18,2)"); // Xác định độ chính xác và số chữ số thập phân
-
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
         }
     }
 }

@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
 using TVOnline.Models;
 
-namespace TVOnline.Controllers.Employers
+
+namespace TVOnline.Controllers.Employer
 {
     [Route("[controller]")]
-    public class EmployersController(UserManager<Users> userManager, AppDbContext context) : Controller
+    public class EmployersPage(UserManager<Users> userManager, AppDbContext context) : Controller
     {
         private readonly UserManager<Users> _userManager = userManager;
         private readonly AppDbContext _context = context;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace TVOnline.Models {
     public class Payment {
         [Key]
-        public int PaymentId { get; set; }
+        public string PaymentId { get; set; }
         public DateTime? PaymentDate { get; set; }
         public string? PaymentMethod { get; set; }
         
