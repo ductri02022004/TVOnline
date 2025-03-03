@@ -15,7 +15,7 @@ using TVOnline.Data;
 namespace TVOnline.Controllers
 {
     [Route("[controller]")]
-    public class PostController(IUserCvService userCvService, IPostService postService, UserManager<Users> userManager, AppDbContext context) : Controller
+    public class ApplyJobController(IUserCvService userCvService, IPostService postService, UserManager<Users> userManager, AppDbContext context) : Controller
     {
         private readonly IUserCvService _userCvService = userCvService;
         private readonly IPostService _postService = postService;
@@ -93,6 +93,8 @@ namespace TVOnline.Controllers
             if (cvFile is { Length: > 0 })
             {
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", cvFile.FileName);
+                var post = await _context.Posts.Include(p => p.Employer)
+                    .Include(p => p.City).FirstOrDefaultAsync(p => p.PostId == postId);
 
                 await using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -114,7 +116,9 @@ namespace TVOnline.Controllers
                     CVFileUrl = cvFile.FileName,
                     CVStatus = "Applied",
                     Users = user,
-                    UserId = user.Id
+                    UserId = user.Id,
+                    PostId = postId,
+                    Post = post
                 };
 
                 await _userCvService.SaveCv(userCv);

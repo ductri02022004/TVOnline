@@ -160,16 +160,16 @@ namespace TVOnline
             {
                 // Apply any pending migrations
                 await context.Database.MigrateAsync();
-                
+
                 // Ensure roles are created first
                 await DbSeeder.SeedRolesAsync(roleManager);
-                
+
                 // Then seed users and assign roles
                 await DbSeeder.SeedUsersAsync(userManager);
-                
+
                 // Seed location data
                 DbSeeder.SeedData(context);
-                
+
                 // Seed employers and posts
                 await DbSeeder.SeedEmployersAsync(context);
                 await DbSeeder.SeedPostsAsync(context);
