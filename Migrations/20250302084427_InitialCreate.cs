@@ -59,8 +59,7 @@ namespace TVOnline.Migrations
                 name: "Jobs",
                 columns: table => new
                 {
-                    JobId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobId = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     JobName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -188,11 +187,30 @@ namespace TVOnline.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentInformationModel",
+                columns: table => new
+                {
+                    OrderType = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: true),
+                    OrderDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UsersId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentInformationModel", x => x.OrderType);
+                    table.ForeignKey(
+                        name: "FK_PaymentInformationModel_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
-                    PaymentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -229,8 +247,7 @@ namespace TVOnline.Migrations
                 name: "UserCVs",
                 columns: table => new
                 {
-                    CvID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CvID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CVFileUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CVStatus = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -269,8 +286,7 @@ namespace TVOnline.Migrations
                 name: "Templates",
                 columns: table => new
                 {
-                    TemplateId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TemplateId = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     TemplateName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TemplateFileURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PremiumUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
@@ -291,12 +307,12 @@ namespace TVOnline.Migrations
                 {
                     EmployerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Field = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Field = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LogoURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CityId = table.Column<int>(type: "int", nullable: true),
+                    CityId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ZoneId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -312,7 +328,8 @@ namespace TVOnline.Migrations
                         name: "FK_Employers_Cities_CityId",
                         column: x => x.CityId,
                         principalTable: "Cities",
-                        principalColumn: "CityId");
+                        principalColumn: "CityId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Employers_Zones_ZoneId",
                         column: x => x.ZoneId,
@@ -324,8 +341,7 @@ namespace TVOnline.Migrations
                 name: "Feedbacks",
                 columns: table => new
                 {
-                    FeedbackId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FeedbackId = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -350,8 +366,7 @@ namespace TVOnline.Migrations
                 name: "InterviewInvitations",
                 columns: table => new
                 {
-                    InvitationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InvitationId = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     InvitationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     EmployerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
@@ -375,15 +390,29 @@ namespace TVOnline.Migrations
                 name: "Posts",
                 columns: table => new
                 {
-                    PostId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PostId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     EmployerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Benefits = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Experience = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CityId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Requirements = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JobType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.PostId);
+                    table.ForeignKey(
+                        name: "FK_Posts_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "CityId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Posts_Employers_EmployerId",
                         column: x => x.EmployerId,
@@ -473,9 +502,19 @@ namespace TVOnline.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentInformationModel_UsersId",
+                table: "PaymentInformationModel",
+                column: "UsersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payments_UserId",
                 table: "Payments",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_CityId",
+                table: "Posts",
+                column: "CityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_EmployerId",
@@ -526,6 +565,9 @@ namespace TVOnline.Migrations
 
             migrationBuilder.DropTable(
                 name: "Jobs");
+
+            migrationBuilder.DropTable(
+                name: "PaymentInformationModel");
 
             migrationBuilder.DropTable(
                 name: "Payments");

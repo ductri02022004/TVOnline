@@ -31,7 +31,15 @@ namespace TVOnline
             ConfigureMiddleware(app, builder.Environment);
 
             // Seed data
-            await SeedDataAsync(app);
+            try
+            {
+                await SeedDataAsync(app);
+                Console.WriteLine("Database seeded successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error seeding database: {ex.Message}");
+            }
 
             app.Run();
         }
@@ -129,17 +137,15 @@ namespace TVOnline
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            // Modern .NET 6+ routing configuration
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                endpoints.MapControllerRoute(
-                    name: "vnpay",
-                    pattern: "payment/{action=Index}/{id?}",
-                    defaults: new { controller = "Payment" });
-            });
+            app.MapControllerRoute(
+                name: "vnpay",
+                pattern: "payment/{action=Index}/{id?}",
+                defaults: new { controller = "Payment" });
         }
 
         private static async Task SeedDataAsync(WebApplication app)
@@ -150,13 +156,30 @@ namespace TVOnline
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = services.GetRequiredService<UserManager<Users>>();
 
-            // Ensure roles are created first
-            await DbSeeder.SeedRolesAsync(roleManager);
-            await DbSeeder.SeedUsersAsync(userManager);
-            // Then seed data
-            DbSeeder.SeedData(context);
-            await DbSeeder.SeedEmployersAsync(context);
-            await DbSeeder.SeedPostsAsync(context);
+            try
+            {
+                // Apply any pending migrations
+                await context.Database.MigrateAsync();
+                
+                // Ensure roles are created first
+                await DbSeeder.SeedRolesAsync(roleManager);
+                
+                // Then seed users and assign roles
+                await DbSeeder.SeedUsersAsync(userManager);
+                
+                // Seed location data
+                DbSeeder.SeedData(context);
+                
+                // Seed employers and posts
+                await DbSeeder.SeedEmployersAsync(context);
+                await DbSeeder.SeedPostsAsync(context);
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while seeding the database.");
+                throw; // Re-throw to handle in the Main method
+            }
         }
     }
 }

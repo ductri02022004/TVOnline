@@ -43,6 +43,9 @@ namespace TVOnline.Data
                         var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                         throw new Exception($"Failed to seed user {user.UserName}: {errors}");
                     }
+                    
+                    // Assign employer role to all these users
+                    await userManager.AddToRoleAsync(user, "Employer");
                 }
             }
         }
@@ -56,8 +59,8 @@ namespace TVOnline.Data
                 new Employers
                 {
                     EmployerId = "EMP001",
-                    UserId = "useremp001", // Replace with actual UserId if needed
-                    Email = "contact@fpt.com.vn",
+                    UserId = "useremp001", // Linked to the first employer user
+                    Email = "employer1@example.com", // Match with user email
                     CompanyName = "FPT Corporation",
                     Description = "FPT is a leading technology corporation in Vietnam.",
                     Field = "Information Technology",
@@ -68,8 +71,8 @@ namespace TVOnline.Data
                 new Employers
                 {
                     EmployerId = "EMP002",
-                    UserId = "useremp002", // Replace with actual UserId if needed
-                    Email = "hr@vingroup.net",
+                    UserId = "useremp002", // Linked to the second employer user
+                    Email = "employer2@example.com", // Match with user email
                     CompanyName = "Vingroup",
                     Description = "Vingroup is the largest conglomerate in Vietnam.",
                     Field = "Real Estate, Retail, Technology",
@@ -80,8 +83,8 @@ namespace TVOnline.Data
                 new Employers
                 {
                     EmployerId = "EMP003",
-                    UserId = "useremp003", // Replace with actual UserId if needed
-                    Email = "tuyendung@viettel.com.vn",
+                    UserId = "useremp003", // Linked to the third employer user
+                    Email = "employer3@example.com", // Match with user email
                     CompanyName = "Viettel Group",
                     Description = "Viettel is a Vietnamese multinational telecommunications company.",
                     Field = "Telecommunications, Technology",
@@ -92,8 +95,8 @@ namespace TVOnline.Data
                 new Employers
                 {
                     EmployerId = "EMP004",
-                    UserId = "useremp004", // Replace with actual UserId if needed
-                    Email = "careers@techcombank.com.vn",
+                    UserId = "useremp004", // Linked to the fourth employer user
+                    Email = "employer4@example.com", // Match with user email
                     CompanyName = "Techcombank",
                     Description = "Techcombank is one of the largest commercial banks in Vietnam.",
                     Field = "Banking, Finance",
@@ -104,8 +107,8 @@ namespace TVOnline.Data
                 new Employers
                 {
                     EmployerId = "EMP005",
-                    UserId = "useremp005", // Replace with actual UserId if needed
-                    Email = "recruitment@vnpt.vn",
+                    UserId = "useremp005", // Linked to the fifth employer user
+                    Email = "employer5@example.com", // Match with user email
                     CompanyName = "VNPT",
                     Description = "VNPT is a leading telecommunications group in Vietnam.",
                     Field = "Telecommunications",

@@ -38,6 +38,7 @@ namespace TVOnline.Controllers
                 Salary = p.Salary,
                 JobType = p.JobType,
                 Experience = p.Experience,
+                Position = p.Position,
                 CreatedAt = p.CreatedAt
             }).ToListAsync();
 
@@ -70,6 +71,7 @@ namespace TVOnline.Controllers
                     Salary = p.Salary,
                     JobType = p.JobType,
                     Experience = p.Experience,
+                    Position = p.Position,
                     Description = p.Description,
                     Requirements = p.Requirements,
                     Benefits = p.Benefits,

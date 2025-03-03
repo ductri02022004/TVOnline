@@ -11,7 +11,6 @@ using TVOnline.ViewModels.Post;
 
 namespace TVOnline.Controllers
 {
-    [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -27,10 +26,9 @@ namespace TVOnline.Controllers
             _userManager = userManager;
             _context = context;
         }
-
-        [Route("/")]
-        public async Task<IActionResult> Index() {
-
+        
+        public async Task<IActionResult> Index()
+        {
             var posts = await _context.Posts
                 .Include(p => p.Employer)
                 .Include(p => p.City)

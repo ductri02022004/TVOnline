@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace TVOnline.Models {
     public class InterviewInvitation {
         [Key]
-        public int InvitationId { get; set; }
+        public string InvitationId { get; set; }
         public DateTime InvitationDate { get; set; }
 
         [ForeignKey("UserId")]

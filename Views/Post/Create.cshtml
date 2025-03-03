@@ -19,6 +19,12 @@
                 </div>
 
                 <div class="mb-3">
+                    <label asp-for="Position" class="form-label">Vị trí công việc</label>
+                    <input asp-for="Position" class="form-control" />
+                    <span asp-validation-for="Position" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
                     <label asp-for="Description" class="form-label">Mô tả công việc</label>
                     <textarea asp-for="Description" class="form-control" rows="5"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
