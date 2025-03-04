@@ -1,20 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using System;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using TVOnline.Service.Post;
 using TVOnline.ViewModels.Post;
-using TVOnline.Data;
-using TVOnline.Service.DTO;
-using TVOnline.Service.Location;
-using TVOnline.Service.UserCVs;
-using TVOnline.ViewModels.JobsViewModel;
 
-namespace TVOnline.Controllers
+namespace TVOnline.Controllers.ApplyJob
 {
     [Route("[controller]")]
     public class ApplyJobController(IUserCvService userCvService, IPostService postService, UserManager<Users> userManager, ILocationService locationService) : Controller
@@ -53,7 +39,15 @@ namespace TVOnline.Controllers
         public async Task<IActionResult> Details(string postID)
         {
             var post = await _postService.FindPostById(postID);
-            return View("JobDetails", post);
+            Users? user = await _userManager.GetUserAsync(User);
+
+            var postDetailViewModel = new PostDetailViewModel
+            {
+                Post = post,
+                CurrentUser = user
+            };
+
+            return View("JobDetails", postDetailViewModel);
         }
 
         [HttpPost]
