@@ -9,6 +9,7 @@
         public int CityId { get; set; }
         public string? CityName { get; set; }
         public string JobType { get; set; }
+        public string? CompanyName { get; set; }
         public string Experience { get; set; }
         public string Position { get; set; }
         public string Description { get; set; }
@@ -30,6 +31,7 @@
                 Salary = post.Salary,
                 CityId = post.CityId,
                 CityName = post.City?.CityName,
+                CompanyName = post.Employer?.CompanyName,
                 JobType = post.JobType,
                 Experience = post.Experience,
                 Position = post.Position,
