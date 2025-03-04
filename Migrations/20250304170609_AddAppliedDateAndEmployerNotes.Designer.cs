@@ -12,8 +12,8 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250302165011_checkoutdata")]
-    partial class checkoutdata
+    [Migration("20250304170609_AddAppliedDateAndEmployerNotes")]
+    partial class AddAppliedDateAndEmployerNotes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -447,16 +447,27 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<DateTime>("AppliedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CVStatus")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmployerNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("CvID");
+
+                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -734,9 +745,15 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.UserCV", b =>
                 {
+                    b.HasOne("TVOnline.Models.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId");
+
                     b.HasOne("TVOnline.Models.Users", "Users")
                         .WithMany("UserCVs")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Post");
 
                     b.Navigation("Users");
                 });
