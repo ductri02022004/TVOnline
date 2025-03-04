@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
-using TVOnline.Models;
 using TVOnline.ViewModels.Employer;
 using Microsoft.Extensions.Logging;
 

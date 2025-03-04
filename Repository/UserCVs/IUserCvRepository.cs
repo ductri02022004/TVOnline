@@ -1,6 +1,4 @@
-﻿using TVOnline.Models;
-
-namespace TVOnline.Service.UserCVs
+﻿namespace TVOnline.Service.UserCVs
 {
     public interface IUserCvRepository
     {
