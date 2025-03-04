@@ -7,7 +7,6 @@ using TVOnline.Helper;
 using CloudinaryDotNet;
 using TVOnline.Repository.Job;
 using TVOnline.Repository.Posts;
-using TVOnline.Repository.UserCVs;
 using TVOnline.Service.Jobs;
 using TVOnline.Service.Post;
 using TVOnline.Service.UserCVs;

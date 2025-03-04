@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
 using TVOnline.Models;
 
@@ -7,6 +8,6 @@ namespace TVOnline.Repository.Posts
     {
         private readonly AppDbContext _context = context;
 
-        public Post? FindPostById(string id) => _context.Posts.FirstOrDefault(post => post.PostId == id);
+        public async Task<Post?> FindPostById(string id) => await _context.Posts.Include(p => p.Employer).Include(p => p.City).FirstOrDefaultAsync(p => p.PostId == id);
     }
 }
