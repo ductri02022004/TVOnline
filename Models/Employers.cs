@@ -34,8 +34,8 @@ namespace TVOnline.Models {
 
         public DateTime CreatedAt { get; set; }
 
-        public virtual ICollection<Post>? Posts { get; set; }
-        public virtual ICollection<Feedbacks>? Feedbacks { get; set; }
-        public virtual ICollection<InterviewInvitation>? InterviewInvitations { get; set; }
+        public virtual ICollection<Post>? Posts { get; set; } = [];
+        public virtual ICollection<Feedbacks>? Feedbacks { get; set; } = [];
+        public virtual ICollection<InterviewInvitation>? InterviewInvitations { get; set; } = [];
     }
 }
