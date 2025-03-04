@@ -11,37 +11,25 @@ using TVOnline.Service.Post;
 using TVOnline.ViewModels.Post;
 using TVOnline.Data;
 using TVOnline.Service.DTO;
+using TVOnline.Service.Location;
 using TVOnline.Service.UserCVs;
+using TVOnline.ViewModels.JobsViewModel;
 
 namespace TVOnline.Controllers
 {
     [Route("[controller]")]
-    public class ApplyJobController(IUserCvService userCvService, IPostService postService, UserManager<Users> userManager, AppDbContext context) : Controller
+    public class ApplyJobController(IUserCvService userCvService, IPostService postService, UserManager<Users> userManager, ILocationService locationService) : Controller
     {
         private readonly IUserCvService _userCvService = userCvService;
         private readonly IPostService _postService = postService;
+        private readonly ILocationService _locationService = locationService;
         private readonly UserManager<Users> _userManager = userManager;
-        private readonly AppDbContext _context = context;
 
         [Route("[action]")]
         public async Task<IActionResult> Index(int page = 1)
         {
-            var posts = await _context.Posts
-            .Include(p => p.Employer)
-            .Include(p => p.City)
-            .OrderByDescending(p => p.CreatedAt)
-            .Select(p => new PostListViewModel
-            {
-                PostId = p.PostId.ToString(),
-                Title = p.Title,
-                CompanyName = p.Employer.CompanyName,
-                Location = p.City.CityName,
-                Salary = p.Salary,
-                JobType = p.JobType,
-                Experience = p.Experience,
-                Position = p.Position,
-                CreatedAt = p.CreatedAt
-            }).ToListAsync();
+            var posts = await _postService.GetAllPosts();
+            var cities = await _locationService.GetAllCities();
 
             int pageSize = 5;
             int totalPosts = posts.Count();
@@ -49,41 +37,23 @@ namespace TVOnline.Controllers
 
             var pagedPosts = posts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
+            var jobsViewModel = new JobsViewModel
+            {
+                Posts = pagedPosts,
+                Locations = cities
+            };
+
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             ViewBag.TotalPosts = totalPosts;
 
-            return View("Details", pagedPosts);
+            return View("Details", jobsViewModel);
         }
 
         [Route("[action]/{postID}")]
         public async Task<IActionResult> Details(string postID)
         {
-            var posts = await _context.Posts
-                .Include(p => p.Employer)
-                .Include(p => p.City)
-                .OrderByDescending(p => p.CreatedAt)
-                .Select(p => new PostListViewModel
-                {
-                    PostId = p.PostId.ToString(),
-                    Title = p.Title,
-                    CompanyName = p.Employer.CompanyName,
-                    Location = p.City.CityName,
-                    Salary = p.Salary,
-                    JobType = p.JobType,
-                    Experience = p.Experience,
-                    Position = p.Position,
-                    Description = p.Description,
-                    Requirements = p.Requirements,
-                    Benefits = p.Benefits,
-                    CreatedAt = p.CreatedAt
-                }).ToListAsync();
-
-            var post = posts.FirstOrDefault(p => p.PostId.ToString() == postID);
-            if (post == null)
-            {
-                return NotFound();
-            }
+            var post = await _postService.FindPostById(postID);
             return View("JobDetails", post);
         }
 

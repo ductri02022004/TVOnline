@@ -12,6 +12,10 @@ using TVOnline.Service.Post;
 using TVOnline.Service.UserCVs;
 using TVOnline.Service.Vnpay;
 using Microsoft.Extensions.Logging;
+using TVOnline.Repository.Employers;
+using TVOnline.Repository.Location;
+using TVOnline.Service.Employers;
+using TVOnline.Service.Location;
 
 namespace TVOnline
 {
@@ -40,7 +44,7 @@ namespace TVOnline
                 Console.WriteLine($"Error seeding database: {ex.Message}");
             }
 
-            app.Run();
+            await app.RunAsync();
         }
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
@@ -58,9 +62,13 @@ namespace TVOnline
             services.AddScoped<IJobsRepository, JobsRepository>();
             services.AddScoped<IUserCvRepository, UserCvRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IEmployersRepository, EmployersRepository>();
             services.AddScoped<IJobsService, JobsService>();
             services.AddScoped<IUserCvService, UserCvService>();
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IEmployersService, EmployersService>();
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("Default")));
