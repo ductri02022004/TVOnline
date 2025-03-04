@@ -83,7 +83,10 @@ namespace TVOnline.Controllers.Employer
                     Description = employer.Description,
                     CreatedAt = employer.CreatedAt,
                     TotalInterviews = await _context.InterviewInvitations.CountAsync(i => i.EmployerId == employer.EmployerId),
-                    TotalFeedbacks = await _context.Feedbacks.CountAsync(f => f.EmployerId == employer.EmployerId)
+                    TotalFeedbacks = await _context.Feedbacks.CountAsync(f => f.EmployerId == employer.EmployerId),
+                    TotalApplications = await _context.UserCVs
+                        .Include(cv => cv.Post)
+                        .CountAsync(cv => cv.Post.EmployerId == employer.EmployerId)
                 };
 
                 return View(viewModel);
@@ -93,6 +96,139 @@ namespace TVOnline.Controllers.Employer
                 _logger.LogError($"Error creating view model: {ex.Message}");
                 throw;
             }
+        }
+
+        public async Task<IActionResult> ManageApplications(string status = null)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Kiểm tra quyền truy cập
+            var isEmployer = await _userManager.IsInRoleAsync(user, "Employer");
+            if (!isEmployer)
+            {
+                return RedirectToAction("Register", "EmployerRegistration");
+            }
+
+            var employer = await _context.Employers
+                .FirstOrDefaultAsync(e => e.UserId == user.Id);
+
+            if (employer == null)
+            {
+                return RedirectToAction("Register", "EmployerRegistration");
+            }
+
+            // Lấy danh sách các CV đã nộp cho các bài đăng của nhà tuyển dụng này
+            var query = _context.UserCVs
+                .Include(cv => cv.Users)
+                .Include(cv => cv.Post)
+                .Where(cv => cv.Post.EmployerId == employer.EmployerId);
+
+            // Lọc theo trạng thái nếu có
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(cv => cv.CVStatus == status);
+            }
+
+            var applications = await query.OrderByDescending(cv => cv.Post.CreatedAt).ToListAsync();
+
+            ViewBag.StatusFilter = status;
+            return View(applications);
+        }
+
+        public async Task<IActionResult> ApplicationDetails(string cvId)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Kiểm tra quyền truy cập
+            var isEmployer = await _userManager.IsInRoleAsync(user, "Employer");
+            if (!isEmployer)
+            {
+                return RedirectToAction("Register", "EmployerRegistration");
+            }
+
+            var employer = await _context.Employers
+                .FirstOrDefaultAsync(e => e.UserId == user.Id);
+
+            if (employer == null)
+            {
+                return RedirectToAction("Register", "EmployerRegistration");
+            }
+
+            // Lấy chi tiết CV
+            var application = await _context.UserCVs
+                .Include(cv => cv.Users)
+                .Include(cv => cv.Post)
+                .FirstOrDefaultAsync(cv => cv.CvID == cvId && cv.Post.EmployerId == employer.EmployerId);
+
+            if (application == null)
+            {
+                return NotFound();
+            }
+
+            return View(application);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateApplicationStatus(string cvId, string status)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Kiểm tra quyền truy cập
+            var isEmployer = await _userManager.IsInRoleAsync(user, "Employer");
+            if (!isEmployer)
+            {
+                return RedirectToAction("Register", "EmployerRegistration");
+            }
+
+            var employer = await _context.Employers
+                .FirstOrDefaultAsync(e => e.UserId == user.Id);
+
+            if (employer == null)
+            {
+                return RedirectToAction("Register", "EmployerRegistration");
+            }
+
+            // Cập nhật trạng thái CV
+            var application = await _context.UserCVs
+                .Include(cv => cv.Post)
+                .FirstOrDefaultAsync(cv => cv.CvID == cvId && cv.Post.EmployerId == employer.EmployerId);
+
+            if (application == null)
+            {
+                return NotFound();
+            }
+
+            application.CVStatus = status;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("ManageApplications");
         }
     }
 }

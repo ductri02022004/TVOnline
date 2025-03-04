@@ -12,5 +12,6 @@ namespace TVOnline.ViewModels.Employer
         public int TotalPosts { get; set; }
         public int TotalInterviews { get; set; }
         public int TotalFeedbacks { get; set; }
+        public int TotalApplications { get; set; }
     }
 }

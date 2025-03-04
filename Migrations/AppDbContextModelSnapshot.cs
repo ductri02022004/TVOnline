@@ -444,10 +444,16 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<DateTime>("AppliedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CVStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployerNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostId")
