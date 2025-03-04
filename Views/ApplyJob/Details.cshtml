@@ -1,7 +1,5 @@
-@model List<TVOnline.ViewModels.Post.PostListViewModel>
+@model TVOnline.ViewModels.JobsViewModel.JobsViewModel
 @using Microsoft.AspNetCore.Identity;
-
-@* @model TVOnline.Models.Post *@
 @inject SignInManager<Users> signInManager;
 
 @{
@@ -24,12 +22,11 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select">
-                    <option selected>Địa điểm</option>
-                    <option>Đà Nẵng</option>
-                    <option>Tp.Hồ Chí Minh</option>
-                    <option>Hà Nội</option>
-                    <option>Cần Thơ</option>
-                    <option>Hải Phòng</option>
+                    <option selected value="">Địa điểm</option>
+                    @foreach (var location in Model.Locations)
+                    {
+                        <option value="@location.Name">@location.Name</option>
+                    }
                 </select>
             </div>
             <div class="col-md-4">
@@ -42,7 +39,7 @@
 <section class="job-listings py-5">
     <div class="container">
         <div class="row g-4">
-            @foreach (var post in Model)
+            @foreach (var post in Model.Posts)
             {
                 <div class="col-12">
                     <div class="job-list-card p-4 bg-white rounded shadow-sm">
@@ -51,18 +48,18 @@
                                 <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo-lg" alt="@post.CompanyName">
                             </div>
                             <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
-                                <a asp-controller="Post" asp-action="Details" asp-route-id="@post.PostId">
+                                <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">
                                     <h4>@post.Title</h4>
                                 </a>
                                 <p class="company-name mb-2">@post.CompanyName</p>
                                 <div class="job-meta">
-                                    <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@post.Location</span>
+                                    <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@post.CityName</span>
                                     <span class="me-3"><i class="bi bi-cash me-1"></i>@($"{post.Salary:N0} VND")</span>
                                     <span><i class="bi bi-briefcase me-1"></i>@post.Experience</span>
                                 </div>
                             </div>
                             <div class="col-md-3 text-md-end">
-                                <a class="btn btn-primary" asp-controller="Post" asp-action="Details" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
+                                <a class="btn btn-primary" asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
                             </div>
                         </div>
                     </div>
