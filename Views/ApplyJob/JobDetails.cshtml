@@ -1,4 +1,4 @@
-@model TVOnline.ViewModels.Post.PostListViewModel
+@model TVOnline.Service.DTO.PostResponse
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<Users> SignInManager
 
@@ -17,7 +17,7 @@
                             <h2 class="mb-2">@Model.Title</h2>
                             <p class="company-name mb-2">@Model.CompanyName</p>
                             <div class="job-meta">
-                                <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@Model.Location</span>
+                                <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@Model.CityName</span>
                                 <span class="me-3"><i class="bi bi-cash me-1"></i>@($"{Model.Salary:N0} VND")</span>
                                 <span class="me-3"><i class="bi bi-briefcase me-1"></i>@Model.Experience</span>
                                 <span><i class="bi bi-person-workspace me-1"></i>@Model.Position</span>
@@ -46,13 +46,7 @@
                             }
                         </ul>
                     </div>
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <div class="text-center">
-                            <a href="#applyForm" class="btn btn-primary">Ứng tuyển ngay</a>
-                        </div>
-                    }
-                    else
+                    @if (!SignInManager.IsSignedIn(User))
                     {
                         <div class="alert alert-warning text-center" role="alert">
                             Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để ứng tuyển.
@@ -66,19 +60,7 @@
                 {
                     <div class="card p-4 mb-4" id="applyForm">
                         <h4 class="mb-4">Ứng tuyển ngay</h4>
-                        <form asp-action="Apply" asp-controller="Post" asp-route-postId="@Model.PostId" method="post" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label class="form-label">Họ và tên</label>
-                                <input type="text" class="form-control" name="FullName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Số điện thoại</label>
-                                <input type="tel" class="form-control" name="PhoneNumber" required>
-                            </div>
+                        <form asp-action="Apply" asp-controller="ApplyJob" asp-route-postId="@Model.PostId" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label class="form-label">Tải lên CV</label>
                                 <input type="file" class="form-control" name="cvFile" required>

@@ -12,7 +12,7 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250302084427_InitialCreate")]
+    [Migration("20250303151840_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -546,8 +546,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Vnpay.PaymentInformationModel", b =>
                 {
-                    b.Property<string>("OrderType")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<double?>("Amount")
                         .HasColumnType("float");
@@ -558,10 +561,14 @@ namespace TVOnline.Migrations
                     b.Property<string>("OrderDescription")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrderType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("OrderType");
+                    b.HasKey("OrderId");
 
                     b.HasIndex("UsersId");
 
