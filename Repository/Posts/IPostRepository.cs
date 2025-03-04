@@ -3,6 +3,6 @@ namespace TVOnline.Repository.Posts
 {
     public interface IPostRepository
     {
-        Post? FindPostById(string id);
+        Task<Post?> FindPostById(string id);
     }
 }

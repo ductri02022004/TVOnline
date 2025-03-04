@@ -7,10 +7,11 @@ using System.IO;
 using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TVOnline.Repository.UserCVs;
 using TVOnline.Service.Post;
 using TVOnline.ViewModels.Post;
 using TVOnline.Data;
+using TVOnline.Service.DTO;
+using TVOnline.Service.UserCVs;
 
 namespace TVOnline.Controllers
 {
@@ -93,8 +94,7 @@ namespace TVOnline.Controllers
             if (cvFile is { Length: > 0 })
             {
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", cvFile.FileName);
-                var post = await _context.Posts.Include(p => p.Employer)
-                    .Include(p => p.City).FirstOrDefaultAsync(p => p.PostId == postId);
+                var post = await _postService.FindPostById(postId);
 
                 await using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -110,18 +110,16 @@ namespace TVOnline.Controllers
 
                 // Lưu thông tin ứng tuyển vào cơ sở dữ liệu hoặc xử lý thêm tại đây
                 // Ví dụ: Lưu thông tin ứng viên và đường dẫn CV vào cơ sở dữ liệu
-                var userCv = new UserCV
+                var userCvAddRequest = new UserCvAddRequest()
                 {
-                    CvFile = cvFile,
-                    CVFileUrl = cvFile.FileName,
-                    CVStatus = "Applied",
-                    Users = user,
+                    CvId = Guid.NewGuid().ToString(),
+                    CvFileUrl = cvFile.FileName,
+                    CvStatus = "Applied",
                     UserId = user.Id,
                     PostId = postId,
-                    Post = post
                 };
 
-                await _userCvService.SaveCv(userCv);
+                 await _userCvService.SaveCv(userCvAddRequest);
 
                 TempData["SuccessMessage"] = "Ứng tuyển thành công!";
                 return RedirectToAction("Details", new { id = postId });

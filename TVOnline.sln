@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVOnline", "TVOnline.csproj", "{B95265B5-9629-4925-B9D4-1E3FA5B50F0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVOnlineTest", "..\TVOnlineTest\TVOnlineTest.csproj", "{04E11C3C-EB33-41A7-9A32-63BF416268D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B95265B5-9629-4925-B9D4-1E3FA5B50F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B95265B5-9629-4925-B9D4-1E3FA5B50F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B95265B5-9629-4925-B9D4-1E3FA5B50F0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04E11C3C-EB33-41A7-9A32-63BF416268D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04E11C3C-EB33-41A7-9A32-63BF416268D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04E11C3C-EB33-41A7-9A32-63BF416268D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04E11C3C-EB33-41A7-9A32-63BF416268D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
