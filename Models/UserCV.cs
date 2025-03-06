@@ -18,14 +18,5 @@ namespace TVOnline.Models {
         
         public string? CVFileUrl { get; set; }
         public string? CVStatus { get; set; }
-
-        [ForeignKey("PostId")]
-        [ValidateNever]
-        public Post? Post { get; set; }
-        public string? PostId { get; set; }
-        
-        public DateTime AppliedDate { get; set; } = DateTime.Now;
-        
-        public string? EmployerNotes { get; set; }
     }
 }
