@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\Employers\**" />
-    <Content Remove="Controllers\Employers\**" />
-    <EmbeddedResource Remove="Controllers\Employers\**" />
-    <None Remove="Controllers\Employers\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Migrations\20250223213406_UpdatePostModel.cs" />
     <Compile Remove="Migrations\20250223213406_UpdatePostModel.Designer.cs" />
     <Compile Remove="Migrations\20250223215114_UpdateEmployersModel.cs" />
@@ -38,7 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Employers\" />
     <Folder Include="wwwroot\uploads\" />
+    <Folder Include="Repository\" />
   </ItemGroup>
 
 </Project>

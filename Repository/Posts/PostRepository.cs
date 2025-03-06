@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
+using TVOnline.Models;
 
 namespace TVOnline.Repository.Posts
 {
@@ -7,17 +7,6 @@ namespace TVOnline.Repository.Posts
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<Post?> FindPostById(string id) => await _context.Posts.Include(p => p.Employer).Include(p => p.City).FirstOrDefaultAsync(p => p.PostId == id);
-
-        public async Task<List<Post>> GetAllPosts() => await _context.Posts
-            .Include(p => p.Employer)
-            .Include(p => p.City).ToListAsync();
-
-        public async Task<List<Post>> GetSeveralPosts(int quantity) => await _context.Posts
-            .Include(p => p.Employer)
-            .Include(p => p.City)
-            .OrderByDescending(p => p.CreatedAt)
-            .Take(quantity)
-            .ToListAsync();
+        public Post? FindPostById(string id) => _context.Posts.FirstOrDefault(post => post.PostId == id);
     }
 }

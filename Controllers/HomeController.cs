@@ -1,13 +1,11 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using TVOnline.Models;
 using System.Collections.Generic;
 using TVOnline.Models.Error;
 using Microsoft.AspNetCore.Identity;
 using TVOnline.Data;
 using Microsoft.EntityFrameworkCore;
-using TVOnline.Service.Location;
-using TVOnline.Service.Post;
-using TVOnline.ViewModels.Home;
 using TVOnline.ViewModels.Post;
 
 
@@ -18,32 +16,36 @@ namespace TVOnline.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<Users> _userManager;
         private readonly AppDbContext _context;
-        private readonly IPostService _postService;
-        private readonly ILocationService _locationService;
 
         public HomeController(
             ILogger<HomeController> logger, 
             UserManager<Users> userManager, 
-            AppDbContext context, IPostService postService, ILocationService locationService)
+            AppDbContext context)
         {
             _logger = logger;
             _userManager = userManager;
             _context = context;
-            _postService = postService;
-            _locationService = locationService;
         }
         
         public async Task<IActionResult> Index()
         {
-            var posts = await _postService.GetSeveralPosts(6);
-            var locations = await _locationService.GetAllCities();
-
-            var homeViewModel = new HomeIndexViewModel
-            {
-                Posts = posts,
-                Locations = locations
-            };
-            return View(homeViewModel);
+            var posts = await _context.Posts
+                .Include(p => p.Employer)
+                .Include(p => p.City)
+                .OrderByDescending(p => p.CreatedAt)
+                .Select(p => new PostListViewModel
+                {
+                    PostId = p.PostId.ToString(),
+                    Title = p.Title,
+                    CompanyName = p.Employer.CompanyName,
+                    Location = p.City.CityName,
+                    Salary = p.Salary,
+                    JobType = p.JobType,
+                    Experience = p.Experience,
+                    CreatedAt = p.CreatedAt
+                }).Take(6)
+                .ToListAsync();
+            return View(posts);
         }
 
         public IActionResult Privacy()
