@@ -188,6 +188,9 @@ namespace TVOnline.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ZoneId")
                         .HasColumnType("int");
 
@@ -444,16 +447,27 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<DateTime>("AppliedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CVStatus")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmployerNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("CvID");
+
+                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -543,8 +557,11 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.Vnpay.PaymentInformationModel", b =>
                 {
-                    b.Property<string>("OrderType")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<double?>("Amount")
                         .HasColumnType("float");
@@ -555,10 +572,14 @@ namespace TVOnline.Migrations
                     b.Property<string>("OrderDescription")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrderType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("OrderType");
+                    b.HasKey("OrderId");
 
                     b.HasIndex("UsersId");
 
@@ -641,9 +662,7 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Employers", "Employer")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployerId");
 
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany("Feedbacks")
@@ -726,9 +745,15 @@ namespace TVOnline.Migrations
 
             modelBuilder.Entity("TVOnline.Models.UserCV", b =>
                 {
+                    b.HasOne("TVOnline.Models.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId");
+
                     b.HasOne("TVOnline.Models.Users", "Users")
                         .WithMany("UserCVs")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Post");
 
                     b.Navigation("Users");
                 });

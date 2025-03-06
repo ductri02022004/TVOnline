@@ -3,9 +3,7 @@
 @inject SignInManager<Users> SignInManager
 @inject UserManager<Users> UserManager
 
-<ul class="navbar-nav ms-auto">
-</ul>
-<ul class="ms-auto d-flex">
+<ul class="ms-auto d-flex align-items-center">
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">

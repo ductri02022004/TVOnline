@@ -26,6 +26,8 @@ namespace TVOnline.Models {
         public IFormFile? Logo { get; set; }
         public string? LogoURL { get; set; }
 
+        public string? Website { get; set; }
+
         [ForeignKey("CityId")]
         [ValidateNever]
         public Location.Cities? City { get; set; }
@@ -34,8 +36,8 @@ namespace TVOnline.Models {
 
         public DateTime CreatedAt { get; set; }
 
-        public virtual ICollection<Post>? Posts { get; set; }
-        public virtual ICollection<Feedbacks>? Feedbacks { get; set; }
-        public virtual ICollection<InterviewInvitation>? InterviewInvitations { get; set; }
+        public virtual ICollection<Post>? Posts { get; set; } = [];
+        public virtual ICollection<Feedbacks>? Feedbacks { get; set; } = [];
+        public virtual ICollection<InterviewInvitation>? InterviewInvitations { get; set; } = [];
     }
 }

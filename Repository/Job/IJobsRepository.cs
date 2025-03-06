@@ -1,6 +1,4 @@
-﻿using TVOnline.Models;
-
-namespace TVOnline.Repository.Job
+﻿namespace TVOnline.Repository.Job
 {
     public interface IJobsRepository
     {
