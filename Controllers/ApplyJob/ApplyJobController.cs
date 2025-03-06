@@ -5,10 +5,6 @@ using TVOnline.Service.Location;
 using TVOnline.Service.UserCVs;
 using TVOnline.ViewModels.JobsViewModel;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using TVOnline.Models;
-using TVOnline.Service.Post;
 
 namespace TVOnline.Controllers {
     [Route("[controller]")]

@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TVOnline.Data;
-
-namespace TVOnline.Repository.Employers
+﻿namespace TVOnline.Repository.Employers
 {
     public class EmployerRepository(AppDbContext context) : IEmployerRepository
     {
