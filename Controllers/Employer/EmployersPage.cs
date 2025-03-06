@@ -8,6 +8,7 @@ using TVOnline.Service.Location;
 using TVOnline.ViewModels.Employer;
 using static TVOnline.Models.Location;
 using TVOnline.ViewModels.JobsViewModel;
+using TVOnline.Models;
 
 namespace TVOnline.Controllers.Employer
 {
