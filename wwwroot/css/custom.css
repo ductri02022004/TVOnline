@@ -32,6 +32,13 @@ body {
     font-family: var(--font-family);
     background-color: var(--background);
     color: var(--foreground);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+nav ~ .container {
+    flex-grow: 1;
 }
 
 .user-dropdown-menu {
@@ -166,7 +173,7 @@ body {
 .company-logo-lg {
     width: 80px;
     height: 80px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: var(--radius);
 }
 
@@ -265,7 +272,7 @@ body {
 }
 
 .company-logo-md {
-    width: 60px;
+/*    width: 60px;*/
     height: 60px;
     object-fit: contain;
     border-radius: var(--radius);

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using TVOnline.ViewModels.Post;
 
 namespace TVOnline.Controllers.ApplyJob
@@ -13,7 +15,8 @@ namespace TVOnline.Controllers.ApplyJob
         [Route("[action]")]
         public async Task<IActionResult> Index(int page = 1)
         {
-            var posts = await _postService.GetAllPosts();
+            Users? user = await _userManager.GetUserAsync(User);
+            var posts = await _postService.GetAllPosts(user.Id);
             var cities = await _locationService.GetAllCities();
 
             int pageSize = 5;
@@ -80,6 +83,7 @@ namespace TVOnline.Controllers.ApplyJob
                     CvStatus = "Applied",
                     UserId = user.Id,
                     PostId = postId,
+                    ApplicationDate = DateTime.Now
                 };
 
                  await _userCvService.SaveCv(userCvAddRequest);
@@ -90,6 +94,53 @@ namespace TVOnline.Controllers.ApplyJob
 
             TempData["ErrorMessage"] = "Vui lòng tải lên CV của bạn.";
             return RedirectToAction("Details", new { id = postId });
+        }
+
+        [HttpPost]
+        [Route("[action]/{postId}")] // Route for saving a job, now in ApplyJobController (e.g., /ApplyJob/SaveJob/POST001)
+        public async Task<IActionResult> SaveJob(string postId)
+        {
+            if (string.IsNullOrEmpty(postId))
+            {
+                return BadRequest("Post ID is required.");
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            bool isSaved = await _postService.SaveJobForJobSeeker(postId, userId);
+
+            return isSaved
+                ? RedirectToAction("Index", "ApplyJob")
+                : BadRequest(new
+                {
+                    message = "Failed to save job or job already saved."
+                });
+        }
+
+        [HttpPost]
+        [Route("[action]/{postId}")]
+        public async Task<IActionResult> UnsaveJob(string postId)
+        {
+            if (string.IsNullOrEmpty(postId))
+            {
+                return BadRequest("Post ID is required.");
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            bool isUnsaved = await _postService.DeleteSavedJobForJobSeeker(postId, userId);
+
+            return isUnsaved
+                ? RedirectToAction("Index", "ApplyJob")
+                : BadRequest(new { message = "Failed to unsave job." });
         }
     }
 }
