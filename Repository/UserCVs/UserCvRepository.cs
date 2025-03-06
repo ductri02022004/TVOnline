@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
+using TVOnline.Models;
+using TVOnline.Repository.UserCVs;
 
-namespace TVOnline.Service.UserCVs
+namespace TVOnline.Repository.UserCVs
 {
     public class UserCvRepository(AppDbContext context) : IUserCvRepository
     {

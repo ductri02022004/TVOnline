@@ -9,7 +9,7 @@ using TVOnline.Service.Location;
 using TVOnline.Service.Post;
 using TVOnline.ViewModels.Home;
 using TVOnline.ViewModels.Post;
-
+using TVOnline.Models;
 
 namespace TVOnline.Controllers
 {

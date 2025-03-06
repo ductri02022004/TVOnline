@@ -1,4 +1,7 @@
-﻿namespace TVOnline.ViewModels.Post
+using TVOnline.Models;
+using TVOnline.Service.DTO;
+
+namespace TVOnline.ViewModels.Post
 {
     public class PostDetailViewModel
     {
