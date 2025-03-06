@@ -12,6 +12,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Collections;
+using TVOnline.Models;
 
 namespace TVOnline.Controllers.Account
 {

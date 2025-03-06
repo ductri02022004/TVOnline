@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -8,7 +8,7 @@ using TVOnline.Service.Location;
 using TVOnline.ViewModels.Employer;
 using static TVOnline.Models.Location;
 using TVOnline.ViewModels.JobsViewModel;
-
+using TVOnline.Models;
 
 namespace TVOnline.Controllers.Employer
 {
@@ -19,6 +19,7 @@ namespace TVOnline.Controllers.Employer
         private readonly AppDbContext _context = context;
         private readonly ILocationService _locationService = locationService;
         private readonly IEmployersService _employersService = employersService;
+
         public async Task<IActionResult> Index(int page = 1)
         {
             var employers = await _employersService.GetAllEmployers();
@@ -30,7 +31,7 @@ namespace TVOnline.Controllers.Employer
 
             var pagedEmployersList = employers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-            var companiesViewModel = new CompanyViewModel()
+            var companiesViewModel = new CompaniesListViewModel()
             {
                 Employers = pagedEmployersList,
                 Cities = cities

@@ -1,0 +1,172 @@
+@model TVOnline.Models.UserCV
+
+@{
+    ViewData["Title"] = "Chi tiết hồ sơ ứng tuyển";
+    Layout = "_EmployerDashboardLayout";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between">
+                        <h6>Chi tiết hồ sơ ứng tuyển</h6>
+                        <a href="@Url.Action("ManageApplications")" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header pb-0">
+                                    <h6>Thông tin ứng viên</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div>
+                                            <img src="https://ui-avatars.com/api/?name=@(Model.Users?.FullName ?? "User")" class="avatar avatar-xl me-3" alt="user1">
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">@(Model.Users?.FullName ?? "Unknown")</h6>
+                                            <p class="text-sm text-secondary mb-0">@(Model.Users?.Email ?? "No email")</p>
+                                            <p class="text-sm text-secondary mb-0">@(Model.Users?.PhoneNumber ?? "No phone")</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-sm">Vị trí ứng tuyển</h6>
+                                        <p class="text-dark font-weight-bold mb-0">@(Model.Post?.Title ?? "Unknown")</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-sm">Trạng thái</h6>
+                                        @{
+                                            string badgeClass = Model.CVStatus switch
+                                            {
+                                                "Applied" => "badge bg-gradient-info",
+                                                "Reviewing" => "badge bg-gradient-warning",
+                                                "Shortlisted" => "badge bg-gradient-success",
+                                                "Rejected" => "badge bg-gradient-danger",
+                                                "Interviewed" => "badge bg-gradient-primary",
+                                                _ => "badge bg-gradient-secondary"
+                                            };
+                                        }
+                                        <span class="@badgeClass">@(Model.CVStatus ?? "Unknown")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header pb-0">
+                                    <h6>Hồ sơ đính kèm</h6>
+                                </div>
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(Model.CVFileUrl))
+                                    {
+                                        <div class="mb-3">
+                                            <a href="/uploads/@Model.CVFileUrl" target="_blank" class="btn btn-outline-primary">
+                                                <i class="fas fa-file-pdf me-2"></i>Xem CV
+                                            </a>
+                                            <a href="/uploads/@Model.CVFileUrl" download class="btn btn-outline-info ms-2">
+                                                <i class="fas fa-download me-2"></i>Tải xuống
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-secondary mb-0">Không có file CV đính kèm</p>
+                                    }
+                                    
+                                    <div class="mt-4">
+                                        <h6 class="text-sm mb-3">Cập nhật trạng thái</h6>
+                                        <form method="post" action="@Url.Action("UpdateApplicationStatus")">
+                                            <input type="hidden" name="cvId" value="@Model.CvID" />
+                                            <div class="d-flex">
+                                                <select name="status" class="form-control">
+                                                    <option value="Applied" selected="@(Model.CVStatus == "Applied")">Đã nộp</option>
+                                                    <option value="Reviewing" selected="@(Model.CVStatus == "Reviewing")">Đang xem xét</option>
+                                                    <option value="Shortlisted" selected="@(Model.CVStatus == "Shortlisted")">Đã chọn</option>
+                                                    <option value="Rejected" selected="@(Model.CVStatus == "Rejected")">Từ chối</option>
+                                                    <option value="Interviewed" selected="@(Model.CVStatus == "Interviewed")">Đã phỏng vấn</option>
+                                                </select>
+                                                <button type="submit" class="btn btn-primary ms-2">Cập nhật</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header pb-0">
+                                    <h6>Thông tin công việc</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <h6 class="text-sm">Tiêu đề</h6>
+                                                <p class="text-dark font-weight-bold mb-0">@(Model.Post?.Title ?? "Unknown")</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <h6 class="text-sm">Vị trí</h6>
+                                                <p class="text-dark font-weight-bold mb-0">@(Model.Post?.Position ?? "Unknown")</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <h6 class="text-sm">Mức lương</h6>
+                                                <p class="text-dark font-weight-bold mb-0">@(Model.Post?.Salary.ToString("N0") ?? "Unknown") VNĐ</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <h6 class="text-sm">Loại công việc</h6>
+                                                <p class="text-dark font-weight-bold mb-0">@(Model.Post?.JobType ?? "Unknown")</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <h6 class="text-sm">Kinh nghiệm</h6>
+                                                <p class="text-dark font-weight-bold mb-0">@(Model.Post?.Experience ?? "Unknown")</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <h6 class="text-sm">Địa điểm</h6>
+                                                <p class="text-dark font-weight-bold mb-0">@(Model.Post?.City?.CityName ?? "Unknown")</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header pb-0">
+                                    <h6>Ghi chú của nhà tuyển dụng</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form method="post" action="@Url.Action("UpdateEmployerNotes")">
+                                        <input type="hidden" name="cvId" value="@Model.CvID" />
+                                        <div class="form-group">
+                                            <textarea name="notes" class="form-control" rows="4" placeholder="Nhập ghi chú về ứng viên này...">@Model.EmployerNotes</textarea>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button type="submit" class="btn btn-primary">Lưu ghi chú</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
