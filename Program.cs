@@ -15,6 +15,8 @@ using TVOnline.Repository.Employers;
 using TVOnline.Repository.Location;
 using TVOnline.Service.Employers;
 using TVOnline.Service.Location;
+using TVOnline.Models;
+using TVOnline.Repository.UserCVs;
 
 namespace TVOnline
 {
