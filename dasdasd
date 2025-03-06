@@ -1,0 +1,50 @@
+[33mcommit fdad6c1ddd35fb1c328d6d6570ba2cac3f26585c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDemo-code-2[m[33m)[m
+Author: Anh Quân <anhquan050503@gmail.com>
+Date:   Wed Feb 19 20:32:42 2025 +0700
+
+    Remove appsettings.json from Git history
+
+[33mcommit 02224f1eb8694df7b9df65d429a44ea72e737eac[m
+Author: Anh Quân <anhquan050503@gmail.com>
+Date:   Wed Feb 19 20:10:24 2025 +0700
+
+    Resolve conflicts and add changes
+
+[33mcommit 5bcdd14db9e83249ef58eb66914f22e299aa7803[m[33m ([m[1;31morigin/Demo-code-2[m[33m)[m
+Author: Ngo Chau <chau78840@gmail.com>
+Date:   Wed Feb 19 07:46:00 2025 +0700
+
+    Save changes before switching branch
+    
+    snilease enter the commit message for your changes. Lines starting
+    
+    UpdateHomePagelease enter the commit message for your changes. Lines starting
+    
+    UpdateHomePage
+
+[33mcommit 7a6c6ef4edd41c15223890044a6959634262b863[m[33m ([m[1;35mrefs/stash[m[33m)[m
+Merge: a26c676 40e1e41 a6d5fc2
+Author: Anh Quân <anhquan050503@gmail.com>
+Date:   Tue Feb 18 08:17:31 2025 +0700
+
+    On master: Checking out Demo-code-2
+    
+    Stashing uncommitted changes before performing a checkout of 'Demo-code-2'. Pop or apply these changes to restore them.
+
+[33mcommit e6dbc8d71dbde61b32c0ceb9d507a78eb52851d0[m
+Author: ductri02022004 <trindde180972@fpt.edu.vn>
+Date:   Tue Feb 18 00:12:45 2025 +0700
+
+    upd-appsetting
+
+[33mcommit 998636e81fd306c4225a686e6988e49eea2de7cf[m
+Author: ductri02022004 <trindde180972@fpt.edu.vn>
+Date:   Mon Feb 17 18:04:29 2025 +0700
+
+    update appsetting
+
+[33mcommit fc72abc6c36237b227816a7f744364f95810f928[m
+Author: ductri02022004 <trindde180972@fpt.edu.vn>
+Date:   Mon Feb 17 17:55:27 2025 +0700
+
+    Done Demo 1

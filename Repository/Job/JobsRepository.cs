@@ -1,4 +1,5 @@
 ﻿using TVOnline.Data;
+using TVOnline.Models;
 
 namespace TVOnline.Repository.Job
 {

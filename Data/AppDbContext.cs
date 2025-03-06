@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TVOnline.Models;
 using static TVOnline.Models.Location;
 using TVOnline.Models.Vnpay;
 

@@ -2,19 +2,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
+using TVOnline.Models;
 using TVOnline.Helper;
 using CloudinaryDotNet;
 using TVOnline.Repository.Job;
 using TVOnline.Repository.Posts;
+using TVOnline.Repository.UserCVs;
 using TVOnline.Service.Jobs;
 using TVOnline.Service.Post;
 using TVOnline.Service.UserCVs;
 using TVOnline.Service.Vnpay;
 using Microsoft.Extensions.Logging;
-using TVOnline.Repository.Employers;
-using TVOnline.Repository.Location;
-using TVOnline.Service.Employers;
-using TVOnline.Service.Location;
 
 namespace TVOnline
 {
@@ -43,7 +41,7 @@ namespace TVOnline
                 Console.WriteLine($"Error seeding database: {ex.Message}");
             }
 
-            await app.RunAsync();
+            app.Run();
         }
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
@@ -61,13 +59,9 @@ namespace TVOnline
             services.AddScoped<IJobsRepository, JobsRepository>();
             services.AddScoped<IUserCvRepository, UserCvRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
-            services.AddScoped<ILocationRepository, LocationRepository>();
-            services.AddScoped<IEmployerRepository, EmployerRepository>();
             services.AddScoped<IJobsService, JobsService>();
             services.AddScoped<IUserCvService, UserCvService>();
             services.AddScoped<IPostService, PostService>();
-            services.AddScoped<ILocationService, LocationService>();
-            services.AddScoped<IEmployersService, EmployersService>();
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("Default")));
@@ -166,16 +160,16 @@ namespace TVOnline
             {
                 // Apply any pending migrations
                 await context.Database.MigrateAsync();
-
+                
                 // Ensure roles are created first
                 await DbSeeder.SeedRolesAsync(roleManager);
-
+                
                 // Then seed users and assign roles
                 await DbSeeder.SeedUsersAsync(userManager);
-
+                
                 // Seed location data
                 DbSeeder.SeedData(context);
-
+                
                 // Seed employers and posts
                 await DbSeeder.SeedEmployersAsync(context);
                 await DbSeeder.SeedPostsAsync(context);
