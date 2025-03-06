@@ -188,6 +188,9 @@ namespace TVOnline.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ZoneId")
                         .HasColumnType("int");
 
@@ -469,13 +472,17 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<DateTime>("ApplicationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("ApplicationDate");
+                    // b.Property<DateTime>("AppliedDate")
+                    //     .HasColumnType("datetime2");
 
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CVStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployerNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostId")

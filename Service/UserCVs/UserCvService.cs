@@ -1,4 +1,6 @@
-﻿using TVOnline.Service.DTO;
+using TVOnline.Service.DTO;
+using TVOnline.Models;
+using TVOnline.Repository.UserCVs;
 
 namespace TVOnline.Service.UserCVs
 {
@@ -52,6 +54,31 @@ namespace TVOnline.Service.UserCVs
             UserCV userCv = cv.ToUserCv();
             await _userCvRepository.AddCv(userCv);
             return userCv.ToUserCvResponse();
+        }
+
+        public async Task<List<UserCV>> GetApplicationsByUser(string userId)
+        {
+            return await _userCvRepository.GetCvsByUserId(userId);
+        }
+
+        public async Task<UserCV> GetApplicationByUserAndPost(string userId, string postId)
+        {
+            return await _userCvRepository.GetCvByUserAndPost(userId, postId);
+        }
+
+        public async Task<UserCV> GetApplicationById(string cvId)
+        {
+            return await _userCvRepository.GetCvById(cvId);
+        }
+
+        public async Task<UserCV> UpdateApplicationStatus(string cvId, string status)
+        {
+            return await _userCvRepository.UpdateCvStatus(cvId, status);
+        }
+
+        public async Task<UserCV> UpdateEmployerNotes(string cvId, string notes)
+        {
+            return await _userCvRepository.UpdateCvNotes(cvId, notes);
         }
     }
 }

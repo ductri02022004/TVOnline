@@ -26,5 +26,9 @@ namespace TVOnline.Models
         [ValidateNever]
         public Post? Post { get; set; }
         public string? PostId { get; set; }
+        
+        public DateTime AppliedDate { get; set; } = DateTime.Now;
+        
+        public string? EmployerNotes { get; set; }
     }
 }
