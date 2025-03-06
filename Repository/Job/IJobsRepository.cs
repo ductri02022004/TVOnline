@@ -3,5 +3,6 @@
     public interface IJobsRepository
     {
         Users? FindUsersByEmail(string email);
+
     }
 }

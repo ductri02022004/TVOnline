@@ -44,8 +44,8 @@
                 <div class="col-12">
                     <div class="job-list-card p-4 bg-white rounded shadow-sm">
                         <div class="row align-items-center">
-                            <div class="col-md-2 col-sm-3 mb-3 mb-md-0">
-                                <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo-lg" alt="@post.CompanyName">
+                            <div class="col-md-2 col-sm-3 mb-3 mb-md-0  d-flex justify-content-center">
+                                <img src="@post.CompanyLogoURL" class="company-logo-lg" alt="@post.CompanyName">
                             </div>
                             <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
                                 <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">
@@ -59,6 +59,18 @@
                                 </div>
                             </div>
                             <div class="col-md-3 text-md-end">
+                                @if (post.IsSaved)
+                                {
+                                    <form asp-controller="Account" asp-action="UnsaveJob" asp-route-postId="@post.PostId" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy lưu công việc này?');" class="d-inline-block me-2">
+                                        <button type="submit" class="btn btn-danger">Bỏ Lưu</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="ApplyJob" asp-action="SaveJob" asp-route-postId="@post.PostId" class="d-inline-block me-2">
+                                        <button type="submit" class="btn btn-success">Lưu</button>
+                                    </form>
+                                }
                                 <a class="btn btn-primary" asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
                             </div>
                         </div>

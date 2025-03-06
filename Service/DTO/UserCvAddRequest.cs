@@ -7,6 +7,7 @@
         public string? CvFileUrl { get; set; }
         public string? CvStatus { get; set; }
         public string? PostId { get; set; }
+        public DateTime ApplicationDate { get; set; }
 
         public UserCV ToUserCv()
         {
@@ -16,7 +17,8 @@
                 UserId = UserId,
                 CVFileUrl = CvFileUrl,
                 CVStatus = CvStatus,
-                PostId = PostId
+                PostId = PostId,
+                ApplicationDate = ApplicationDate
             };
         }
     }
