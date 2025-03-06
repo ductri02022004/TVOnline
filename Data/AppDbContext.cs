@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TVOnline.Models;
 using static TVOnline.Models.Location;
 using TVOnline.Models.Vnpay;
+using TVOnline.Models;
 
 namespace TVOnline.Data
 {
@@ -20,6 +21,7 @@ namespace TVOnline.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<PremiumUser> PremiumUsers { get; set; }
         public DbSet<Template> Templates { get; set; }
+        public DbSet<SavedJob> SavedJobs { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

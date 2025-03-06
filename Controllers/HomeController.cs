@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using TVOnline.Data;
 using Microsoft.EntityFrameworkCore;
 using TVOnline.ViewModels.Post;
-
+using TVOnline.Models;
 
 namespace TVOnline.Controllers
 {
