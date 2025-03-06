@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
+using TVOnline.Models;
 
 namespace TVOnline.Repository.Posts
 {

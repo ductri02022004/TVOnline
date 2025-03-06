@@ -1,6 +1,8 @@
 using TVOnline.Repository.Employers;
 using TVOnline.Models;
 using Microsoft.EntityFrameworkCore;
+using TVOnline.Data;
+using TVOnline.Service.DTO;
 
 namespace TVOnline.Service.Employers
 {
