@@ -8,6 +8,7 @@ using TVOnline.Models;
 using TVOnline.ViewModels.Employer;
 using static TVOnline.Models.Location;
 using Microsoft.Extensions.Logging;
+using TVOnline.Models;
 
 namespace TVOnline.Controllers.Employer {
     [Authorize]

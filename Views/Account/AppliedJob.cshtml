@@ -1,0 +1,140 @@
+﻿@model List<TVOnline.Service.DTO.AppliedJob>
+
+@{
+    ViewBag.Title = "Công việc đã ứng tuyển";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="mb-4">Việc Làm Đã Ứng Tuyển</h2>
+                <div class="applied-jobs-list">
+                    @if (Model.Count == 0)
+                    {
+                        <p class="mb-1">Không có công việc nào</p>
+                    }
+                    else
+                    {
+                        @foreach (var job in Model)
+                        {
+                            <div class="card mb-3 application-card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2 text-center">
+                                            <img src="@job.CompanyLogoURL" class="company-logo-md" alt="Company Logo">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h5 class="card-title mb-1">@job.PostTitle</h5>
+                                            <p class="company-name mb-1">@job.CompanyIndustry</p>
+                                            <span class="badge @(job.CvStatus switch
+                                                               {
+                                                                   "Applied" => "bg-primary",
+                                                                   "Rejected" => "bg-danger",
+                                                                   _ => "bg-success"
+                                                               }) ">@job.CvStatus</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="application-details">
+                                                <p class="mb-1"><i class="bi bi-calendar me-2"></i>Ngày ứng tuyển: @job.ApplicationDate.ToString("dd/MM/yyyy")</p>
+                                                <p class="mb-1"><i class="bi bi-file-earmark-text me-2"></i>CV: <a href="@job.CvURL" target="_blank">Tải xuống</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 text-end">
+                                            <button class="btn btn-outline-primary btn-sm me-2 view-detail-btn"
+                                                    data-title="@job.PostTitle"
+                                                    data-company="@job.CompanyIndustry"
+                                                    data-logo="@job.CompanyLogoURL"
+                                                    data-date="@job.ApplicationDate.ToString("dd/MM/yyyy")"
+                                                    data-status="@job.CvStatus"
+                                                    data-cv="@job.CvURL"
+                                                    data-description="@job.Description"
+                                                    data-requirements="@job.Requirements"
+                                                    data-benefits="@job.Benefits"
+                                                    data-bs-toggle="modal" data-bs-target="#jobDetailModal">
+                                                Xem Chi Tiết
+                                            </button>
+                                            <form action="@Url.Action("CancelApplication", "Account")" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy ứng tuyển?');" class="d-inline-block">
+                                                <input type="hidden" name="postId" value="@job.PostId" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Hủy Ứng Tuyển</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="jobDetailModal" tabindex="-1" aria-labelledby="jobDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="jobDetailModalLabel">Chi tiết công việc</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <img id="modalCompanyLogo" src="" class="company-logo-md mb-3" alt="Company Logo">
+                </div>
+                <h4 id="modalJobTitle"></h4>
+                <p><strong>Công ty:</strong> <span id="modalCompany"></span></p>
+                <p><strong>Ngày ứng tuyển:</strong> <span id="modalApplicationDate"></span></p>
+                <p><strong>Trạng thái:</strong> <span id="modalCvStatus"></span></p>
+                <p><strong>CV đã gửi:</strong> <a id="modalCvUrl" href="#" target="_blank">Tải xuống</a></p>
+                <div class="job-description mt-3">
+                    <h5>Mô tả công việc</h5>
+                    <p id="modalDescription"></p>
+                </div>
+                <div class="job-requirements mt-3">
+                    <h5>Yêu cầu ứng viên</h5>
+                    <ul id="modalRequirements" class="list-unstyled"></ul>
+                </div>
+                <div class="benefits mt-3">
+                    <h5>Quyền lợi</h5>
+                    <ul id="modalBenefits" class="list-unstyled"></ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript để cập nhật nội dung modal -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".view-detail-btn").click(function () {
+            let title = $(this).data("title");
+            let company = $(this).data("company");
+            let logo = $(this).data("logo");
+            let date = $(this).data("date");
+            let status = $(this).data("status");
+            let cvUrl = $(this).data("cv");
+            let description = $(this).data("description");
+            let requirements = $(this).data("requirements").split("\n");
+            let benefits = $(this).data("benefits").split("\n");
+
+            $("#modalJobTitle").text(title);
+            $("#modalCompany").text(company);
+            $("#modalApplicationDate").text(date);
+            $("#modalCvStatus").text(status);
+            $("#modalCvUrl").attr("href", cvUrl);
+            $("#modalCompanyLogo").attr("src", logo);
+            $("#modalDescription").text(description);
+
+            let reqList = $("#modalRequirements").empty();
+            requirements.forEach(req => reqList.append(`<li><i class="bi bi-arrow-right me-2 text-primary"></i>${req}</li>`));
+
+            let benList = $("#modalBenefits").empty();
+            benefits.forEach(ben => benList.append(`<li><i class="bi bi-gift me-2 text-primary"></i>${ben}</li>`));
+        });
+    });
+</script>

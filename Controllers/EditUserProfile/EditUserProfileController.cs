@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
 using TVOnline.ViewModels.UserProfile;
+using TVOnline.Models;
 
 namespace TVOnline.Controllers.EditUserProfile {
     [Authorize]
