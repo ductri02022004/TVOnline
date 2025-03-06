@@ -10,6 +10,7 @@
         public string? CityName { get; set; }
         public string JobType { get; set; }
         public string? CompanyName { get; set; }
+        public string? CompanyLogoURL { get; set; }
         public string Experience { get; set; }
         public string Position { get; set; }
         public string Description { get; set; }
@@ -17,6 +18,7 @@
         public string Benefits { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsSaved { get; set; } = false;
     }
 
     public static class PostResponseExtension
@@ -32,6 +34,7 @@
                 CityId = post.CityId,
                 CityName = post.City?.CityName,
                 CompanyName = post.Employer?.CompanyName,
+                CompanyLogoURL = post.Employer?.LogoURL,
                 JobType = post.JobType,
                 Experience = post.Experience,
                 Position = post.Position,

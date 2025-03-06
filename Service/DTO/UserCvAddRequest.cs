@@ -9,6 +9,7 @@ namespace TVOnline.Service.DTO
         public string? CvFileUrl { get; set; }
         public string? CvStatus { get; set; }
         public string? PostId { get; set; }
+        public DateTime ApplicationDate { get; set; }
 
         public UserCV ToUserCv()
         {
@@ -18,7 +19,8 @@ namespace TVOnline.Service.DTO
                 UserId = UserId,
                 CVFileUrl = CvFileUrl,
                 CVStatus = CvStatus,
-                PostId = PostId
+                PostId = PostId,
+                ApplicationDate = ApplicationDate
             };
         }
     }
