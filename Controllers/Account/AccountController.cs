@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TVOnline.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
 using System.Security.Claims;

@@ -1,84 +1,186 @@
 ﻿:root {
-    --primary: #0d6efd;
-    --primary-foreground: #ffffff;
-    --secondary: #6c757d;
-    --secondary-foreground: #ffffff;
-    --accent: #ffc107;
-    --accent-foreground: #000000;
-    --background: #ffffff;
-    --foreground: #000000;
-    --card: #ffffff;
-    --card-foreground: #000000;
-    --border: #dee2e6;
-    --input: #ced4da;
-    --ring: #0d6efd;
-    --radius: 0.5rem;
-    --font-family: system-ui, -apple-system, "Segoe UI", Roboto;
+  --primary: #0d6efd;
+  --primary-foreground: #ffffff;
+  --secondary: #6c757d;
+  --secondary-foreground: #ffffff;
+  --accent: #ffc107;
+  --accent-foreground: #000000;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --border: #dee2e6;
+  --input: #ced4da;
+  --ring: #0d6efd;
+  --radius: 0.5rem;
+  --font-family: system-ui, -apple-system, "Segoe UI", Roboto;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 ul {
-    margin-bottom: 0;
+  list-style: none;
+  margin-bottom: 0;
 }
 
 li {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 a {
     text-decoration: none;
+
 }
 
 body {
-    font-family: var(--font-family);
-    background-color: var(--background);
-    color: var(--foreground);
+  font-family: var(--font-family);
+  background-color: var(--background);
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.user-dropdown-menu {
-    min-width: 220px;
-    padding: 10px;
-}
-
-    .user-dropdown-menu .dropdown-item {
-        display: flex;
-        align-items: center;
-    }
-
-        .user-dropdown-menu .dropdown-item i {
-            margin-right: 10px;
-        }
-
-.user-info {
-    font-weight: bold;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
+body .container {
+    flex-grow: 1;
 }
 
 .navbar {
-    background-color: var(--background);
-    border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
 }
 
 .hero-section {
-    background-color: var(--background);
-    padding: 80px 0;
+  background-color: var(--background);
+  padding: 80px 0;
 }
 
 .search-box {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .category-card {
-    background-color: var(--card);
-    border: 1px solid var(--border);
-    transition: transform 0.3s ease;
-    cursor: pointer;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
-    .category-card:hover {
-        transform: translateY(-5px);
+.category-card:hover {
+  transform: translateY(-5px);
+}
+
+.job-card {
+  border: 1px solid var(--border);
+  transition: transform 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+}
+
+.company-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-outline-primary {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.footer a {
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.footer a:hover {
+  opacity: 0.8;
+}
+
+.footer li {
+  margin-bottom: 0.5rem;
+}
+
+.footer .bi {
+  color: var(--primary);
+}
+
+.job-filters {
+    border-bottom: 1px solid var(--border);
+}
+
+.job-list-card {
+    border: 1px solid var(--border);
+    transition: transform 0.2s ease;
+}
+
+    .job-list-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
     }
+
+.company-logo-lg {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+.company-name {
+    color: var(--secondary);
+    font-size: 0.95rem;
+}
+
+.job-meta {
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+    .job-meta i {
+        color: var(--primary);
+    }
+
+.pagination .page-link {
+    color: var(--primary);
+    border-color: var(--border);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-foreground);
+}
+
+@media (max-width: 768px) {
+    .job-list-card {
+        text-align: center;
+    }
+
+    .company-logo-lg {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+    }
+}
 
 .job-card {
     border: 1px solid var(--border);
@@ -99,7 +201,7 @@ body {
 .company-logo-xl {
     width: 120px;
     height: 120px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: var(--radius);
 }
 
@@ -222,51 +324,49 @@ body {
     }
 }
 
-.company-meta {
-    color: var(--secondary);
-    font-size: 0.95rem;
-}
-
-    .company-meta i {
-        color: var(--primary);
-    }
-
-.benefit-card {
-    background-color: var(--card);
+.company-card {
     transition: transform 0.3s ease;
+    border: 1px solid var(--border);
 }
 
-    .benefit-card:hover {
+    .company-card:hover {
         transform: translateY(-5px);
-    }
-
-.company-gallery img {
-    height: 200px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-    .company-gallery img:hover {
-        transform: scale(1.05);
-    }
-
-.job-openings .job-item {
-    transition: all 0.3s ease;
-}
-
-    .job-openings .job-item:hover {
-        background-color: var(--background);
-        transform: translateY(-3px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-
-.job-item i {
-    color: var(--primary);
-}
 
 .company-logo-md {
     width: 60px;
     height: 60px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: var(--radius);
+}
+
+.company-stats .badge {
+    font-weight: normal;
+    padding: 8px 12px;
+}
+
+.search-filters {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+}
+
+.user-dropdown-menu {
+    min-width: 220px;
+    padding: 10px;
+}
+
+    .user-dropdown-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+    }
+
+        .user-dropdown-menu .dropdown-item i {
+            margin-right: 10px;
+        }
+
+.user-info {
+    font-weight: bold;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
 }
