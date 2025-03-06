@@ -188,6 +188,9 @@ namespace TVOnline.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ZoneId")
                         .HasColumnType("int");
 

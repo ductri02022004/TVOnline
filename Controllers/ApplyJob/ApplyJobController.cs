@@ -1,13 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using TVOnline.Models;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using System;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using TVOnline.Service.Post;
 using TVOnline.ViewModels.Post;
 using TVOnline.Data;
 using TVOnline.Service.DTO;
@@ -75,7 +65,13 @@ namespace TVOnline.Controllers {
                 }
             }
             
-            return View("JobDetails", post);
+            var viewModel = new TVOnline.ViewModels.Post.PostDetailViewModel
+            {
+                Post = post,
+                CurrentUser = User.Identity.IsAuthenticated ? await _userManager.GetUserAsync(User) : null
+            };
+            
+            return View("JobDetails", viewModel);
         }
 
         [HttpPost]

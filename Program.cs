@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
-using TVOnline.Models;
 using TVOnline.Helper;
 using CloudinaryDotNet;
 using TVOnline.Repository.Job;
@@ -63,7 +62,7 @@ namespace TVOnline
             services.AddScoped<IUserCvRepository, UserCvRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
-            services.AddScoped<IEmployersRepository, EmployersRepository>();
+            services.AddScoped<IEmployerRepository, EmployerRepository>();
             services.AddScoped<IJobsService, JobsService>();
             services.AddScoped<IUserCvService, UserCvService>();
             services.AddScoped<IPostService, PostService>();

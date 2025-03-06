@@ -6,6 +6,86 @@
 }
 
 <div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Thống kê hồ sơ ứng tuyển</h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Tổng số hồ sơ</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="bi bi-file-earmark-person fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Đã chọn</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count(cv => cv.CVStatus == "Shortlisted")</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="bi bi-check-circle fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Đang xem xét</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count(cv => cv.CVStatus == "Reviewing")</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="bi bi-hourglass-split fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Đã phỏng vấn</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count(cv => cv.CVStatus == "Interviewed")</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="bi bi-person-badge fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="card mb-4">
@@ -34,7 +114,7 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Vị trí ứng tuyển</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng thái</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày nộp</th>
-                                    <th class="text-secondary opacity-7"></th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,12 +153,47 @@
                                                 <span class="@badgeClass">@(application.CVStatus ?? "Unknown")</span>
                                             </td>
                                             <td class="align-middle text-center">
-                                                <span class="text-secondary text-xs font-weight-bold">@(application.Post?.CreatedAt.ToString("dd/MM/yyyy") ?? "Unknown")</span>
+                                                <span class="text-secondary text-xs font-weight-bold">@application.AppliedDate.ToString("dd/MM/yyyy")</span>
                                             </td>
-                                            <td class="align-middle">
-                                                <a href="@Url.Action("ApplicationDetails", new { cvId = application.CvID })" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Xem chi tiết">
-                                                    Xem chi tiết
+                                            <td class="align-middle text-center">
+                                                <a href="@Url.Action("ApplicationDetails", new { cvId = application.CvID })" class="btn btn-link text-primary px-3 mb-0">
+                                                    <i class="bi bi-eye me-2"></i>Xem
                                                 </a>
+                                                <div class="dropdown d-inline">
+                                                    <button class="btn btn-link text-secondary px-3 mb-0" type="button" id="dropdownMenuButton-@application.CvID" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-@application.CvID">
+                                                        <li>
+                                                            <form method="post" action="@Url.Action("UpdateApplicationStatus")">
+                                                                <input type="hidden" name="cvId" value="@application.CvID" />
+                                                                <input type="hidden" name="status" value="Reviewing" />
+                                                                <button type="submit" class="dropdown-item">Đánh dấu đang xem xét</button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form method="post" action="@Url.Action("UpdateApplicationStatus")">
+                                                                <input type="hidden" name="cvId" value="@application.CvID" />
+                                                                <input type="hidden" name="status" value="Shortlisted" />
+                                                                <button type="submit" class="dropdown-item">Đánh dấu đã chọn</button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form method="post" action="@Url.Action("UpdateApplicationStatus")">
+                                                                <input type="hidden" name="cvId" value="@application.CvID" />
+                                                                <input type="hidden" name="status" value="Rejected" />
+                                                                <button type="submit" class="dropdown-item">Đánh dấu từ chối</button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form method="post" action="@Url.Action("UpdateApplicationStatus")">
+                                                                <input type="hidden" name="cvId" value="@application.CvID" />
+                                                                <input type="hidden" name="status" value="Interviewed" />
+                                                                <button type="submit" class="dropdown-item">Đánh dấu đã phỏng vấn</button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                     }
@@ -99,3 +214,15 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Khởi tạo các dropdown Bootstrap
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl)
+            });
+        });
+    </script>
+}
