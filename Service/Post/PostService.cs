@@ -1,4 +1,5 @@
-﻿using TVOnline.Repository.Posts;
+﻿using TVOnline.Models;
+using TVOnline.Repository.Posts;
 using TVOnline.Service.DTO;
 
 namespace TVOnline.Service.Post

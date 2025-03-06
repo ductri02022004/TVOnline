@@ -13,6 +13,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Collections;
 using TVOnline.Models;
+using TVOnline.Service.UserCVs;
+using TVOnline.Service.Post;
 
 namespace TVOnline.Controllers.Account
 {
