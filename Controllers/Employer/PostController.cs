@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using TVOnline.Data;
 using TVOnline.ViewModels.Post;
-using TVOnline.Models;
 
 namespace TVOnline.Controllers.Employer
 {

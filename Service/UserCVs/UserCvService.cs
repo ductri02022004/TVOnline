@@ -1,6 +1,4 @@
 using TVOnline.Service.DTO;
-using TVOnline.Models;
-using TVOnline.Repository.UserCVs;
 
 namespace TVOnline.Service.UserCVs
 {
