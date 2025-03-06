@@ -472,9 +472,11 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<DateTime>("ApplicationDate");
-                    // b.Property<DateTime>("AppliedDate")
-                    //     .HasColumnType("datetime2");
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("AppliedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
