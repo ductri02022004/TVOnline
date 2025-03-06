@@ -1,6 +1,4 @@
-﻿using TVOnline.Models;
-
-namespace TVOnline.Service.DTO
+﻿namespace TVOnline.Service.DTO
 {
     public class UserCvAddRequest
     {
