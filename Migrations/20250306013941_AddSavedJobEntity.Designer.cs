@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TVOnline.Data;
 
@@ -11,9 +12,11 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250306013941_AddSavedJobEntity")]
+    partial class AddSavedJobEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,9 +190,6 @@ namespace TVOnline.Migrations
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ZoneId")
                         .HasColumnType("int");
@@ -472,17 +472,13 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<DateTime>("ApplicationDate");
-                    // b.Property<DateTime>("AppliedDate")
-                    //     .HasColumnType("datetime2");
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CVStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmployerNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostId")

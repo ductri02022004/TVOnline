@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TVOnline.Data;
 
@@ -11,9 +12,11 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250305042601_AddColumnApplicationDateTableUserCv")]
+    partial class AddColumnApplicationDateTableUserCv
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,9 +190,6 @@ namespace TVOnline.Migrations
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ZoneId")
                         .HasColumnType("int");
@@ -417,31 +417,6 @@ namespace TVOnline.Migrations
                     b.ToTable("PremiumUsers");
                 });
 
-            modelBuilder.Entity("TVOnline.Models.SavedJob", b =>
-                {
-                    b.Property<string>("SavedJobId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PostId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("SavedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("SavedJobId");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SavedJobs");
-                });
-
             modelBuilder.Entity("TVOnline.Models.Template", b =>
                 {
                     b.Property<string>("TemplateId")
@@ -472,17 +447,13 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<DateTime>("ApplicationDate");
-                    // b.Property<DateTime>("AppliedDate")
-                    //     .HasColumnType("datetime2");
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CVFileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CVStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmployerNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostId")
@@ -756,25 +727,6 @@ namespace TVOnline.Migrations
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithOne("PremiumUser")
                         .HasForeignKey("TVOnline.Models.PremiumUser", "UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TVOnline.Models.SavedJob", b =>
-                {
-                    b.HasOne("TVOnline.Models.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TVOnline.Models.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
 
                     b.Navigation("User");
                 });
