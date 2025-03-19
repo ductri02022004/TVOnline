@@ -4,21 +4,17 @@ using TVOnline.Library;
 using TVOnline.Models.Vnpay;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-namespace TVOnline.Service.Vnpay
-{
+namespace TVOnline.Service.Helper.Vnpay {
 
 
-    public class VnPayService : IVnPayService
-    {
+    public class VnPayService : IVnPayService {
         private readonly IConfiguration _configuration;
 
-        public VnPayService(IConfiguration configuration)
-        {
+        public VnPayService(IConfiguration configuration) {
             _configuration = configuration;
         }
 
-        public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
-        {
+        public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context) {
             var tick = DateTime.Now.Ticks.ToString();
             var timeNow = DateTime.Now;
             var pay = new VnPayLibrary();
@@ -45,11 +41,9 @@ namespace TVOnline.Service.Vnpay
             return paymentUrl;
         }
 
-        public PaymentResponseModel PaymentExecute(IQueryCollection collections)
-        {
+        public PaymentResponseModel PaymentExecute(IQueryCollection collections) {
             var pay = new VnPayLibrary();
-            foreach (var (key, value) in collections)
-            {
+            foreach (var (key, value) in collections) {
                 pay.AddResponseData(key, value.ToString());
             }
 
@@ -59,17 +53,14 @@ namespace TVOnline.Service.Vnpay
             var vnp_ResponseCode = pay.GetResponseData("vnp_ResponseCode");
             var vnp_OrderInfo = pay.GetResponseData("vnp_OrderInfo");
             bool checkSignature = pay.ValidateSignature(vnp_SecureHash, _configuration["Vnpay:HashSecret"]);
-            if (!checkSignature)
-            {
-                return new PaymentResponseModel()
-                {
+            if (!checkSignature) {
+                return new PaymentResponseModel() {
                     Success = false
                 };
             }
 
-            return new PaymentResponseModel()
-            {
-                Success = true, 
+            return new PaymentResponseModel() {
+                Success = true,
                 PaymentMethod = "VnPay",
                 OrderDescription = vnp_OrderInfo,
                 OrderId = vnp_orderId.ToString(),

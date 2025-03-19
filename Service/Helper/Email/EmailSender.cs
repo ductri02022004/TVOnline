@@ -2,25 +2,21 @@ using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using MimeKit;
 
-namespace TVOnline.Helper
-{
-    public class EmailSender : IEmailSender
-    {
+namespace TVOnline.Service.Helper.Email {
+    public class EmailSender : IEmailSender {
         private readonly IConfiguration _configuration;
 
-        public EmailSender(IConfiguration configuration)
-        {
+        public EmailSender(IConfiguration configuration) {
             _configuration = configuration;
         }
 
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
-        {
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage) {
             var emailMessage = new MimeMessage();
-            
+
             emailMessage.From.Add(new MailboxAddress(
                 _configuration["EmailSettings:SenderName"],
                 _configuration["EmailSettings:SenderEmail"]));
-            
+
             emailMessage.To.Add(MailboxAddress.Parse(email));
             emailMessage.Subject = subject;
 
@@ -28,8 +24,7 @@ namespace TVOnline.Helper
             builder.HtmlBody = htmlMessage;
             emailMessage.Body = builder.ToMessageBody();
 
-            using (var client = new SmtpClient())
-            {
+            using (var client = new SmtpClient()) {
                 await client.ConnectAsync(
                     _configuration["EmailSettings:SmtpServer"],
                     int.Parse(_configuration["EmailSettings:Port"]),

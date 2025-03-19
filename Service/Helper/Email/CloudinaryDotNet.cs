@@ -1,4 +1,4 @@
-﻿namespace TVOnline.Helper {
+﻿namespace TVOnline.Service.Helper.Email {
     public class CloudinarySettings {
         public string CloudName { get; set; }
         public string ApiKey { get; set; }

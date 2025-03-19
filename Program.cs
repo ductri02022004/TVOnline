@@ -2,14 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TVOnline.Data;
-using TVOnline.Helper;
 using CloudinaryDotNet;
 using TVOnline.Repository.Job;
 using TVOnline.Repository.Posts;
 using TVOnline.Service.Jobs;
 using TVOnline.Service.Post;
 using TVOnline.Service.UserCVs;
-using TVOnline.Service.Vnpay;
 using Microsoft.Extensions.Logging;
 using TVOnline.Repository.Employers;
 using TVOnline.Repository.Location;
@@ -17,9 +15,10 @@ using TVOnline.Service.Employers;
 using TVOnline.Service.Location;
 using TVOnline.Models;
 using TVOnline.Repository.UserCVs;
+using TVOnline.Service.Helper.Email;
+using TVOnline.Service.Helper.Vnpay;
 
-namespace TVOnline
-{
+namespace TVOnline {
     public class Program
     {
         public static async Task Main(string[] args)
