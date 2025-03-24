@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using TVOnline.Data;
+using TVOnline.Models;
 using TVOnline.ViewModels.Post;
 using TVOnline.Models;
 
