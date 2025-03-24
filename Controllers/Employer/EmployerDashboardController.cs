@@ -18,7 +18,7 @@ using System.IO;
 using System.Collections.Generic;
 
 namespace TVOnline.Controllers.Employer {
-    [Authorize(Roles = "Employer")]
+    [Authorize]
     public class EmployerDashboardController : Controller {
         private readonly UserManager<Users> _userManager;
         private readonly AppDbContext _context;
