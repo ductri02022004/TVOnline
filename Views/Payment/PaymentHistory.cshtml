@@ -1,0 +1,30 @@
+﻿@model IEnumerable<TVOnline.Models.Payment>
+
+@{
+    ViewData["Title"] = "Lịch Sử Thanh Toán";
+}
+
+<h2 class="text-center">Lịch Sử Thanh Toán</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã Giao Dịch</th>
+            <th>Số Tiền</th>
+            <th>Phương Thức</th>
+            <th>Ngày Thanh Toán</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var payment in Model)
+        {
+            <tr>
+                <td>@payment.PaymentId</td>
+                <td>@string.Format("{0:N0} VNĐ", payment.Amount)</td>
+                <td>@payment.PaymentMethod</td>
+                <td>@(payment.PaymentDate?.ToString("dd/MM/yyyy HH:mm:ss") ?? "N/A")</td>
+
+            </tr>
+        }
+    </tbody>
+</table>

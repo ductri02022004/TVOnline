@@ -1,16 +1,22 @@
 @using Microsoft.AspNetCore.Identity
 @using TVOnline.Models
+@using TVOnline.Data
+@using Microsoft.EntityFrameworkCore
 @inject SignInManager<Users> SignInManager
 @inject UserManager<Users> UserManager
+@inject AppDbContext Context
 
 <ul class="ms-auto d-flex align-items-center">
     @if (SignInManager.IsSignedIn(User))
     {
+        var user = await UserManager.GetUserAsync(User);
+        var isPremium = await Context.PremiumUsers.AnyAsync(p => p.UserId == user.Id);
+
         <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Home" asp-action="BecomeEmployer">
-            <i class="bi bi-briefcase"></i> Trở thành nhà tuyển dụng
-        </a>
-    </li>
+            <a class="nav-link text-dark" asp-controller="Home" asp-action="BecomeEmployer">
+                <i class="bi bi-briefcase"></i> Trở thành nhà tuyển dụng
+            </a>
+        </li>
 
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,15 +25,19 @@
             </a>
             <ul class="dropdown-menu user-dropdown-menu" aria-labelledby="userDropdown">
                 <li class="user-info">@User.Identity.Name</li>
-                <li><a class="dropdown-item" asp-controller="EditUserProfile" asp-action="Index" title="Manage" ><i class="bi bi-person"></i> Chỉnh sửa tài khoản</a></li>
+                <li><a class="dropdown-item" asp-controller="EditUserProfile" asp-action="Index"><i class="bi bi-person"></i> Chỉnh sửa tài khoản</a></li>
                 <li><a class="dropdown-item" asp-controller="Account" asp-action="AppliedJob"><i class="bi bi-file-earmark-text"></i> CV của tôi</a></li>
                 <li><a class="dropdown-item" asp-controller="Account" asp-action="GetSavedJobs"><i class="bi bi-bookmark"></i> Công việc đã lưu</a></li>
-                <li><a class="dropdown-item" asp-controller="Account" asp-action="UpgradeAccount"><i class="bi bi-star"></i> Nâng cấp tài khoản</a></li>
+                <li><a class="dropdown-item" asp-controller="AccountStatus" asp-action="Index"><i class="bi bi-person-badge"></i> Trạng thái tài khoản</a></li>
+                @if (!isPremium)
+                {
+                    <li><a class="dropdown-item" asp-controller="Account" asp-action="UpgradeAccount"><i class="bi bi-star"></i> Nâng Cấp tài khoản</a></li>
+                }
+                <li><a class="dropdown-item" asp-controller="Payment" asp-action="PaymentHistory"><i class="bi bi-credit-card"></i> Lịch sử giao dịch</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
             </ul>
         </li>
-
     }
     else
     {

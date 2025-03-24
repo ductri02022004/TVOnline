@@ -1,0 +1,55 @@
+@model TVOnline.Models.AccountStatusViewModel
+
+@{
+    ViewData["Title"] = "Trạng thái tài khoản";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Thông tin tài khoản</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Tên đăng nhập:</div>
+                        <div class="col-sm-9">@Model.UserName</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Email:</div>
+                        <div class="col-sm-9">@Model.Email</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Trạng thái:</div>
+                        <div class="col-sm-9">
+                            @if (Model.IsPremium)
+                            {
+                                <span class="badge bg-success">Premium</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Thường</span>
+                            }
+                        </div>
+                    </div>
+                    @if (Model.IsPremium)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-3 fw-bold">ID Premium:</div>
+                            <div class="col-sm-9">@Model.PremiumUserId</div>
+                        </div>
+                    }
+                    <div class="mt-4">
+                        @if (!Model.IsPremium)
+                        {
+                            <a asp-controller="Account" asp-action="UpgradeAccount" class="btn btn-primary">
+                                <i class="bi bi-star"></i> Nâng cấp tài khoản
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

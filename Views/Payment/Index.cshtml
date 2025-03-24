@@ -1,14 +1,13 @@
 ﻿@{
-    ViewData["Title"] = "Thanh toán với VNPay";
+    ViewData["Title"] = "Thanh toán với PAYOS";
 }
 
-<h2>Thanh toán với VNPay</h2>
+<h2>Thanh toán với :PAYOS</h2>
 
-<form method="POST" asp-action="Create" asp-controller="Payment">
-    <input type="hidden" name="Name" value="Nguyen Van A" />
-    <input type="hidden" name="Amount" value="500000" />
-    <input type="hidden" name="OrderDescription" value="Thanh toán đơn hàng #123456 qua VNPay" />
-    <input type="hidden" name="OrderType" value="order" />
-
-    <button class="btn btn-success" type="submit">Pay with VNPay</button>
+<form action="/Payment/create-payment-link" method="post">
+    <button type="submit" id="create-payment-link-btn">
+        Tạo Link thanh toán
+    </button>
 </form>
+
+

@@ -72,7 +72,7 @@ namespace TVOnline
             services.AddScoped<IEmployersService, EmployersService>();
 
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("Default")));
+                options.UseSqlServer(configuration.GetConnectionString("DatabaseConnection")));
 
             services.AddIdentity<Users, IdentityRole>(options =>
             {

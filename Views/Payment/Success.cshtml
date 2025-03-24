@@ -1,0 +1,32 @@
+﻿@model TVOnline.Models.Payment
+
+<h2>Thanh toán thành công!</h2>
+
+<table>
+    <tr>
+        <td><strong>Mã giao dịch:</strong></td>
+        <td>@Model.PaymentId</td>
+    </tr>
+    <tr>
+        <td><strong>Ngày thanh toán:</strong></td>
+        <td>@Model.PaymentDate</td>
+    </tr>
+    <tr>
+        <td><strong>Phương thức thanh toán:</strong></td>
+        <td>@Model.PaymentMethod</td>
+    </tr>
+    <tr>
+        <td><strong>Số tiền:</strong></td>
+        <td>@Model.Amount VNĐ</td>
+    </tr>
+    <tr>
+        <td><strong>Trạng thái:</strong></td>
+        <td>@Model.Status</td>
+    </tr>
+    <tr>
+        <td><strong>ID Người dùng:</strong></td>
+        <td>@Model.UserId</td> <!-- ✅ Hiển thị UserId -->
+    </tr>
+</table>
+
+<a href="/">Quay về trang chủ</a>
