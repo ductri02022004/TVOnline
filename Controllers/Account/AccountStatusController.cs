@@ -1,42 +1,54 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using TVOnline.Models;
-using Microsoft.EntityFrameworkCore;
-using TVOnline.Data;
+using TVOnline.Services;
+using Microsoft.Extensions.Logging;
 
 namespace TVOnline.Controllers
 {
     public class AccountStatusController : Controller
     {
         private readonly UserManager<Users> _userManager;
-        private readonly AppDbContext _context;
+        private readonly IPremiumUserService _premiumUserService;
+        private readonly ILogger<AccountStatusController> _logger;
 
-        public AccountStatusController(UserManager<Users> userManager, AppDbContext context)
+        public AccountStatusController(
+            UserManager<Users> userManager,
+            IPremiumUserService premiumUserService,
+            ILogger<AccountStatusController> logger)
         {
             _userManager = userManager;
-            _context = context;
+            _premiumUserService = premiumUserService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            try
             {
-                return RedirectToAction("Login", "Account");
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    _logger.LogWarning("User not found when accessing account status");
+                    return RedirectToAction("Login", "Account");
+                }
+
+                var isPremium = await _premiumUserService.IsUserPremium(user.Id);
+
+                var viewModel = new AccountStatusViewModel
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    IsPremium = isPremium
+                };
+
+                return View(viewModel);
             }
-
-            var premiumUser = await _context.PremiumUsers
-                .FirstOrDefaultAsync(p => p.UserId == user.Id);
-
-            var viewModel = new AccountStatusViewModel
+            catch (Exception ex)
             {
-                UserName = user.UserName,
-                Email = user.Email,
-                IsPremium = premiumUser != null,
-                PremiumUserId = premiumUser?.PremiumUserId
-            };
-
-            return View(viewModel);
+                _logger.LogError(ex, "Error occurred while accessing account status");
+                return View("Error");
+            }
         }
     }
 } 

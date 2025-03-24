@@ -1,16 +1,15 @@
 @using Microsoft.AspNetCore.Identity
 @using TVOnline.Models
-@using TVOnline.Data
-@using Microsoft.EntityFrameworkCore
+@using TVOnline.Services
 @inject SignInManager<Users> SignInManager
 @inject UserManager<Users> UserManager
-@inject AppDbContext Context
+@inject IPremiumUserService PremiumUserService
 
 <ul class="ms-auto d-flex align-items-center">
     @if (SignInManager.IsSignedIn(User))
     {
         var user = await UserManager.GetUserAsync(User);
-        var isPremium = await Context.PremiumUsers.AnyAsync(p => p.UserId == user.Id);
+        var isPremium = await PremiumUserService.IsUserPremium(user.Id);
 
         <li class="nav-item">
             <a class="nav-link text-dark" asp-controller="Home" asp-action="BecomeEmployer">

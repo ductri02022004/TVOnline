@@ -70,6 +70,7 @@ namespace TVOnline
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IEmployersService, EmployersService>();
+            services.AddScoped<IPremiumUserService, PremiumUserService>();
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DatabaseConnection")));
