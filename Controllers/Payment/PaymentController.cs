@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models.Vnpay;
-using TVOnline.Service.Vnpay;
+using TVOnline.Service.Helper.Vnpay;
 
 [Route("payment")]
 [ApiController]
