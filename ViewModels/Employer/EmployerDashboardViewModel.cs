@@ -17,6 +17,9 @@ namespace TVOnline.ViewModels.Employer
     {
         public string EmployerId { get; set; }
         public string CompanyName { get; set; }
+        public string Email { get; set; }
+        public string City { get; set; }
+        public string Zone { get; set; }
         public string Field { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }

@@ -66,7 +66,7 @@
         </div>
 
         <nav class="mt-5">
-            <ul class="pagination justify-content-center">
+                    <ul class="pagination justify-content-center">
                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
                     <a class="page-link" href="?page=@(currentPage - 1)">Trước</a>
                 </li>
@@ -75,13 +75,15 @@
                 {
                     <li class="page-item @(i == currentPage ? "active" : "")">
                         <a class="page-link" href="?page=@i">@i</a>
-                    </li>
+                        </li>
                 }
 
                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
                     <a class="page-link" href="?page=@(currentPage + 1)">Sau</a>
-                </li>
-            </ul>
-        </nav>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 </section>

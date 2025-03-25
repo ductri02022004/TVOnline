@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TVOnline.Models;
 
 namespace TVOnline.ViewModels.Employer
 {
