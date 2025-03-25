@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
@@ -72,7 +73,7 @@ namespace TVOnline.Controllers.Employer {
 
             // Tạo CompanyInfoViewModel
             var companyInfoViewModel = new CompanyInfoViewModel
-            {
+        {
                 EmployerId = employer.EmployerId,
                 CompanyName = employer.CompanyName,
                 Field = employer.Field,
@@ -137,7 +138,7 @@ namespace TVOnline.Controllers.Employer {
 
             return View(viewModel);
         }
-
+            
         public async Task<IActionResult> ManageApplications(string status = null) {
             if (!User.Identity.IsAuthenticated) {
                 return RedirectToAction("Login", "Account");
@@ -232,6 +233,8 @@ namespace TVOnline.Controllers.Employer {
             }
 
             var employer = await _context.Employers
+                .Include(e => e.City)
+                .ThenInclude(c => c.Zone)
                 .FirstOrDefaultAsync(e => e.UserId == user.Id);
 
             if (employer == null) {
@@ -268,7 +271,7 @@ namespace TVOnline.Controllers.Employer {
             await _context.SaveChangesAsync();
 
             return RedirectToAction("ApplicationDetails", new { cvId });
-        }
+            }
 
         [HttpGet]
         public async Task<IActionResult> EditProfile() {
@@ -291,18 +294,18 @@ namespace TVOnline.Controllers.Employer {
 
             var viewModel = new EditCompanyProfileViewModel {
                 EmployerId = employer.EmployerId,
-                CompanyName = employer.CompanyName,
+                    CompanyName = employer.CompanyName,
                 Industry = employer.Field,
-                Email = employer.Email,
+                    Email = employer.Email,
                 Phone = user.PhoneNumber,
                 Website = employer.Website,
-                Description = employer.Description,
+                    Description = employer.Description,
                 CurrentLogoUrl = employer.LogoURL,
                 CityId = employer.CityId
-            };
+                };
 
-            return View(viewModel);
-        }
+                return View(viewModel);
+            }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

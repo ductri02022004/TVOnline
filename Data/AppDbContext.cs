@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using static TVOnline.Models.Location;
 using TVOnline.Models.Vnpay;
 using TVOnline.Models;
+using static TVOnline.Models.Location;
+using TVOnline.Models.Vnpay;
+using TVOnline.Models;
 
 namespace TVOnline.Data
 {
