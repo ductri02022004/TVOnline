@@ -1,0 +1,106 @@
+@model TVOnline.ViewModels.Post.EditPostViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa tin tuyển dụng";
+    Layout = "_EmployerDashboardLayout";
+}
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Chỉnh sửa tin tuyển dụng</h4>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="PostId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label asp-for="Title" class="form-label">Tiêu đề</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Position" class="form-label">Vị trí tuyển dụng</label>
+                    <input asp-for="Position" class="form-control" />
+                    <span asp-validation-for="Position" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Salary" class="form-label">Mức lương (VNĐ)</label>
+                    <input asp-for="Salary" class="form-control" type="number" />
+                    <span asp-validation-for="Salary" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label asp-for="JobType" class="form-label">Loại công việc</label>
+                    <select asp-for="JobType" asp-items="Model.JobTypes" class="form-select"></select>
+                    <span asp-validation-for="JobType" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Experience" class="form-label">Kinh nghiệm</label>
+                    <select asp-for="Experience" asp-items="Model.ExperienceLevels" class="form-select"></select>
+                    <span asp-validation-for="Experience" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="CityId" class="form-label">Địa điểm làm việc</label>
+                    <select asp-for="CityId" asp-items="Model.Cities" class="form-select"></select>
+                    <span asp-validation-for="CityId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label asp-for="Description" class="form-label">Mô tả công việc</label>
+                    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label asp-for="Requirements" class="form-label">Yêu cầu ứng viên</label>
+                    <textarea asp-for="Requirements" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Requirements" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label asp-for="Benefits" class="form-label">Quyền lợi</label>
+                    <textarea asp-for="Benefits" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Benefits" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label">Đang tuyển dụng</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-between">
+                    <a asp-controller="EmployerDashboard" asp-action="ManagePosts" class="btn btn-secondary">Quay lại</a>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Có thể thêm JavaScript nếu cần
+        });
+    </script>
+}

@@ -39,6 +39,7 @@ namespace TVOnline.Models {
         public virtual Cities? City { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
         public string Requirements { get; set; }
         public string JobType { get; set; } // Full-time, Part-time, etc.

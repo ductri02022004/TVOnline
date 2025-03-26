@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Net.payOS.Types;
 using Net.payOS;
@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using TVOnline.Data;
 using TVOnline.Models;
 using System.Security.Claims;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using System.Linq;
 
 [Route("Payment")]
 [ApiController]
@@ -75,16 +76,14 @@ public class PaymentController : Controller
             return Unauthorized("Bạn cần đăng nhập để xem lịch sử giao dịch.");
         }
 
-        var payments = await _context.Payments
-            .Where(p => p.UserId == userId)
-            .OrderByDescending(p => p.PaymentDate)
+        // Use FromSqlRaw to get payment history
+        var sqlQuery = "SELECT * FROM Payments WHERE UserId = @UserId ORDER BY PaymentDate DESC";
+        var payments = await _context.Set<Payment>()
+            .FromSqlRaw(sqlQuery, new SqlParameter("@UserId", userId))
             .ToListAsync();
 
         return View(payments);
     }
-
-
-    // ✅ Import thư viện Claims
 
     [HttpGet("Success")]
     public async Task<IActionResult> Success(
@@ -120,25 +119,34 @@ public class PaymentController : Controller
 
         try
         {
-            // Lưu thông tin thanh toán
-            _context.Payments.Add(payment);
+            // Use direct SQL with parameters to insert payment record
+            var sql = @"INSERT INTO Payments (PaymentId, PaymentDate, PaymentMethod, Amount, Status, UserId) 
+                       VALUES (@PaymentId, @PaymentDate, @PaymentMethod, @Amount, @Status, @UserId)";
             
-            // Kiểm tra xem người dùng đã là premium chưa
+            await _context.Database.ExecuteSqlRawAsync(sql,
+                new SqlParameter("@PaymentId", payment.PaymentId),
+                new SqlParameter("@PaymentDate", payment.PaymentDate),
+                new SqlParameter("@PaymentMethod", payment.PaymentMethod ?? (object)DBNull.Value),
+                new SqlParameter("@Amount", payment.Amount),
+                new SqlParameter("@Status", payment.Status),
+                new SqlParameter("@UserId", payment.UserId));
+            
+            // Check if user is already premium
             var existingPremiumUser = await _context.PremiumUsers
                 .FirstOrDefaultAsync(p => p.UserId == userId);
 
             if (existingPremiumUser == null)
             {
-                // Tạo mới PremiumUser
+                // Create new premium user
                 var premiumUser = new PremiumUser
                 {
                     PremiumUserId = Guid.NewGuid().ToString(),
                     UserId = userId
                 };
                 _context.PremiumUsers.Add(premiumUser);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return View("Success", payment);
         }
         catch (Exception ex)
@@ -146,10 +154,6 @@ public class PaymentController : Controller
             return StatusCode(500, new { message = "Lỗi khi lưu thông tin thanh toán", details = ex.Message });
         }
     }
-
-
-
-
 
     [HttpGet("Cancel")]
     public IActionResult Cancel()

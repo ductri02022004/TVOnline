@@ -41,11 +41,31 @@ namespace TVOnline.Data
                     {
                         // Xử lý lỗi nếu tạo user không thành công
                         var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                        throw new Exception($"Failed to seed user {user.UserName}: {errors}");
                     }
+                    else
+                    {
+                        await userManager.AddToRoleAsync(user, "Employer");
+                    }
+                }
+            }
+        }
 
-                    // Assign employer role to all these users
-                    await userManager.AddToRoleAsync(user, "Employer");
+        public static async Task SeedAdminUserAsync(UserManager<Users> userManager)
+        {
+            var adminUser = await userManager.FindByEmailAsync("admin@tvonline.com");
+            if (adminUser == null)
+            {
+                var admin = new Users
+                {
+                    UserName = "admin@tvonline.com",
+                    Email = "admin@tvonline.com",
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = true
+                };
+                var result = await userManager.CreateAsync(admin, "Admin@123456");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(admin, "Admin");
                 }
             }
         }

@@ -149,6 +149,10 @@ namespace TVOnline
 
             // Modern .NET 6+ routing configuration
             app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
@@ -176,6 +180,9 @@ namespace TVOnline
 
                 // Then seed users and assign roles
                 await DbSeeder.SeedUsersAsync(userManager);
+                
+                // Seed admin user
+                await DbSeeder.SeedAdminUserAsync(userManager);
 
                 // Seed location data
                 DbSeeder.SeedData(context);

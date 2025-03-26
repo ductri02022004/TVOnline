@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TVOnline.Models
 {
+    [Table("Payments")]
     public class Payment
     {
         [Key]
@@ -17,6 +18,9 @@ namespace TVOnline.Models
         public string? UserId { get; set; }
 
         public double? Amount { get; set; }
+        
+        // This maps to the existing Status column in the database
+        [Column("Status")]
         public string? Status { get; set; }
     }
 }

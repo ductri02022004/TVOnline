@@ -61,6 +61,17 @@ namespace TVOnline.Controllers.Account
                     await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    // Lấy thông tin người dùng đã đăng nhập
+                    var user = await userManager.FindByNameAsync(model.UserName);
+                    
+                    // Kiểm tra xem người dùng có vai trò Admin không
+                    if (user != null && await userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        // Nếu là Admin, chuyển hướng đến trang quản trị
+                        return RedirectToAction("Index", "Admin", new { area = "Admin" });
+                    }
+                    
+                    // Nếu không phải Admin, chuyển hướng đến trang chủ như bình thường
                     return RedirectToAction("Index", "Home");
                 }
 
