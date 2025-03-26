@@ -363,8 +363,3 @@ MigrationBackup/
 FodyWeavers.xsd
 /Migrations/20250221194201_InitialCreate.Designer.cs
 
-#
-appsettings.json  
-appsettings.Development.json  "appsettings.json" 
-"appsettings.json" 
-"appsettings.json" 
