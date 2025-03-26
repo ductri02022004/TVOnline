@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validate;
 
 namespace TVOnline.Models {
     public class Feedbacks {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string FeedbackId { get; set; }
+        public string FeedbackId { get; set; } = Guid.NewGuid().ToString();
         public string? Content { get; set; }
         public DateTime Date { get; set; }
 
