@@ -48,7 +48,6 @@ namespace TVOnline.Controllers
             {
                 try
                 {
-                    feedback.FeedbackId = Guid.NewGuid().ToString();
                     feedback.Date = DateTime.Now;
                     feedback.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

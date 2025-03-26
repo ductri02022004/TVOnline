@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace TVOnline.Models {
     public class Feedbacks {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string FeedbackId { get; set; }
         public string? Content { get; set; }
         public DateTime Date { get; set; }
