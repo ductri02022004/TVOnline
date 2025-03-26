@@ -29,6 +29,7 @@ namespace TVOnline.Service.UserCVs
                         CvStatus = userCV.CVStatus,
                         ApplicationDate = userCV.ApplicationDate,
                         CvURL = userCV.CVFileUrl,
+                        EmployerId = post.EmployerId,
 
                         // Thêm dữ liệu từ Post
                         Description = post.Description,
