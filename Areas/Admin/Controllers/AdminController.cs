@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TVOnline.Areas.Admin.Models;
 using TVOnline.Data;
 using TVOnline.Models;
+using Microsoft.Extensions.Logging;
 
 namespace TVOnline.Areas.Admin.Controllers
 {
@@ -17,15 +18,18 @@ namespace TVOnline.Areas.Admin.Controllers
         private readonly UserManager<Users> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AppDbContext _context;
+        private readonly ILogger<AdminController> _logger;
 
         public AdminController(
             UserManager<Users> userManager,
             RoleManager<IdentityRole> roleManager,
-            AppDbContext context)
+            AppDbContext context,
+            ILogger<AdminController> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _context = context;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -232,17 +236,31 @@ namespace TVOnline.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePost(string id)
         {
-            var post = await _context.Posts.FindAsync(id);
-            if (post == null)
+            try
             {
-                return NotFound();
+                var post = await _context.Posts.FindAsync(id);
+                if (post == null)
+                {
+                    return NotFound();
+                }
+
+                // Xóa tất cả UserCV liên quan đến post này
+                var userCVs = await _context.UserCVs.Where(ucv => ucv.PostId == id).ToListAsync();
+                _context.UserCVs.RemoveRange(userCVs);
+
+                // Sau đó xóa post
+                _context.Posts.Remove(post);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
-
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Đã xóa bài đăng thành công!";
-            return RedirectToAction(nameof(ManagePosts));
+            catch (Exception ex)
+            {
+                // Log lỗi
+                _logger.LogError(ex, "Lỗi khi xóa post {PostId}", id);
+                TempData["Error"] = "Không thể xóa bài đăng. Vui lòng thử lại sau.";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }
