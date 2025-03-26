@@ -1,0 +1,36 @@
+@model TVOnline.Models.Feedbacks
+
+@{
+    ViewBag.Title = "Gửi Phản Hồi";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Gửi Phản Hồi</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Submit" method="post">
+                            <input type="hidden" asp-for="UserId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+                            <input type="hidden" asp-for="EmployerId" value="@ViewBag.EmployerId" />
+                            
+                            <div class="mb-3">
+                                <label asp-for="Content" class="form-label">Nội dung phản hồi</label>
+                                <textarea asp-for="Content" class="form-control" rows="5" placeholder="Nhập nội dung phản hồi chi tiết"></textarea>
+                                <span asp-validation-for="Content" class="text-danger"></span>
+                            </div>
+
+                            <div class="text-end">
+                                <a asp-controller="Account" asp-action="AppliedJob" class="btn btn-secondary">Quay lại</a>
+                                <button type="submit" class="btn btn-primary">Gửi Phản Hồi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 

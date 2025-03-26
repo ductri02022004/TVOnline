@@ -51,6 +51,7 @@
                                                     data-description="@job.Description"
                                                     data-requirements="@job.Requirements"
                                                     data-benefits="@job.Benefits"
+                                                    data-employerid="@job.EmployerId"
                                                     data-bs-toggle="modal" data-bs-target="#jobDetailModal">
                                                 Xem Chi Tiết
                                             </button>
@@ -102,6 +103,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <a href="#" class="btn btn-primary" id="feedbackBtn">Gửi Phản Hồi</a>
             </div>
         </div>
     </div>
@@ -121,6 +123,7 @@
             let description = $(this).data("description");
             let requirements = $(this).data("requirements").split("\n");
             let benefits = $(this).data("benefits").split("\n");
+            let employerId = $(this).data("employerid");
 
             $("#modalJobTitle").text(title);
             $("#modalCompany").text(company);
@@ -135,6 +138,9 @@
 
             let benList = $("#modalBenefits").empty();
             benefits.forEach(ben => benList.append(`<li><i class="bi bi-gift me-2 text-primary"></i>${ben}</li>`));
+
+            // Cập nhật link feedback
+            $("#feedbackBtn").attr("href", `/Feedback?employerId=${employerId}`);
         });
     });
 </script>
