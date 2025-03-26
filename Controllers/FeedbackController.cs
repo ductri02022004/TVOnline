@@ -4,6 +4,7 @@ using TVOnline.Data;
 using TVOnline.Models;
 using System;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace TVOnline.Controllers
 {
@@ -24,11 +25,18 @@ namespace TVOnline.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            if (string.IsNullOrEmpty(employerId))
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy thông tin nhà tuyển dụng.";
+                return RedirectToAction("AppliedJob", "Account");
+            }
+
             ViewBag.EmployerId = employerId;
-            return View();
+            return View(new Feedbacks());
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(Feedbacks feedback)
         {
             if (!User.Identity.IsAuthenticated)
@@ -38,13 +46,25 @@ namespace TVOnline.Controllers
 
             if (ModelState.IsValid)
             {
-                feedback.Date = DateTime.Now;
-                _context.Feedbacks.Add(feedback);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Cảm ơn bạn đã gửi phản hồi!";
-                return RedirectToAction("AppliedJob", "Account");
+                try
+                {
+                    feedback.FeedbackId = Guid.NewGuid().ToString();
+                    feedback.Date = DateTime.Now;
+                    feedback.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    _context.Feedbacks.Add(feedback);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Cảm ơn bạn đã gửi phản hồi!";
+                    return RedirectToAction("AppliedJob", "Account");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Có lỗi xảy ra khi lưu phản hồi. Vui lòng thử lại sau.");
+                }
             }
 
+            ViewBag.EmployerId = feedback.EmployerId;
             return View("Index", feedback);
         }
     }

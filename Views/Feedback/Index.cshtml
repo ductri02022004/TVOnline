@@ -13,13 +13,20 @@
                         <h4 class="mb-0">Gửi Phản Hồi</h4>
                     </div>
                     <div class="card-body">
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        }
+
                         <form asp-action="Submit" method="post">
                             <input type="hidden" asp-for="UserId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
                             <input type="hidden" asp-for="EmployerId" value="@ViewBag.EmployerId" />
                             
                             <div class="mb-3">
                                 <label asp-for="Content" class="form-label">Nội dung phản hồi</label>
-                                <textarea asp-for="Content" class="form-control" rows="5" placeholder="Nhập nội dung phản hồi chi tiết"></textarea>
+                                <textarea asp-for="Content" class="form-control" rows="5" placeholder="Nhập nội dung phản hồi chi tiết" required></textarea>
                                 <span asp-validation-for="Content" class="text-danger"></span>
                             </div>
 
@@ -33,4 +40,8 @@
             </div>
         </div>
     </div>
-</section> 
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
