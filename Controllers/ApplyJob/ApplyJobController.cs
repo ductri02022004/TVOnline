@@ -25,7 +25,7 @@ namespace TVOnline.Controllers {
         public async Task<IActionResult> Index(int page = 1)
         {
             Users? user = await _userManager.GetUserAsync(User);
-            string? userId = user?.Id; // Lấy ID nếu có, không có thì null
+           
 
             var posts = await _postService.GetAllPosts(user.Id);
             var cities = await _locationService.GetAllCities();
