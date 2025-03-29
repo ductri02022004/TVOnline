@@ -1,85 +1,203 @@
+@using Microsoft.AspNetCore.Identity
+@using TVOnline.Models
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+
+@{
+    // Get admin ID if user is admin
+    if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+    {
+        ViewBag.AdminId = UserManager.GetUserId(User);
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TVOnline</title>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/animations.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/nav-logo.png" alt="TVOnline Logo" height="60" /></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="ApplyJob" asp-action="Index">Việc làm</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="EmployersPage" asp-action="Index">Công ty</a></li>
-                  
-                </ul>
-                <partial name="_LoginPartial" />
+    <header class="header-area shadow-sm">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand fade-in-left" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/nav-logo.png" alt="TVOnline Logo" height="50" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto fade-in-right">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1"></i>Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="ApplyJob" asp-action="Index">
+                                <i class="bi bi-briefcase me-1"></i>Việc làm
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="EmployersPage" asp-action="Index">
+                                <i class="bi bi-building me-1"></i>Công ty
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <div class="theme-toggle me-3">
+                            <button id="theme-toggle-btn" class="btn btn-sm btn-outline-secondary rounded-circle">
+                                <i class="bi bi-sun-fill"></i>
+                            </button>
+                        </div>
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container">
+    <div class="container mt-4">
         @if (TempData["SuccessMessage"] != null)
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
         @if (TempData["ErrorMessage"] != null)
         {
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"]
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-4 fade-in-up">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="footer py-5 bg-dark text-light">
+    <footer class="footer mt-auto py-3 bg-white border-top">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5>Về TVOnline</h5>
-                    <p>Nền tảng tìm kiếm việc làm hàng đầu Việt Nam</p>
+            <div class="row gy-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white mb-4">Về TVOnline</h5>
+                    <p class="text-white-50">Nền tảng tìm kiếm việc làm hàng đầu Việt Nam kết nối ứng viên với nhà tuyển dụng để tạo nên cơ hội nghề nghiệp tốt nhất.</p>
+                    <div class="social-links mt-4">
+                        <a href="#" class="me-2"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#" class="me-2"><i class="bi bi-linkedin fs-5"></i></a>
+                        <a href="#" class="me-2"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#" class="me-2"><i class="bi bi-instagram fs-5"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h5>Liên Kết</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light">Về Chúng Tôi</a></li>
-                        <li><a href="#" class="text-light">Điều Khoản Sử Dụng</a></li>
-                        <li><a href="#" class="text-light">Chính Sách Bảo Mật</a></li>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white mb-4">Liên Kết</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Về Chúng Tôi</a></li>
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Điều Khoản Sử Dụng</a></li>
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Chính Sách Bảo Mật</a></li>
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Hỗ Trợ</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h5>Liên Hệ</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="bi bi-envelope-fill me-2"></i>contact@tvonline.vn</li>
-                        <li><i class="bi bi-telephone-fill me-2"></i>1900 1234</li>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white mb-4">Dành cho Ứng Viên</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Tìm Việc Làm</a></li>
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Tạo CV</a></li>
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Công Ty Tuyển Dụng</a></li>
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Cẩm Nang</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white mb-4">Liên Hệ</h5>
+                    <ul class="list-unstyled contact-info">
+                        <li class="d-flex mb-3">
+                            <i class="bi bi-geo-alt-fill me-3 text-primary"></i>
+                            <span>TP. Hồ Chí Minh, Việt Nam</span>
+                        </li>
+                        <li class="d-flex mb-3">
+                            <i class="bi bi-envelope-fill me-3 text-primary"></i>
+                            <span>contact@tvonline.vn</span>
+                        </li>
+                        <li class="d-flex mb-3">
+                            <i class="bi bi-telephone-fill me-3 text-primary"></i>
+                            <span>1900 1234</span>
+                        </li>
                     </ul>
                 </div>
             </div>
             <div class="text-center pt-4 border-top border-secondary">
-                <p class="mb-0">© @DateTime.Now.Year - TVOnline. Tất cả quyền được bảo lưu.</p>
+                <p class="text-white-50 mb-0">© @DateTime.Now.Year - TVOnline. Tất cả quyền được bảo lưu.</p>
             </div>
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Thêm Chat Widget vào cuối trang -->
+    <partial name="_ChatWidget" />
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top" id="backToTop"><i class="bi bi-arrow-up"></i></a>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const htmlElement = document.documentElement;
+            const icon = themeToggleBtn.querySelector('i');
+            
+            // Check for saved theme preference or set default
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            htmlElement.setAttribute('data-bs-theme', savedTheme);
+            updateIcon(savedTheme);
+            
+            // Toggle theme on button click
+            themeToggleBtn.addEventListener('click', function() {
+                const currentTheme = htmlElement.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                htmlElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateIcon(newTheme);
+            });
+            
+            function updateIcon(theme) {
+                if (theme === 'dark') {
+                    icon.classList.remove('bi-sun-fill');
+                    icon.classList.add('bi-moon-fill');
+                } else {
+                    icon.classList.remove('bi-moon-fill');
+                    icon.classList.add('bi-sun-fill');
+                }
+            }
+            
+            // Show/hide back to top button
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            // Scroll to top when button is clicked
+            backToTopBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

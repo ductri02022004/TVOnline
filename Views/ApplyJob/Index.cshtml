@@ -1,39 +1,42 @@
 @model TVOnline.ViewModels.JobsViewModel.JobsViewModel
 @using Microsoft.AspNetCore.Identity;
-@inject SignInManager<Users> signInManager;
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.IdentityModel.Tokens
+@using TVOnline.Models
+@inject SignInManager<Users> SignInManager;
 
 @{
-    ViewData["Title"] = "Chi tiết bài đăng";
+    ViewData["Title"] = "Việc làm";
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
 }
 
-<section class="job-filters py-4 bg-light">
+<section class="job-filters py-4">
     <div class="container">
         <form class="row g-3" asp-controller="Home" asp-action="SearchJobs" method="get">
             <div class="col-md-5">
                 <input type="text" value="@Model.SearchKeyword" class="form-control" placeholder="Tên công việc hoặc từ khóa" name="keyword">
             </div>
             <div class="col-md-4">
-                <select class="form-select">
-                    <option selected value="">Địa điểm</option>
-                    @foreach (var location in Model.Locations)
+                <select class="form-select" name="location">
+                    <option value="">Chọn địa điểm</option>
+                    @foreach (var city in Model.Locations)
                     {
-                        <option value="@location.Name">@location.Name</option>
+                        <option value="@city.Name">@city.Name</option>
                     }
                 </select>
             </div>
-            <div class="col-md-4">
-                <button class="btn btn-primary w-100">Lọc Kết Quả</button>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Tìm Kiếm</button>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 
 <section class="job-listings py-5">
     <div class="container">
         <div class="row g-4">
-            @if (Model.Posts.IsNullOrEmpty())
+            @if (Model.Posts == null || !Model.Posts.Any())
             {
                 <div class="col-12 text-center py-5">
                     <div class="alert alert-info" role="alert">
@@ -46,24 +49,24 @@
                 foreach (var post in Model.Posts)
                 {
                     <div class="col-12">
-                        <div class="job-list-card p-4 bg-white rounded shadow-sm">
+                        <div class="job-list-card p-4 rounded shadow-sm" style="opacity: 1; transform: translateY(0);">
                             <div class="row align-items-center">
                                 <div class="col-md-2 col-sm-3 mb-3 mb-md-0 d-flex justify-content-center">
-                                    <img src="@post.CompanyLogoUrl" class="company-logo-lg" alt="@post.CompanyName" style="max-width: 80px; max-height: 80px;">
+                                    <img src="@post.CompanyLogoUrl" class="company-logo-lg" alt="@post.CompanyName">
                                 </div>
                                 <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
-                                    <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">
+                                    <a asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">
                                         <h4>@post.Title</h4>
                                     </a>
                                     <p class="company-name mb-2">@post.CompanyName</p>
                                     <div class="job-meta">
                                         <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@post.CityName</span>
-                                        <span class="me-3"><i class="bi bi-cash me-1"></i>@($"{post.Salary:N0} VND")</span>
+                                        <span class="me-3"><i class="bi bi-cash-stack me-1"></i>@($"{post.Salary:N0} VND")</span>
                                         <span><i class="bi bi-briefcase me-1"></i>@post.Experience</span>
                                     </div>
                                 </div>
                                 <div class="col-md-3 text-md-end">
-                                    <a class="btn btn-primary me-2" asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
+                                    <a class="btn btn-primary me-2" asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
                                     @if (SignInManager.IsSignedIn(User))
                                     {
                                         @if (post.IsSaved)
@@ -87,7 +90,7 @@
             }
         </div>
 
-        @if (!Model.Posts.IsNullOrEmpty() && totalPages > 1)
+        @if (Model.Posts != null && Model.Posts.Any() && totalPages > 1)
         {
             <nav class="mt-5">
                 <ul class="pagination justify-content-center">
@@ -113,15 +116,40 @@
 
 @section Scripts {
     <script>
-        // Đảm bảo các job-list-card được hiển thị đúng cách
+        // Đảm bảo DOM đã load xong trước khi thao tác
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - Fixing Index.cshtml');
+            
+            // Lấy tất cả các job-list-card và đảm bảo hiển thị
             const jobCards = document.querySelectorAll('.job-list-card');
+            console.log('Số lượng card tìm thấy:', jobCards.length);
+            
             if (jobCards.length > 0) {
+                // Áp dụng style trực tiếp vào mỗi card
                 jobCards.forEach(card => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
+                    // Đặt thuộc tính style trực tiếp
+                    card.setAttribute('style', 'opacity: 1 !important; transform: translateY(0) !important;');
+                    
+                    // Thêm class để đảm bảo hiển thị
+                    card.classList.add('show');
+                    
+                    // Xóa bất kỳ class animation nào có thể gây vấn đề
+                    card.classList.remove('with-animation', 'animate', 'fade-in-up');
                 });
+                
+                console.log('Đã áp dụng style cho tất cả card');
             }
         });
+        
+        // Đảm bảo khi trang đã tải hoàn tất
+        window.addEventListener('load', function() {
+            console.log('Window loaded - Fixing visibility issues');
+            
+            // Làm lại các bước của DOMContentLoaded
+            const jobCards = document.querySelectorAll('.job-list-card');
+            jobCards.forEach(card => {
+                card.setAttribute('style', 'opacity: 1 !important; transform: translateY(0) !important;');
+            });
+        });
     </script>
-}
+} 

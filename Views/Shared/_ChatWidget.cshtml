@@ -1,0 +1,44 @@
+@using Microsoft.AspNetCore.Identity
+@using TVOnline.Models
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+@inject Microsoft.AspNetCore.Identity.UserManager<Users> AdminUserManager
+
+@{
+    // Find the admin user
+    var adminUser = await AdminUserManager.FindByEmailAsync("admin@tvonline.com");
+    ViewBag.AdminId = adminUser?.Id ?? "";
+}
+
+@if (SignInManager.IsSignedIn(User) && !User.IsInRole("Admin"))
+{
+    <div id="chat-widget" class="chat-widget" data-user-id="@UserManager.GetUserId(User)" data-admin-id="@ViewBag.AdminId">
+        <div class="chat-header">
+            <span>Chat with Admin</span>
+            <button type="button" id="toggle-chat" class="btn btn-sm">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="chat-body" id="chat-messages">
+            <!-- Empty state will be added here if no messages -->
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="message-input" class="form-control" placeholder="Type a message...">
+            <button type="button" id="send-message" class="btn btn-primary">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </div>
+    </div>
+
+    <button id="chat-toggle-button" class="btn chat-toggle-button">
+        <i class="bi bi-chat-dots-fill"></i>
+        <span class="badge" id="unread-count" style="display: none;">0</span>
+    </button>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/chat.css" />
+    
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/toastr.js/toastr.min.js"></script>
+    <script src="~/js/chat.js"></script>
+} 

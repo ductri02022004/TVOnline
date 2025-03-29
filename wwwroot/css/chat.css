@@ -1,0 +1,363 @@
+.chat-widget {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.chat-widget.open {
+  display: flex;
+}
+
+.chat-header {
+  padding: 15px;
+  background: #007bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header button {
+  color: white;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1.2rem;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.chat-header button:hover {
+  opacity: 1;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: #f8f9fa;
+}
+
+.chat-footer {
+  padding: 15px;
+  background: white;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  gap: 10px;
+}
+
+.chat-footer input {
+  flex: 1;
+}
+
+.chat-footer button {
+  padding: 8px 15px;
+}
+
+.chat-toggle-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: #007bff;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 999;
+  transition: transform 0.2s;
+}
+
+.chat-toggle-button:hover {
+  transform: scale(1.1);
+  background: #0056b3;
+  color: white;
+}
+
+.chat-toggle-button.hidden {
+  display: none;
+}
+
+.chat-toggle-button .badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #dc3545;
+  color: white;
+  border-radius: 10px;
+  padding: 3px 6px;
+  font-size: 0.75rem;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.message {
+  margin-bottom: 15px;
+  max-width: 80%;
+  clear: both;
+  position: relative;
+}
+
+.message-sent {
+  float: right;
+}
+
+.message-received {
+  float: left;
+}
+
+.message-content {
+  padding: 10px 15px;
+  border-radius: 15px;
+  position: relative;
+  word-wrap: break-word;
+}
+
+.message-sent .message-content {
+  background: #007bff;
+  color: white;
+  margin-left: auto;
+}
+
+.message-received .message-content {
+  background: white;
+  color: #212529;
+}
+
+.message-time {
+  display: block;
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 5px;
+  clear: both;
+}
+
+.message-sent .message-time {
+  text-align: right;
+}
+
+.message-actions {
+  position: absolute;
+  left: -65px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message:hover .message-actions {
+  opacity: 1;
+}
+
+.message-actions button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.message-actions button i {
+  font-size: 0.8rem;
+}
+
+.message-actions button.edit-btn {
+  color: #0d6efd;
+  background: white;
+}
+
+.message-actions button.delete-btn {
+  color: #dc3545;
+  background: white;
+}
+
+.message-actions button:hover {
+  transform: scale(1.1);
+}
+
+.message-actions button.edit-btn:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.message-actions button.delete-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.message-actions button::after {
+  display: none;
+}
+
+.edit-message-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background: white;
+  color: #495057;
+  margin: 8px 0;
+}
+
+.edit-message-input:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.edit-actions button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.edit-actions button i {
+  font-size: 0.9rem;
+}
+
+.edit-actions .save-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-actions .save-btn:hover {
+  background-color: #0056b3;
+}
+
+.edit-actions .cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.edit-actions .cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Thêm animation cho quá trình chỉnh sửa */
+.message.editing .message-content {
+  background-color: #f8f9fa;
+  border: 2px solid #007bff;
+  transition: all 0.3s ease;
+}
+
+.message.editing .message-text {
+  color: #495057;
+}
+
+.message-edit-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin: 5px 0;
+}
+
+.message-edit-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.message-edit-header i {
+  margin-right: 6px;
+  color: #007bff;
+}
+
+/* Animation khi bắt đầu và kết thúc chỉnh sửa */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-edit-container {
+  animation: fadeIn 0.3s ease;
+}
+
+.chat-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6c757d;
+  text-align: center;
+  padding: 20px;
+}
+
+.chat-empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.chat-empty-state p {
+  margin: 0;
+}
+
+.chat-empty-state p.text-muted {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Responsive styles */
+@media (max-width: 576px) {
+  .chat-widget {
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+
+  .chat-toggle-button {
+    bottom: 10px;
+    right: 10px;
+  }
+}

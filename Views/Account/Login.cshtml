@@ -5,72 +5,89 @@
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/Account/_AccountLayout.cshtml";
 }
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-<div class="account-container">
-    <div class="account-box">
-        <h2 class="text-center mb-4">Đăng nhập</h2>
-        <form asp-action="Login" method="post">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/account.css" />
+
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <h2>Đăng nhập</h2>
+            <p>Chào mừng bạn quay trở lại!</p>
+        </div>
+
+        <form asp-action="Login" method="post" class="login-form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="mb-3">
-                <label asp-for="UserName" class="form-label"></label>
-                <input asp-for="UserName" class="form-control" />
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input asp-for="UserName" class="form-control" placeholder="Email hoặc tên đăng nhập" />
+                </div>
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
 
-            <div class="mb-3 position-relative">
-                <label asp-for="Password" class="form-label"></label>
+            <div class="form-group">
                 <div class="input-group">
-                    <input asp-for="Password" class="form-control" id="password" />
-                    <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input asp-for="Password" class="form-control" id="password" placeholder="Mật khẩu" />
+                    <button type="button" class="btn btn-outline-secondary password-toggle" onclick="togglePassword('password', 'toggleIcon')">
                         <i id="toggleIcon" class="bi bi-eye-slash"></i>
                     </button>
                 </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <div class="float-end">
-                <a asp-controller="Account" asp-action="CheckEmail" class="text-decoration-none">
-                    Quên mật khẩu ?
+            <div class="form-options">
+                <div class="remember-me">
+                    <label class="form-check-label">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <span>@Html.DisplayNameFor(a => a.RememberMe)</span>
+                    </label>
+                </div>
+                <a asp-controller="Account" asp-action="CheckEmail" class="forgot-password">
+                    Quên mật khẩu?
                 </a>
             </div>
 
-            <div class="form-check mb-3">
-                <label class="form-check-label">
-                    <input asp-for="RememberMe" class="form-check-input" />
-                    @Html.DisplayNameFor(a => a.RememberMe)
-                </label>
-            </div>
-
-            <input style="background-color: #0866FF" type="submit" value="Đăng nhập" class="btn btn-success w-100 p-2" />
-
-            <p class="text-center mt-2">
-                Chưa có tài khoản ? <a asp-controller="Account" asp-action="Register" class="text-decoration-none">Đăng kí</a>
-            </p>
-
-            <div class="text-center">
-                <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Trở về</a>
-            </div>
+            <button type="submit" class="btn btn-primary login-btn">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Đăng nhập
+            </button>
         </form>
-        <div class="external-login">
-            <hr />
-            <p class="text-center">Hoặc đăng nhập bằng:</p>
-            <form asp-action="ExternalLogin" asp-controller="Account" method="post">
-                <button type="submit" class="btn btn-primary w-100 mb-2"
-                        name="provider" value="Google"
-                        style="background-color: #0866FF;">
-                    <i class="fab fa-google"></i> Đăng nhập bằng Google
-                </button>
-                @if (TempData["ErrorMessage"] != null)
-                {
-                    <div class="alert alert-danger">
-                        @TempData["ErrorMessage"]
-                    </div>
-                }
-            </form>
+
+        <div class="divider">
+            <span>hoặc</span>
         </div>
-    </div>
+
+        <form asp-action="ExternalLogin" asp-controller="Account" method="post" class="social-login">
+            <button type="submit" class="btn btn-google" name="provider" value="Google">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/24px-Google_%22G%22_logo.svg.png" alt="Google" />
+                Đăng nhập với Google
+            </button>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+        </form>
+
+        <div class="register-link">
+            Chưa có tài khoản? 
+            <a asp-controller="Account" asp-action="Register">Đăng ký ngay</a>
+        </div>
+
+        <div class="back-link">
+            <a asp-controller="Home" asp-action="Index">
+                <i class="bi bi-arrow-left"></i>
+                Trở về trang chủ
+            </a>
+        </div>
     </div>
 </div>
 
@@ -78,20 +95,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        function togglePassword() {
-            var passwordField = document.getElementById("password");
-            var toggleIcon = document.getElementById("toggleIcon");
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleIcon.classList.remove("bi-eye-slash");
-                toggleIcon.classList.add("bi-eye");
-            } else {
-                passwordField.type = "password";
-                toggleIcon.classList.remove("bi-eye");
-                toggleIcon.classList.add("bi-eye-slash");
-            }
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
+    <script src="~/js/account.js"></script>
 }
