@@ -258,7 +258,7 @@ p {
   border-radius: var(--radius-sm);
   font-size: 0.75rem;
   background-color: var(--primary-light);
-  color: var(--primary-color);
+  color: white;
 }
 
 /* Footer */

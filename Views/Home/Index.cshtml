@@ -12,13 +12,13 @@
                 <p class="lead mb-4 hero-subtitle">Tìm kiếm công việc phù hợp với kỹ năng và nguyện vọng của bạn</p>
                 
                 <div class="search-box bg-white rounded-4 shadow p-4 mb-4">
-                    <form class="row g-3">
+                    <form class="row g-3" asp-controller="Home" asp-action="SearchJobs" method="get">
                         <div class="col-lg-5 col-md-5">
                             <div class="input-group">
                                 <span class="input-group-text bg-transparent border-0">
                                     <i class="bi bi-search text-primary"></i>
                                 </span>
-                                <input type="text" class="form-control border-0 shadow-none" placeholder="Tên công việc hoặc từ khóa">
+                                <input type="text" class="form-control border-0 shadow-none" placeholder="Tên công việc hoặc từ khóa" name="keyword">
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-4">

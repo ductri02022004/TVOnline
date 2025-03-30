@@ -326,7 +326,7 @@ nav ~ .container {
   padding: 0.5rem 1rem;
   font-weight: 500;
   background-color: var(--primary-light);
-  color: var(--primary-color);
+  color: white;
   transition: var(--transition);
 }
 
