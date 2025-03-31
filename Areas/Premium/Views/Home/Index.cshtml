@@ -27,7 +27,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Công việc đã lưu</h5>
                                     <p class="card-text">Xem danh sách công việc đã lưu</p>
-                                    <a asp-area="Premium" asp-controller="SavedJobs" asp-action="Index" class="btn btn-primary">Xem danh sách</a>
+                                    <a asp-controller="Account" asp-action="GetSavedJobs" class="btn btn-primary">Xem danh sách</a>
                                 </div>
                             </div>
                         </div>
@@ -36,7 +36,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Lịch sử giao dịch</h5>
                                     <p class="card-text">Xem lịch sử các giao dịch premium</p>
-                                    <a asp-area="Premium" asp-controller="Transaction" asp-action="Index" class="btn btn-primary">Xem lịch sử</a>
+                                    <a asp-controller="Payment" asp-action="PaymentHistory" class="btn btn-primary">Xem lịch sử</a>
                                 </div>
                             </div>
                         </div>
