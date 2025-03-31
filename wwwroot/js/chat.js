@@ -227,8 +227,8 @@ class ChatWidget {
                 ${new Date(message.timestamp).toLocaleTimeString()}
                 ${!canEdit && isFromUser ? " (Không thể chỉnh sửa)" : ""}
             </small>
-        </div>
-    `;
+            </div>
+        `;
 
     const emptyState = document.querySelector(".chat-empty-state");
     if (emptyState) {
