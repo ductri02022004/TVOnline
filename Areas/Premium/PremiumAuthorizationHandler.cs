@@ -1,12 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using TVOnline.Services;
+using TVOnline.Areas.Premium;
 
 namespace TVOnline.Areas.Premium
 {
-    public class PremiumRequirement : IAuthorizationRequirement
-    {
-    }
-
     public class PremiumAuthorizationHandler : AuthorizationHandler<PremiumRequirement>
     {
         private readonly IPremiumUserService _premiumUserService;
