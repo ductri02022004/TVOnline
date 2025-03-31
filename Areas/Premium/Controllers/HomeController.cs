@@ -17,7 +17,10 @@ namespace TVOnline.Areas.Premium.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var premiumUser = await _premiumUserService.GetPremiumUser(userId);
+            
+            return View(premiumUser);
         }
     }
 } 

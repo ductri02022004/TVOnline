@@ -18,6 +18,8 @@ using TVOnline.Service.Location;
 using TVOnline.Models;
 using TVOnline.Repository.UserCVs;
 using TVOnline.Services;
+using Microsoft.AspNetCore.Authorization;
+using TVOnline.Areas.Premium;
 
 namespace TVOnline
 {
@@ -58,7 +60,12 @@ namespace TVOnline
             services.AddScoped<IVnPayService, VnPayService>();
 
             // Add services to the container.
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddRazorOptions(options =>
+                {
+                    options.ViewLocationFormats.Add("/Areas/{2}/Views/{1}/{0}.cshtml");
+                    options.ViewLocationFormats.Add("/Areas/{2}/Views/Shared/{0}.cshtml");
+                });
 
             // Add services into IoC container
             services.AddScoped<IJobsRepository, JobsRepository>();
@@ -121,6 +128,15 @@ namespace TVOnline
                                .AllowAnyHeader();
                     });
             });
+
+            // Thêm cấu hình policy PremiumUser
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("PremiumUser", policy =>
+                    policy.Requirements.Add(new PremiumRequirement()));
+            });
+
+            services.AddScoped<IAuthorizationHandler, PremiumAuthorizationHandler>();
         }
 
         private static void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env)

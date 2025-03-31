@@ -3,6 +3,10 @@ using TVOnline.Services;
 
 namespace TVOnline.Areas.Premium
 {
+    public class PremiumRequirement : IAuthorizationRequirement
+    {
+    }
+
     public class PremiumAuthorizationHandler : AuthorizationHandler<PremiumRequirement>
     {
         private readonly IPremiumUserService _premiumUserService;
@@ -23,9 +27,5 @@ namespace TVOnline.Areas.Premium
                 context.Succeed(requirement);
             }
         }
-    }
-
-    public class PremiumRequirement : IAuthorizationRequirement
-    {
     }
 } 
