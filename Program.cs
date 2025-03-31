@@ -19,7 +19,7 @@ using TVOnline.Models;
 using TVOnline.Repository.UserCVs;
 using TVOnline.Services;
 using Microsoft.AspNetCore.Authorization;
-using TVOnline.Areas.Premium;
+using TVOnline.Areas.Premium.Authorization;
 
 namespace TVOnline
 {
