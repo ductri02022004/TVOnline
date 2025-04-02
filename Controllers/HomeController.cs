@@ -1,15 +1,14 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using TVOnline.Models.Error;
 using Microsoft.AspNetCore.Identity;
-using TVOnline.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using TVOnline.Data;
+using TVOnline.Models;
+using TVOnline.Models.Error;
 using TVOnline.Service.Location;
 using TVOnline.Service.Post;
 using TVOnline.ViewModels.Home;
-using TVOnline.ViewModels.Post;
-using TVOnline.Models;
+using TVOnline.ViewModels.JobsViewModel;
 
 namespace TVOnline.Controllers
 {
@@ -55,6 +54,26 @@ namespace TVOnline.Controllers
                 Locations = locations
             };
             return View(homeViewModel);
+        }
+
+        public async Task<IActionResult> SearchJobs(string keyword, int? cityId, int page = 1)
+        {
+            const int PageSize = 10;
+            var posts = await _postService.SearchPosts(keyword, cityId, page, PageSize);
+            var totalPosts = await _postService.CountSearchPosts(keyword, cityId);
+            var locations = await _locationService.GetAllCities();
+
+            var viewModel = new JobsViewModel
+            {
+                Posts = posts,
+                Locations = locations,
+                SearchKeyword = keyword ?? string.Empty
+            };
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalPosts / (double)PageSize);
+
+            return View("~/Views/ApplyJob/Index.cshtml", viewModel);
         }
 
         public IActionResult Privacy()

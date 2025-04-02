@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.IdentityModel.Tokens
 @using TVOnline.Models
-@inject SignInManager<Users> SignInManager;
+@inject SignInManager<Users> signInManager;
 
 @{
     ViewData["Title"] = "Việc làm";
@@ -18,11 +18,11 @@
                 <input type="text" value="@Model.SearchKeyword" class="form-control" placeholder="Tên công việc hoặc từ khóa" name="keyword">
             </div>
             <div class="col-md-4">
-                <select class="form-select" name="location">
+                <select class="form-select" name="cityId">
                     <option value="">Chọn địa điểm</option>
                     @foreach (var city in Model.Locations)
                     {
-                        <option value="@city.Name">@city.Name</option>
+                        <option value="@city.Id">@city.Name</option>
                     }
                 </select>
             </div>
@@ -67,7 +67,7 @@
                                 </div>
                                 <div class="col-md-3 text-md-end">
                                     <a class="btn btn-primary me-2" asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
-                                    @if (SignInManager.IsSignedIn(User))
+                                    @if (signInManager.IsSignedIn(User))
                                     {
                                         @if (post.IsSaved)
                                         {

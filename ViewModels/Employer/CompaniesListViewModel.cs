@@ -1,6 +1,4 @@
 using TVOnline.Service.DTO;
-using TVOnline.Service.Location;
-using System.Collections.Generic;
 
 namespace TVOnline.ViewModels.Employer
 {

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace TVOnline.ViewModels.Chat
 {
@@ -12,5 +13,8 @@ namespace TVOnline.ViewModels.Chat
 
         [Required]
         public string Message { get; set; }
+
+        // File attachment (optional)
+        public IFormFile? Attachment { get; set; }
     }
 }

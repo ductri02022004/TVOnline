@@ -2,12 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 using TVOnline.Areas.Admin.Models;
 using TVOnline.Data;
 using TVOnline.Models;
-using Microsoft.Extensions.Logging;
 
 namespace TVOnline.Areas.Admin.Controllers
 {
@@ -32,19 +29,34 @@ namespace TVOnline.Areas.Admin.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // Trang dashboard cho admin
-            var dashboardViewModel = new AdminDashboardViewModel
-            {
-                TotalUsers = _userManager.Users.Count(),
-                TotalEmployers = _context.Employers.Count(),
-                TotalJobSeekers = _userManager.GetUsersInRoleAsync("JobSeeker").Result.Count,
-                TotalPosts = _context.Posts.Count(),
-                TotalApplications = _context.InterviewInvitations.Count()
-            };
+            // Get all counts for dashboard
+            ViewBag.UserCount = await _userManager.Users.CountAsync();
+            ViewBag.EmployerCount = await _context.Employers.CountAsync();
+            var jobSeekers = await _userManager.GetUsersInRoleAsync("User");
+            ViewBag.JobSeekerCount = jobSeekers.Count;
+            ViewBag.PostCount = await _context.Posts.CountAsync();
 
-            return View(dashboardViewModel);
+            // Get unread messages count
+            var adminId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(adminId))
+            {
+                ViewBag.UnreadMessagesCount = await _context.ChatMessages
+                    .Where(m => m.ReceiverId == adminId && !m.IsRead)
+                    .CountAsync();
+
+                // Get users with chat history
+                var userIds = await _context.ChatMessages
+                    .Where(m => m.SenderId == adminId || m.ReceiverId == adminId)
+                    .Select(m => m.SenderId == adminId ? m.ReceiverId : m.SenderId)
+                    .Distinct()
+                    .CountAsync();
+
+                ViewBag.ChatUsersCount = userIds;
+            }
+
+            return View();
         }
 
         public async Task<IActionResult> ManageUsers()
@@ -118,32 +130,28 @@ namespace TVOnline.Areas.Admin.Controllers
                 // Lấy thông tin từ bảng UserCVs thay vì JobSeekers
                 var userCV = await _context.UserCVs
                     .FirstOrDefaultAsync(j => j.UserId == user.Id);
-                if (userCV != null)
-                {
-                    userViewModel.JobSeekerDetails = new JobSeekerDetailsViewModel
+                userViewModel.JobSeekerDetails = userCV != null
+                    ? new JobSeekerDetailsViewModel
                     {
                         FullName = user.UserName ?? "Chưa cập nhật",
                         Phone = user.PhoneNumber ?? "Chưa cập nhật",
                         Address = "Chưa cập nhật", // UserCV không có trường Address
                         CreatedAt = userCV.AppliedDate // Sử dụng AppliedDate thay vì CreatedAt
-                    };
-                }
-                else
-                {
-                    userViewModel.JobSeekerDetails = new JobSeekerDetailsViewModel
+                    }
+                    : new JobSeekerDetailsViewModel
                     {
                         FullName = user.UserName ?? "Chưa cập nhật",
                         Phone = user.PhoneNumber ?? "Chưa cập nhật",
                         Address = "Chưa cập nhật",
                         CreatedAt = DateTime.Now
                     };
-                }
             }
 
             return View(userViewModel);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LockUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -159,16 +167,14 @@ namespace TVOnline.Areas.Admin.Controllers
                 return RedirectToAction(nameof(ManageUsers));
             }
 
-            // Khóa tài khoản trong 30 ngày
-            var lockoutEndDate = DateTime.Now.AddDays(30);
-            await _userManager.SetLockoutEnabledAsync(user, true);
-            await _userManager.SetLockoutEndDateAsync(user, lockoutEndDate);
-
+            user.LockoutEnd = DateTimeOffset.Now.AddYears(100);
+            await _userManager.UpdateAsync(user);
             TempData["SuccessMessage"] = "Đã khóa tài khoản người dùng thành công!";
             return RedirectToAction(nameof(ManageUsers));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnlockUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -178,14 +184,14 @@ namespace TVOnline.Areas.Admin.Controllers
             }
 
             // Mở khóa tài khoản
-            await _userManager.SetLockoutEnabledAsync(user, false);
-            await _userManager.SetLockoutEndDateAsync(user, null);
-
+            user.LockoutEnd = null;
+            await _userManager.UpdateAsync(user);
             TempData["SuccessMessage"] = "Đã mở khóa tài khoản người dùng thành công!";
             return RedirectToAction(nameof(ManageUsers));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmEmail(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -197,7 +203,6 @@ namespace TVOnline.Areas.Admin.Controllers
             // Xác nhận email
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
-
             TempData["SuccessMessage"] = "Đã xác nhận email người dùng thành công!";
             return RedirectToAction(nameof(ManageUsers));
         }
@@ -214,6 +219,7 @@ namespace TVOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePostStatus(string id)
         {
             var post = await _context.Posts.FindAsync(id);
@@ -234,6 +240,7 @@ namespace TVOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePost(string id)
         {
             try

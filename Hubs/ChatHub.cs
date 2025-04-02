@@ -1,10 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Threading.Tasks;
 using TVOnline.Models;
 using TVOnline.Service;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
 
 namespace TVOnline.Hubs
 {

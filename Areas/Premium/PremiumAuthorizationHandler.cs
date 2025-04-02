@@ -17,7 +17,7 @@ namespace TVOnline.Areas.Premium
             PremiumRequirement requirement)
         {
             var userId = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            
+
             if (userId != null && await _premiumUserService.IsUserPremium(userId))
             {
                 context.Succeed(requirement);
@@ -28,4 +28,4 @@ namespace TVOnline.Areas.Premium
     public class PremiumRequirement : IAuthorizationRequirement
     {
     }
-} 
+}

@@ -1,317 +1,276 @@
 @{
-    ViewData["Title"] = "Admin Chat";
+    ViewData["Title"] = "Quản lý tin nhắn";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Users</h5>
+<div class="container-fluid py-4">
+    <div class="messenger-container">
+        <!-- Sidebar người dùng -->
+        <div class="messenger-sidebar">
+            <div class="messenger-header">
+                <h5 class="mb-0">Tin nhắn quản trị</h5>
+                <div class="messenger-actions">
+                    <button class="btn btn-icon" id="refresh-users" title="Làm mới danh sách">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                 </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush" id="users-list">
-                        <!-- Users with chat history will be loaded here -->
+            </div>
+            <div class="messenger-search">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control ps-0 border-start-0" id="search-users" placeholder="Tìm kiếm người dùng...">
+                </div>
+            </div>
+            <div class="users-stats px-3 py-2">
+                <small class="text-muted">
+                    <span id="total-users-count">0</span> người dùng
+                </small>
+            </div>
+            <div class="messenger-user-list" id="users-list">
+                <div class="text-center text-muted p-4 loading-state">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
                     </div>
+                    <p class="mt-2">Đang tải danh sách người dùng...</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0" id="chat-user-name">Select a user to start chatting</h5>
-                    <span class="badge bg-light text-dark" id="user-status"></span>
-                </div>
-                <div class="card-body chat-container" id="chat-messages">
-                    <div class="text-center text-muted py-5">
-                        <i class="fas fa-comments fa-3x mb-3"></i>
-                        <p>Select a user from the list to view conversation</p>
+
+        <!-- Phần nội dung tin nhắn -->
+        <div class="messenger-content">
+            <!-- Phần header tin nhắn -->
+            <div class="messenger-content-header">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar bg-gradient-primary">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="mb-0" id="chat-user-name">Chọn người dùng để bắt đầu cuộc trò chuyện</h6>
+                        <small class="text-muted" id="user-status-text">Chưa có cuộc hội thoại nào</small>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <form id="message-form" class="d-flex">
-                        <input type="text" id="message-input" class="form-control me-2" placeholder="Type a message..." disabled>
-                        <button type="submit" id="send-button" class="btn btn-primary" disabled>
+                <div class="messenger-header-actions">
+                    <button class="btn btn-sm btn-outline-primary rounded-pill me-2" id="mark-all-read" title="Đánh dấu tất cả là đã đọc">
+                        <i class="fas fa-check-double me-1"></i>Đánh dấu đã đọc
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-icon" id="user-options-btn" data-bs-toggle="dropdown" aria-expanded="false" title="Tùy chọn người dùng">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-options-btn">
+                            <li><a class="dropdown-item" href="#" id="view-profile-link"><i class="fas fa-user me-2"></i>Xem hồ sơ người dùng</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="mark-all-read-info"><i class="fas fa-check-double me-2"></i>Đánh dấu đã đọc</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phần nội dung tin nhắn chính -->
+            <div class="messenger-content-body">
+                <div class="chat-container" id="chat-messages">
+                    <div class="text-center empty-chat-state">
+                        <div class="empty-chat-icon">
+                            <i class="fas fa-comments fa-3x mb-3 text-primary opacity-5"></i>
+                        </div>
+                        <h6 class="text-muted">Chọn người dùng từ danh sách để xem cuộc trò chuyện</h6>
+                        <p class="text-sm opacity-8">Tin nhắn sẽ hiển thị tại đây</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phần footer và input tin nhắn -->
+            <div class="messenger-content-footer">
+                <form id="message-form" class="message-form">
+                    <!-- File preview area -->
+                    <div id="file-preview-container" class="mb-2"></div>
+                    
+                    <!-- Input area with buttons -->
+                    <div class="input-with-buttons">
+                        <button type="button" class="btn btn-light btn-sm" id="emoji-button" title="Chọn biểu tượng cảm xúc">
+                            <i class="far fa-smile"></i>
+                        </button>
+                        <button type="button" class="btn btn-light btn-sm" id="attachment-button" title="Đính kèm tệp">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <input type="file" id="file-input" style="display:none" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt">
+                        
+                        <textarea id="chat-input" class="form-control" placeholder="Nhập tin nhắn..." disabled></textarea>
+                        
+                        <button type="submit" id="send-button" class="btn btn-primary btn-sm" disabled title="Gửi tin nhắn">
                             <i class="fas fa-paper-plane"></i>
                         </button>
+                    </div>
                     </form>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
+<div id="admin-chat" class="d-none" data-admin-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value"></div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-chat.css" />
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+}
+
 @section Scripts {
-    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/js/admin-chat.js"></script>
+    <div id="emojiPicker" class="emoji-picker" style="display:none;"></div>
     <script>
-        $(document).ready(function () {
-            const adminId = "@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value";
-            let currentUserId = null;
-            let connection = null;
+        // Set up global variables to avoid "not defined" errors
+        window.chatHistoryRetryCount = 0;
+        window.MAX_RETRIES = 3;
+        
+        // Add a function to patch the message objects to always have isEdited property
+        function ensureMessageProperties(messages) {
+            if (!messages) return messages;
             
-            // Initialize SignalR connection
-            function initializeSignalR() {
-                connection = new signalR.HubConnectionBuilder()
-                    .withUrl("/chatHub")
-                    .build();
-
-                connection.on("ReceiveMessage", function (message) {
-                    if (currentUserId === message.senderId || currentUserId === message.receiverId) {
-                        addMessageToChat(message);
-                        
-                        // If message is from the selected user, mark as read
-                        if (message.senderId === currentUserId) {
-                            markAsRead(message.senderId);
-                            
-                            // Update unread count badge to 0
-                            $(`#unread-${message.senderId}`).text("").hide();
-                        }
-                    } else {
-                        // If message is from another user, update their unread count
-                        incrementUnreadCount(message.senderId);
-                    }
-                });
-
-                connection.start().then(function () {
-                    console.log("SignalR Connected");
-                    // Join admin group
-                    connection.invoke("JoinGroup", adminId).catch(function (err) {
-                        console.error(err);
-                    });
-                    
-                    // Load users with chat history
-                    loadUsersWithChatHistory();
-                }).catch(function (err) {
-                    console.error(err);
-                });
-            }
-
-            // Load users who have chat history with admin
-            function loadUsersWithChatHistory() {
-                $.ajax({
-                    url: "/Admin/AdminChat/GetUsersWithChatHistory",
-                    type: "GET",
-                    success: function (users) {
-                        $("#users-list").empty();
-                        
-                        if (users.length === 0) {
-                            $("#users-list").append(`
-                                <div class="list-group-item text-center text-muted">
-                                    No chat history found
+            return messages.map(message => {
+                // Ensure isEdited property exists to prevent errors
+                if (message.isEdited === undefined) {
+                    message.isEdited = false;
+                }
+                return message;
+            });
+        }
+        
+        // Wait for document ready to ensure admin-chat.js is loaded
+        $(document).ready(function() {
+            // Make sure the original loadChatHistory function exists
+            if (typeof loadChatHistory === 'undefined') {
+                // Define a temporary function until the real one is loaded
+                window.loadChatHistory = function(adminId, otherUserId, isRetry) {
+                    console.log("Using temporary loadChatHistory function", adminId, otherUserId, isRetry);
+                    $("#chat-messages").html(`
+                        <div class="text-center p-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Đang tải...</span>
+                            </div>
+                            <p class="mt-2">Đang tải tin nhắn...</p>
                                 </div>
                             `);
-                            return;
-                        }
-                        
-                        users.forEach(function (userId) {
-                            // Get user details and unread count
+                    
+                    // Try to load the real function
+                    setTimeout(() => {
+                        if (typeof originalLoadChatHistory !== 'undefined') {
+                            originalLoadChatHistory(adminId, otherUserId, isRetry);
+                        } else {
                             $.ajax({
-                                url: `/Admin/AdminChat/GetUserDetails?userId=${userId}`,
+                                url: `/Admin/AdminChat/GetChatHistory?userId=${adminId}&otherUserId=${otherUserId}`,
                                 type: "GET",
-                                success: function (user) {
-                                    // Get unread message count
-                                    $.ajax({
-                                        url: `/Admin/AdminChat/GetUnreadCount?userId=${userId}`,
-                                        type: "GET",
-                                        success: function (count) {
-                                            const unreadBadge = count > 0 
-                                                ? `<span class="badge bg-danger rounded-pill" id="unread-${userId}">${count}</span>` 
-                                                : `<span class="badge rounded-pill" id="unread-${userId}" style="display: none;"></span>`;
-                                                
-                                            $("#users-list").append(`
-                                                <button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center user-item" 
-                                                        data-user-id="${userId}" data-user-name="${user.userName || 'Unknown User'}">
-                                                    <div>
-                                                        <i class="fas fa-user-circle me-2"></i>
-                                                        <span>${user.userName || 'Unknown User'}</span>
-                                                    </div>
-                                                    ${unreadBadge}
-                                                </button>
-                                            `);
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                    }
-                });
-            }
-
-            // Handle user selection
-            $(document).on("click", ".user-item", function () {
-                $(".user-item").removeClass("active");
-                $(this).addClass("active");
-                
-                const userId = $(this).data("user-id");
-                const userName = $(this).data("user-name");
-                
-                currentUserId = userId;
-                $("#chat-user-name").text(userName);
-                $("#message-input").prop("disabled", false);
-                $("#send-button").prop("disabled", false);
-                
-                // Mark messages from this user as read
-                markAsRead(userId);
-                
-                // Load chat history
-                loadChatHistory(userId);
-            });
-
-            // Load chat history with selected user
-            function loadChatHistory(userId) {
-                $.ajax({
-                    url: `/Admin/AdminChat/GetChatHistory?userId=${adminId}&otherUserId=${userId}`,
-                    type: "GET",
-                    success: function (messages) {
+                                success: function(messages) {
                         $("#chat-messages").empty();
                         
-                        if (messages.length === 0) {
+                                    if (!messages || messages.length === 0) {
                             $("#chat-messages").html(`
-                                <div class="text-center text-muted py-5">
-                                    <p>No messages yet</p>
+                                            <div class="text-center empty-chat-state">
+                                                <div class="empty-chat-icon">
+                                                    <i class="fas fa-comments fa-3x mb-3 text-primary opacity-5"></i>
+                                                </div>
+                                                <h6 class="text-muted">Chưa có tin nhắn nào</h6>
+                                                <p class="text-sm opacity-8">Bắt đầu cuộc trò chuyện ngay bây giờ!</p>
                                 </div>
                             `);
                             return;
                         }
                         
-                        messages.forEach(function (message) {
-                            addMessageToChat(message);
+                                    // Patch the messages to ensure isEdited property exists
+                                    messages = ensureMessageProperties(messages);
+                                    
+                                    if (typeof appendMessage === 'function') {
+                                        messages.forEach(function(message) {
+                                            appendMessage(message);
                         });
                         
                         // Scroll to bottom
+                                        if (typeof scrollToBottom === 'function') {
                         scrollToBottom();
+                                        } else {
+                                            const chatContainer = document.getElementById("chat-messages");
+                                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                                        }
+                                    } else {
+                                        $("#chat-messages").html(`
+                                            <div class="alert alert-warning">
+                                                <p>Không thể hiển thị tin nhắn. Vui lòng tải lại trang.</p>
+                                            </div>
+                                        `);
+                                    }
+                                },
+                                error: function(xhr) {
+                                    let errorMessage = "Không thể tải lịch sử trò chuyện";
+                                    try {
+                                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                                            errorMessage = xhr.responseJSON.message;
+                                        }
+                                    } catch (e) {}
+                                    
+                                    $("#chat-messages").html(`
+                                        <div class="alert alert-danger m-3">
+                                            <h6><i class="fas fa-exclamation-triangle me-2"></i>Lỗi</h6>
+                                            <p>${errorMessage}</p>
+                                            <div class="mt-3">
+                                                <button class="btn btn-sm btn-outline-danger" onclick="loadChatHistory('${adminId}', '${otherUserId}')">
+                                                    <i class="fas fa-sync-alt me-1"></i>Thử lại
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `);
                     }
                 });
             }
-
-            // Add message to chat
-            function addMessageToChat(message) {
-                const isFromAdmin = message.senderId === adminId;
-                const messageHtml = `
-                    <div class="message ${isFromAdmin ? 'message-sent' : 'message-received'}">
-                        <div class="message-content">${message.content}</div>
-                        <small class="message-time">${new Date(message.timestamp).toLocaleTimeString()}</small>
-                    </div>
-                `;
-                $("#chat-messages").append(messageHtml);
-                scrollToBottom();
+                    }, 500);
+                };
             }
-
-            // Send message
-            $("#message-form").on("submit", function (e) {
-                e.preventDefault();
-                
-                if (!currentUserId) return;
-                
-                const content = $("#message-input").val().trim();
-                if (content) {
-                    const message = {
-                        senderId: adminId,
-                        receiverId: currentUserId,
-                        message: content
-                    };
-                    
-                    $.ajax({
-                        url: "/Admin/AdminChat/SendMessage",
-                        type: "POST",
-                        data: message,
-                        success: function (response) {
-                            $("#message-input").val("");
-                        }
-                    });
-                }
-            });
-
-            // Mark messages as read
-            function markAsRead(senderId) {
-                $.ajax({
-                    url: "/Admin/AdminChat/MarkAsRead",
-                    type: "POST",
-                    data: {
-                        senderId: senderId,
-                        receiverId: adminId
-                    },
-                    success: function () {
-                        $(`#unread-${senderId}`).text("").hide();
-                    }
-                });
-            }
-
-            // Increment unread count
-            function incrementUnreadCount(userId) {
-                const badge = $(`#unread-${userId}`);
-                let count = parseInt(badge.text()) || 0;
-                badge.text(count + 1).show();
-                
-                // If user not in list, reload list
-                if (badge.length === 0) {
-                    loadUsersWithChatHistory();
-                }
-            }
-
-            // Scroll chat to bottom
-            function scrollToBottom() {
-                const chatContainer = document.getElementById("chat-messages");
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-
-            // Initialize
-            initializeSignalR();
             
-            // Auto refresh user list every 30 seconds
-            setInterval(loadUsersWithChatHistory, 30000);
+            // Make sure scrollToBottom is available globally
+            if (typeof scrollToBottom === 'undefined') {
+                window.scrollToBottom = function() {
+                    const chatContainer = document.getElementById("chat-messages");
+                    if (chatContainer) {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }
+                };
+            }
+            
+            // Make sure appendMessage is available globally
+            if (typeof appendMessage === 'undefined') {
+                window.appendMessage = function(message) {
+                    console.log("Using temporary appendMessage function", message);
+                };
+            }
+        });
+        
+        // Script to facilitate debugging errors
+        window.addEventListener('error', function(e) {
+            console.error('Global error caught:', e.message, e.filename, e.lineno, e.colno, e.error);
+            if (document.getElementById('error-log') === null) {
+                const errorLog = document.createElement('div');
+                errorLog.id = 'error-log';
+                errorLog.style.cssText = 'position:fixed; bottom:10px; right:10px; background:rgba(255,255,255,0.9); border:1px solid #dc3545; border-radius:5px; padding:10px; z-index:9999; max-width:350px; max-height:200px; overflow:auto; font-size:12px;';
+                errorLog.innerHTML = '<strong>Error Log</strong> <button onclick="this.parentNode.remove()" style="float:right;background:none;border:none;cursor:pointer;">&times;</button><hr style="margin:5px 0">';
+                document.body.appendChild(errorLog);
+            }
+            
+            const errorEntry = document.createElement('div');
+            errorEntry.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${e.message}`;
+            document.getElementById('error-log').appendChild(errorEntry);
+        });
+        
+        // Add AJAX error handler
+        $(document).ajaxError(function(event, jqXHR, settings, error) {
+            console.error('AJAX error:', settings.url, jqXHR.status, error);
+            const errorMsg = `AJAX Error: ${settings.url} (${jqXHR.status})`;
+            if (document.getElementById('error-log')) {
+                const errorEntry = document.createElement('div');
+                errorEntry.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${errorMsg}`;
+                document.getElementById('error-log').appendChild(errorEntry);
+            }
         });
     </script>
 }
-
-<style>
-    .chat-container {
-        height: 400px;
-        overflow-y: auto;
-        padding: 20px;
-        background-color: #f8f9fa;
-    }
-    
-    .message {
-        margin-bottom: 15px;
-        max-width: 80%;
-        clear: both;
-    }
-    
-    .message-sent {
-        float: right;
-        text-align: right;
-    }
-    
-    .message-received {
-        float: left;
-        text-align: left;
-    }
-    
-    .message-content {
-        padding: 10px 15px;
-        border-radius: 18px;
-        display: inline-block;
-        word-break: break-word;
-    }
-    
-    .message-sent .message-content {
-        background-color: #0d6efd;
-        color: white;
-        border-bottom-right-radius: 4px;
-    }
-    
-    .message-received .message-content {
-        background-color: #e9ecef;
-        color: #212529;
-        border-bottom-left-radius: 4px;
-    }
-    
-    .message-time {
-        display: block;
-        font-size: 12px;
-        margin-top: 5px;
-        color: #6c757d;
-    }
-</style> 

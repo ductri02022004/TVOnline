@@ -1,4 +1,4 @@
-namespace TVOnline.Models
+namespace TVOnline.ViewModels.Account
 {
     public class AccountStatusViewModel
     {
@@ -7,4 +7,4 @@ namespace TVOnline.Models
         public bool IsPremium { get; set; }
         public string PremiumUserId { get; set; }
     }
-} 
+}

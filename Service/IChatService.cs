@@ -12,7 +12,8 @@ namespace TVOnline.Service
         Task<int> GetUnreadCountAsync(string userId);
         Task<int> GetUnreadCountFromUserAsync(string senderId, string receiverId);
         Task<List<string>> GetUserIdsWithChatHistoryAsync(string userId);
-        Task<ChatMessage> UpdateMessageAsync(int messageId, string newContent, string userId);
-        Task<bool> DeleteMessageAsync(int messageId, string userId);
+        Task<ChatMessage> UpdateMessageAsync(int messageId, string newContent, string userId, bool isAdmin = false);
+        Task<bool> DeleteMessageAsync(int messageId, string userId, bool forceDelete = false);
+        Task<ChatMessage> GetMessageByIdAsync(int messageId);
     }
 }

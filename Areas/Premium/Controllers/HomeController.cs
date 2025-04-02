@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVOnline.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace TVOnline.Areas.Premium.Controllers
 {
@@ -20,4 +20,4 @@ namespace TVOnline.Areas.Premium.Controllers
             return View();
         }
     }
-} 
+}

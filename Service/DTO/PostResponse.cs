@@ -11,6 +11,7 @@
         public string JobType { get; set; }
         public string? CompanyName { get; set; }
         public string? CompanyLogoURL { get; set; }
+        public string? CompanyLogoUrl => CompanyLogoURL;
         public string Experience { get; set; }
         public string Position { get; set; }
         public string Description { get; set; }

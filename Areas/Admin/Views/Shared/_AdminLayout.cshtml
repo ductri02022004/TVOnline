@@ -1,16 +1,284 @@
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index", "Admin", new { area = "Admin" })">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TVOnline</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --sidebar-bg: #2c3e50;
+            --sidebar-color: #ecf0f1;
+            --sidebar-hover: #34495e;
+            --sidebar-active: #3498db;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-color);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 0;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .sidebar-menu-item {
+            padding: 0;
+            position: relative;
+        }
+
+        .sidebar-menu-link {
+            padding: 0.75rem 1.5rem;
+            color: var(--sidebar-color);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .sidebar-menu-link:hover {
+            background-color: var(--sidebar-hover);
+            color: white;
+        }
+
+        .sidebar-menu-link.active {
+            background-color: var(--sidebar-active);
+            color: white;
+            font-weight: 500;
+        }
+
+        .sidebar-menu-icon {
+            width: 24px;
+            display: inline-flex;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+
+        .badge-unread {
+            position: absolute;
+            right: 12px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        /* Main Content */
+        .admin-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .admin-navbar {
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 0.75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            height: 60px;
+        }
+
+        .admin-navbar .navbar-brand {
+            display: none;
+        }
+
+        /* Responsive */
+        @@media (max-width: 992px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .admin-navbar .navbar-brand {
+                display: block;
+            }
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* Logout form in sidebar */
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logout-form button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--sidebar-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-form button:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .logout-icon {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <a href="@Url.Action("Index", "Admin", new { area = "Admin" })" class="sidebar-brand">
+                <i class="fas fa-tv me-2"></i> TVOnline
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-menu-item">
+                <a href="@Url.Action("Index", "Admin", new { area = "Admin" })" 
+                   class="sidebar-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "Admin" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
+                    <span class="sidebar-menu-icon"><i class="fas fa-home"></i></span>
                     <span>Dashboard</span>
                 </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index", "AdminChat", new { area = "Admin" })">
-                    <i class="fas fa-fw fa-comments"></i>
-                    <span>Chat</span>
+            </div>
+            <div class="sidebar-menu-item">
+                <a href="@Url.Action("ManageUsers", "Admin", new { area = "Admin" })" 
+                   class="sidebar-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "Admin" && ViewContext.RouteData.Values["action"].ToString() == "ManageUsers" ? "active" : "")">
+                    <span class="sidebar-menu-icon"><i class="fas fa-users"></i></span>
+                    <span>Quản lý người dùng</span>
                 </a>
-            </li>
+            </div>
+            <div class="sidebar-menu-item">
+                <a href="@Url.Action("ManagePosts", "Admin", new { area = "Admin" })" 
+                   class="sidebar-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "Admin" && ViewContext.RouteData.Values["action"].ToString() == "ManagePosts" ? "active" : "")">
+                    <span class="sidebar-menu-icon"><i class="fas fa-file-alt"></i></span>
+                    <span>Quản lý bài đăng</span>
+                </a>
+            </div>
+            <div class="sidebar-menu-item">
+                <a href="@Url.Action("Index", "AdminChat", new { area = "Admin" })" 
+                   class="sidebar-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "AdminChat" ? "active" : "")">
+                    <span class="sidebar-menu-icon"><i class="fas fa-comments"></i></span>
+                    <span>Quản lý tin nhắn</span>
+                    @if (ViewBag.UnreadMessagesCount > 0)
+                    {
+                        <span class="badge badge-unread rounded-pill">@ViewBag.UnreadMessagesCount</span>
+                    }
+                </a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <form class="logout-form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="btn">
+                    <span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span>Đăng xuất</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+        <!-- Navbar -->
+        <nav class="admin-navbar d-flex justify-content-between align-items-center">
+            <button class="btn border-0 d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <span class="page-title">@ViewData["Title"]</span>
+            <div class="user-menu">
+                <span>
+                    <i class="fas fa-user-circle me-1"></i>Admin
+                </span>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <main class="p-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SignalR JS -->
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function() {
+            // Toggle sidebar on mobile
+            $('#sidebarToggle').click(function() {
+                $('.admin-sidebar').toggleClass('show');
+            });
             
-            <!-- Divider -->
-            <hr class="sidebar-divider"> 
+            // Hide sidebar when clicking outside on mobile
+            $(document).click(function(event) {
+                if ($(window).width() < 992) {
+                    if (!$(event.target).closest('.admin-sidebar, #sidebarToggle').length) {
+                        $('.admin-sidebar').removeClass('show');
+                    }
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

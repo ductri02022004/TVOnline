@@ -2,13 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Threading.Tasks;
+using System.Security.Claims;
 using TVOnline.Hubs;
 using TVOnline.Models;
 using TVOnline.Service;
 using TVOnline.ViewModels.Chat;
-using Microsoft.Extensions.Logging;
 
 namespace TVOnline.Controllers
 {
@@ -37,42 +35,75 @@ namespace TVOnline.Controllers
         [HttpGet("history")]
         public async Task<IActionResult> GetChatHistory(string userId, string otherUserId)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(currentUserId))
+                return Unauthorized("User not authenticated");
+
+            // If userId is not provided, use current user's ID
+            if (string.IsNullOrEmpty(userId))
+                userId = currentUserId;
+
+            // If otherUserId is not provided, return bad request
+            if (string.IsNullOrEmpty(otherUserId))
+                return BadRequest("Receiver ID is required");
+
             try
             {
-                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(otherUserId))
-                {
-                    _logger.LogWarning("GetChatHistory called with missing user IDs");
-                    return BadRequest("Both user IDs are required");
-                }
-
-                _logger.LogInformation($"Getting chat history between {userId} and {otherUserId}");
+                _logger.LogInformation($"Getting chat history between users {userId} and {otherUserId}");
                 var messages = await _chatService.GetChatHistoryAsync(userId, otherUserId);
-                _logger.LogInformation($"Retrieved {messages.Count()} messages");
                 return Ok(messages);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting chat history between {userId} and {otherUserId}");
-                return StatusCode(500, "An error occurred while retrieving chat history");
+                _logger.LogError(ex, $"Error retrieving chat history: {ex.Message}");
+                return StatusCode(500, new { message = $"An error occurred: {ex.Message}" });
             }
         }
 
-        [HttpPost("send")]
+        [HttpPost("messages")]
         public async Task<IActionResult> SendMessage([FromBody] SendMessageViewModel model)
         {
+            _logger.LogInformation("Receiving message: {SenderId} -> {ReceiverId}, content length: {Length}",
+                model?.SenderId, model?.ReceiverId, model?.Message?.Length ?? 0);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning("Unauthorized attempt to send message");
+                return Unauthorized(new { message = "Bạn cần đăng nhập để gửi tin nhắn" });
+            }
+
+            // If senderId is provided but doesn't match the current user, use the current user's ID
+            if (!string.IsNullOrEmpty(model.SenderId) && model.SenderId != userId)
+            {
+                _logger.LogWarning("SenderId mismatch. Provided: {ProvidedId}, Actual: {ActualId}", model.SenderId, userId);
+                model.SenderId = userId; // Override with the authenticated user's ID
+            }
+            // If senderId is not provided, use the current user's ID
+            else if (string.IsNullOrEmpty(model.SenderId))
+            {
+                model.SenderId = userId;
+            }
+
+            if (string.IsNullOrEmpty(model.Message))
+            {
+                _logger.LogWarning("Empty message content");
+                return BadRequest(new { message = "Nội dung tin nhắn không được để trống" });
+            }
+
+            if (string.IsNullOrEmpty(model.ReceiverId))
+            {
+                _logger.LogWarning("Missing receiver ID");
+                return BadRequest(new { message = "ID người nhận không được để trống" });
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogWarning("SendMessage called with invalid model state");
-                    return BadRequest(ModelState);
-                }
-
-                _logger.LogInformation($"Sending message from {model.SenderId} to {model.ReceiverId}");
-
                 var message = new ChatMessage
                 {
-                    SenderId = model.SenderId,
+                    SenderId = model.SenderId, // This is now guaranteed to be the current user's ID
                     ReceiverId = model.ReceiverId,
                     Content = model.Message,
                     Timestamp = DateTime.Now,
@@ -80,76 +111,133 @@ namespace TVOnline.Controllers
                 };
 
                 var savedMessage = await _chatService.SaveMessageAsync(message);
-                _logger.LogInformation($"Message saved with ID {savedMessage.Id}");
 
                 // Send the message through SignalR
                 await _hubContext.Clients.Group(model.ReceiverId).SendAsync("ReceiveMessage", savedMessage);
                 await _hubContext.Clients.Group(model.SenderId).SendAsync("ReceiveMessage", savedMessage);
-                _logger.LogInformation("Message sent through SignalR");
-
-                // Update unread count for receiver
-                var unreadCount = await _chatService.GetUnreadCountAsync(model.ReceiverId);
-                await _hubContext.Clients.Group(model.ReceiverId).SendAsync("UpdateUnreadCount", unreadCount);
-                _logger.LogInformation($"Updated unread count for {model.ReceiverId}: {unreadCount}");
 
                 return Ok(savedMessage);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error sending message from {model.SenderId} to {model.ReceiverId}");
-                return StatusCode(500, "An error occurred while sending the message");
+                _logger.LogError(ex, "Error sending message: {Message}", ex.Message);
+                return StatusCode(500, new { message = $"Đã xảy ra lỗi khi gửi tin nhắn: {ex.Message}" });
             }
+        }
+
+        [HttpPut("messages/{id}")]
+        public async Task<IActionResult> UpdateMessage(int id, [FromBody] UpdateMessageViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            try
+            {
+                var message = await _chatService.UpdateMessageAsync(id, model.Content, userId, false);
+
+                // Notify users about the update through SignalR
+                await _hubContext.Clients.Group(message.SenderId).SendAsync("MessageUpdated", message);
+                await _hubContext.Clients.Group(message.ReceiverId).SendAsync("MessageUpdated", message);
+
+                return Ok(message);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("You can only edit your own messages");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Message not found");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("messages/{id}")]
+        public async Task<IActionResult> DeleteMessage(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Bạn cần đăng nhập để thực hiện hành động này" });
+
+            try
+            {
+                // Get message to determine receiver before deletion
+                var message = await _chatService.GetMessageByIdAsync(id);
+                if (message == null)
+                    return NotFound(new { message = "Không tìm thấy tin nhắn" });
+
+                if (message.SenderId != userId)
+                    return StatusCode(403, new { message = "Bạn chỉ có thể xóa tin nhắn của mình" });
+
+                var receiverId = message.ReceiverId;
+
+                var success = await _chatService.DeleteMessageAsync(id, userId, false);
+                if (!success)
+                    return NotFound(new { message = "Không tìm thấy tin nhắn" });
+
+                // Notify users about the deletion through SignalR
+                await _hubContext.Clients.Group(userId).SendAsync("MessageDeleted", id);
+                await _hubContext.Clients.Group(receiverId).SendAsync("MessageDeleted", id);
+
+                return Ok(new { message = "Đã xóa tin nhắn thành công" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { message = $"Lỗi quyền truy cập: {ex.Message}" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi xóa tin nhắn {Id}", id);
+                return StatusCode(500, new { message = $"Đã xảy ra lỗi: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("admin-id")]
+        public async Task<IActionResult> GetAdminId()
+        {
+            var admin = await _userManager.GetUsersInRoleAsync("Admin");
+            var adminId = admin.FirstOrDefault()?.Id;
+
+            if (string.IsNullOrEmpty(adminId))
+                return NotFound("Admin not found");
+
+            return Ok(new { adminId });
         }
 
         [HttpPost("mark-as-read")]
         public async Task<IActionResult> MarkAsRead([FromBody] MarkAsReadViewModel model)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogWarning("MarkAsRead called with invalid model state");
-                    return BadRequest(ModelState);
-                }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                _logger.LogInformation($"Marking messages as read from {model.SenderId} to {model.ReceiverId}");
-                await _chatService.MarkAsReadAsync(model.SenderId, model.ReceiverId);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-                // Update unread count
-                var unreadCount = await _chatService.GetUnreadCountAsync(model.ReceiverId);
-                await _hubContext.Clients.Group(model.ReceiverId).SendAsync("UpdateUnreadCount", unreadCount);
-                _logger.LogInformation($"Updated unread count for {model.ReceiverId}: {unreadCount}");
+            if (string.IsNullOrEmpty(model.SenderId))
+                return BadRequest("Sender ID is required.");
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error marking messages as read from {model.SenderId} to {model.ReceiverId}");
-                return StatusCode(500, "An error occurred while marking messages as read");
-            }
+            await _chatService.MarkAsReadAsync(model.SenderId, userId);
+            return Ok();
         }
 
         [HttpGet("unread-count")]
-        public async Task<IActionResult> GetUnreadCount(string userId)
+        public async Task<IActionResult> GetUnreadCount()
         {
-            try
-            {
-                if (string.IsNullOrEmpty(userId))
-                {
-                    _logger.LogWarning("GetUnreadCount called with missing user ID");
-                    return BadRequest("User ID is required");
-                }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                _logger.LogInformation($"Getting unread count for user {userId}");
-                var count = await _chatService.GetUnreadCountAsync(userId);
-                _logger.LogInformation($"Unread count for {userId}: {count}");
-                return Ok(new { count });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error getting unread count for user {userId}");
-                return StatusCode(500, "An error occurred while getting unread count");
-            }
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var count = await _chatService.GetUnreadCountAsync(userId);
+            return Ok(new { count });
         }
 
         [HttpGet("users-with-conversations")]
@@ -194,110 +282,113 @@ namespace TVOnline.Controllers
             }
         }
 
-        [HttpGet("admin-id")]
-        public async Task<IActionResult> GetAdminId()
+        [HttpPost("send-with-attachment")]
+        public async Task<IActionResult> SendMessageWithAttachment([FromForm] SendMessageViewModel model)
         {
+            _logger.LogInformation("Receiving message with attachment: {SenderId} -> {ReceiverId}",
+                model?.SenderId, model?.ReceiverId);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning("Unauthorized attempt to send message with attachment");
+                return Unauthorized(new { message = "Bạn cần đăng nhập để gửi tin nhắn" });
+            }
+
+            // If senderId is provided but doesn't match the current user, use the current user's ID
+            if (!string.IsNullOrEmpty(model.SenderId) && model.SenderId != userId)
+            {
+                _logger.LogWarning("SenderId mismatch. Provided: {ProvidedId}, Actual: {ActualId}", model.SenderId, userId);
+                model.SenderId = userId; // Override with the authenticated user's ID
+            }
+            // If senderId is not provided, use the current user's ID
+            else if (string.IsNullOrEmpty(model.SenderId))
+            {
+                model.SenderId = userId;
+            }
+
+            if (string.IsNullOrEmpty(model.ReceiverId))
+            {
+                _logger.LogWarning("Missing receiver ID in attachment message");
+                return BadRequest(new { message = "ID người nhận không được để trống" });
+            }
+
             try
             {
-                _logger.LogInformation("Getting admin ID");
-                var adminUser = await _userManager.FindByEmailAsync("admin@tvonline.com");
-                if (adminUser == null)
+                string messageContent = model.Message;
+
+                // Handle file attachment if exists
+                if (model.Attachment != null && model.Attachment.Length > 0)
                 {
-                    _logger.LogWarning("Admin user not found");
-                    return NotFound("Admin user not found");
+                    // Validate file size (5MB max)
+                    if (model.Attachment.Length > 5 * 1024 * 1024)
+                    {
+                        return BadRequest(new { message = "Kích thước file quá lớn, giới hạn 5MB" });
+                    }
+
+                    // Get file extension and validate
+                    var extension = Path.GetExtension(model.Attachment.FileName).ToLowerInvariant();
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx" };
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        return BadRequest(new { message = "Định dạng file không được hỗ trợ" });
+                    }
+
+                    // Create unique filename
+                    var uniqueFileName = Guid.NewGuid().ToString() + extension;
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "chat");
+
+                    // Create directory if it doesn't exist
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    // Save file
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.Attachment.CopyToAsync(stream);
+                    }
+
+                    // Update message content to include file link
+                    var fileUrl = $"/uploads/chat/{uniqueFileName}";
+                    var isImage = new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(extension);
+
+                    // If message text is empty, use file name
+                    if (string.IsNullOrEmpty(model.Message))
+                    {
+                        model.Message = model.Attachment.FileName;
+                    }
+
+                    // Append file information to message content
+                    messageContent = model.Message + "\n[FILE]" + fileUrl + "\n" + model.Attachment.FileName + "\n" + extension;
                 }
 
-                _logger.LogInformation($"Admin ID retrieved: {adminUser.Id}");
-                return Ok(new { adminId = adminUser.Id });
+                var message = new ChatMessage
+                {
+                    SenderId = model.SenderId,
+                    ReceiverId = model.ReceiverId,
+                    Content = messageContent,
+                    Timestamp = DateTime.Now,
+                    IsRead = false
+                };
+
+                var savedMessage = await _chatService.SaveMessageAsync(message);
+
+                // Send the message through SignalR
+                await _hubContext.Clients.Group(model.ReceiverId).SendAsync("ReceiveMessage", savedMessage);
+                await _hubContext.Clients.Group(model.SenderId).SendAsync("ReceiveMessage", savedMessage);
+
+                return Ok(savedMessage);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting admin ID");
-                return StatusCode(500, "An error occurred while getting admin ID");
-            }
-        }
-
-        [HttpPut("messages/{id}")]
-        public async Task<IActionResult> UpdateMessage(int id, [FromBody] UpdateMessageViewModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogWarning("UpdateMessage called with invalid model state");
-                    return BadRequest(ModelState);
-                }
-
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    _logger.LogWarning("UpdateMessage called without user ID");
-                    return Unauthorized("User not authenticated");
-                }
-
-                _logger.LogInformation($"Updating message {id} for user {userId}");
-                var updatedMessage = await _chatService.UpdateMessageAsync(id, model.Content, userId);
-
-                // Notify both users about the update
-                await _hubContext.Clients.Group(updatedMessage.SenderId).SendAsync("MessageUpdated", updatedMessage);
-                await _hubContext.Clients.Group(updatedMessage.ReceiverId).SendAsync("MessageUpdated", updatedMessage);
-
-                _logger.LogInformation($"Message {id} updated successfully");
-                return Ok(updatedMessage);
-            }
-            catch (KeyNotFoundException)
-            {
-                _logger.LogWarning($"Message {id} not found");
-                return NotFound("Message not found");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                _logger.LogWarning($"Unauthorized attempt to update message {id}");
-                return Forbid();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error updating message {id}");
-                return StatusCode(500, "An error occurred while updating the message");
-            }
-        }
-
-        [HttpDelete("messages/{id}")]
-        public async Task<IActionResult> DeleteMessage(int id)
-        {
-            try
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    _logger.LogWarning("DeleteMessage called without user ID");
-                    return Unauthorized("User not authenticated");
-                }
-
-                _logger.LogInformation($"Deleting message {id} for user {userId}");
-                var result = await _chatService.DeleteMessageAsync(id, userId);
-
-                if (!result)
-                {
-                    _logger.LogWarning($"Message {id} not found");
-                    return NotFound("Message not found");
-                }
-
-                // Notify users about the deletion
-                await _hubContext.Clients.All.SendAsync("MessageDeleted", id);
-
-                _logger.LogInformation($"Message {id} deleted successfully");
-                return Ok();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                _logger.LogWarning($"Unauthorized attempt to delete message {id}");
-                return Forbid();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error deleting message {id}");
-                return StatusCode(500, "An error occurred while deleting the message");
+                _logger.LogError(ex, "Error sending message with attachment: {Message}", ex.Message);
+                return StatusCode(500, new { message = $"Đã xảy ra lỗi khi gửi tin nhắn: {ex.Message}" });
             }
         }
     }

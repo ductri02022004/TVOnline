@@ -5,6 +5,6 @@ namespace TVOnline.ViewModels.Chat
     public class UpdateMessageViewModel
     {
         [Required]
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }

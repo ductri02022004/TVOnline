@@ -21,5 +21,8 @@ namespace TVOnline.Models
         public DateTime Timestamp { get; set; } = DateTime.Now;
 
         public bool IsRead { get; set; } = false;
+
+        [NotMapped]
+        public bool IsEdited { get; set; } = false;
     }
 }

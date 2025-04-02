@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels.Account {
-    public class ChangePasswordViewModel {
+namespace TVOnline.ViewModels.Account
+{
+    public class ChangePasswordViewModel
+    {
         [EmailAddress]
         public string Email { get; set; }
 
