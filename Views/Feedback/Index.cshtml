@@ -25,6 +25,23 @@
                             <input type="hidden" asp-for="EmployerId" value="@ViewBag.EmployerId" />
                             
                             <div class="mb-3">
+                                <label class="form-label">Đánh giá sao</label>
+                                <div class="rating">
+                                    <input type="radio" name="Rating" value="5" id="star5" class="rating-input">
+                                    <label for="star5" class="rating-label">★</label>
+                                    <input type="radio" name="Rating" value="4" id="star4" class="rating-input">
+                                    <label for="star4" class="rating-label">★</label>
+                                    <input type="radio" name="Rating" value="3" id="star3" class="rating-input">
+                                    <label for="star3" class="rating-label">★</label>
+                                    <input type="radio" name="Rating" value="2" id="star2" class="rating-input">
+                                    <label for="star2" class="rating-label">★</label>
+                                    <input type="radio" name="Rating" value="1" id="star1" class="rating-input">
+                                    <label for="star1" class="rating-label">★</label>
+                                </div>
+                                <span asp-validation-for="Rating" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
                                 <label asp-for="Content" class="form-label">Nội dung phản hồi</label>
                                 <textarea asp-for="Content" class="form-control" rows="5" placeholder="Nhập nội dung phản hồi chi tiết" required></textarea>
                                 <span asp-validation-for="Content" class="text-danger"></span>
@@ -44,4 +61,29 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} 
+}
+
+<style>
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+    .rating-input {
+        display: none;
+    }
+
+    .rating-label {
+        font-size: 30px;
+        color: #ddd;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .rating-input:checked ~ .rating-label,
+    .rating-label:hover,
+    .rating-label:hover ~ .rating-label {
+        color: #ffd700;
+    }
+</style> 
