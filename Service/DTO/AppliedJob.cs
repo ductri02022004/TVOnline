@@ -17,5 +17,6 @@
         public string Requirements { get; set; }
         public string JobType { get; set; }
         public string Location { get; set; }
+        public string EmployerId { get; set; }
     }
 }

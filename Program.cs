@@ -62,6 +62,7 @@ namespace TVOnline {
             services.AddScoped<IEmployerRepository, EmployerRepository>();
             services.AddScoped<IJobsService, JobsService>();
             services.AddScoped<IUserCvService, UserCvService>();
+            services.AddScoped<IPremiumUserService, PremiumUserService>();
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IEmployersService, EmployersService>();
