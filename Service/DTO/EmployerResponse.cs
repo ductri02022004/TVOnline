@@ -13,6 +13,7 @@
         public int CityId { get; set; }
         public string? CityName { get; set; }
         public DateTime CreatedAt { get; set; }
+        public List<PostResponse> Posts { get; set; } = new List<PostResponse>();
     }
 
     public static class EmployerResponseExtension

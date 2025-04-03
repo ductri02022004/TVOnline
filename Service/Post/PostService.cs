@@ -59,6 +59,19 @@ namespace TVOnline.Service.Post
             return true;
         }
 
+        //public async Task<bool> UnsaveJobForJobSeeker(string postId, string userId)
+        //{
+        //    if (string.IsNullOrEmpty(postId) || string.IsNullOrEmpty(userId))
+        //        return false;
+
+        //    var existingSavedJob = await _postRepository.FindSavedJob(postId, userId);
+        //    if (existingSavedJob == null)
+        //        return false;
+
+        //    await _postRepository.DeleteSavedJob(existingSavedJob);
+        //    return true;
+        //}
+
         public async Task<List<SavedJobResponse>> GetSavedPostsForJobSeeker(string userId)
         {
             var savedPosts = await _postRepository.GetSavedPostsForJobSeeker(userId);
@@ -113,6 +126,26 @@ namespace TVOnline.Service.Post
         public async Task<int> CountFilteredPosts(string keyword, int? cityId, decimal? minSalary, decimal? maxSalary, int? minExperience, int? maxExperience)
         {
             return await _postRepository.CountFilteredPosts(keyword, cityId, minSalary, maxSalary, minExperience, maxExperience);
+        }
+
+        public async Task<bool> IsJobSavedByUser(string postId, string userId)
+        {
+            if (string.IsNullOrEmpty(postId) || string.IsNullOrEmpty(userId))
+                return false;
+
+            var savedJob = await _postRepository.FindSavedJob(postId, userId);
+            return savedJob != null;
+        }
+
+        public async Task<List<PostResponse>> GetPostsByEmployer(string employerId)
+        {
+            if (string.IsNullOrEmpty(employerId))
+            {
+                throw new ArgumentNullException(nameof(employerId));
+            }
+
+            var posts = await _postRepository.GetPostsByEmployerId(employerId);
+            return posts.Select(p => p.ToPostResponse()).ToList();
         }
     }
 }
