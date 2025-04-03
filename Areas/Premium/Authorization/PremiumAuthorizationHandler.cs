@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using TVOnline.Services;
-using TVOnline.Areas.Premium;
+using TVOnline.Areas.Premium.Authorization;
 
-namespace TVOnline.Areas.Premium
+namespace TVOnline.Areas.Premium.Authorization
 {
     public class PremiumAuthorizationHandler : AuthorizationHandler<PremiumRequirement>
     {
@@ -18,15 +18,11 @@ namespace TVOnline.Areas.Premium
             PremiumRequirement requirement)
         {
             var userId = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+            
             if (userId != null && await _premiumUserService.IsUserPremium(userId))
             {
                 context.Succeed(requirement);
             }
         }
     }
-
-    public class PremiumRequirement : IAuthorizationRequirement
-    {
-    }
-}
+} 
