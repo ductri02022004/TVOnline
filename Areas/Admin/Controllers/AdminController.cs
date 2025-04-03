@@ -176,9 +176,14 @@ namespace TVOnline.Areas.Admin.Controllers
 
         [HttpGet]
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Route("Admin/Admin/UnlockUser/{id?}")]
         public async Task<IActionResult> UnlockUser(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
