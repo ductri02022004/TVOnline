@@ -174,6 +174,7 @@ namespace TVOnline.Areas.Admin.Controllers
             return RedirectToAction(nameof(ManageUsers));
         }
 
+        [HttpGet]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnlockUser(string id)
