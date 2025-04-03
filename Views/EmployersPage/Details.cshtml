@@ -1,38 +1,250 @@
 ﻿@model TVOnline.Service.DTO.EmployerResponse
 
-<section class="company-detail py-5">
+@{
+    ViewData["Title"] = @Model.CompanyName;
+}
+
+<section class="company-header py-5 bg-light">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8">
-                <div class="card p-4 mb-4">
-                    <div class="d-flex align-items-center mb-4">
-                        <img src="@Model.LogoURL" class="company-logo-xl me-4" alt="Company Logo">
-                        <div>
-                            <h2 class="mb-2">@Model.CompanyName</h2>
-                            <div class="company-meta">
-                                <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@Model.CityName</span>
-                                @* <span><i class="bi bi-globe me-1"></i>www.techsolutions.com</span> *@
+            <div class="col-12">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a asp-controller="EmployersPage" asp-action="Index">Công ty</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@Model.CompanyName</li>
+                    </ol>
+                </nav>
+                
+                <div class="card border-0 rounded-4 shadow-sm overflow-hidden fade-in-up">
+                    <div class="card-body p-0">
+                        <div class="company-cover bg-primary bg-gradient position-relative" style="height: 180px;">
+                            <div class="company-logo-wrapper position-absolute start-4 bottom-0 translate-middle-y">
+                                <img src="@Model.LogoUrl" class="company-logo-xl rounded-circle bg-white p-2 shadow" alt="@Model.CompanyName">
+                            </div>
+                        </div>
+                        <div class="company-info p-4 pt-5 mt-4">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h1 class="mb-2 display-6 fw-bold">@Model.CompanyName</h1>
+                                    <div class="d-flex flex-wrap align-items-center mb-3">
+                                        <span class="badge bg-light text-dark me-2 mb-2">
+                                            <i class="bi bi-geo-alt-fill me-1"></i>@Model.CityName
+                                        </span>
+                                        <span class="badge bg-light text-dark me-2 mb-2">
+                                            <i class="bi bi-building me-1"></i>@Model.Field
+                                        </span>
+                                        <span class="badge bg-light text-dark me-2 mb-2">
+                                            <i class="bi bi-people-fill me-1"></i>50-200 nhân viên
+                                        </span>
+                                        <span class="badge bg-primary-light text-primary mb-2">
+                                            <i class="bi bi-briefcase-fill me-1"></i>5+ Việc làm đang tuyển
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <a href="#jobs" class="btn btn-primary me-2">
+                                        <i class="bi bi-briefcase me-2"></i>Xem việc làm
+                                    </a>
+                                    <button class="btn btn-outline-primary">
+                                        <i class="bi bi-bookmark me-2"></i>Lưu
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="company-overview mb-4">
-                        <h4>Giới thiệu công ty</h4>
-                        <p>@Model.Description</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card p-4 mb-4">
-                    <h4 class="mb-4">Thông tin liên hệ</h4>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
-                            @Model.CityName
-                        </li>
-                    </ul>
-                    <hr>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<section class="company-detail py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 fade-in-up">
+                    <h3 class="card-title mb-4">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>Giới thiệu công ty
+                    </h3>
+                    <div class="company-description">
+                        <p>@Model.Description</p>
+                    </div>
+                    
+                    <div class="company-gallery mt-4">
+                        <h4 class="mb-3">Hình ảnh công ty</h4>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <img src="https://images.unsplash.com/photo-1497215842964-222b430dc094" alt="Office" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c" alt="Team" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2" alt="Culture" class="img-fluid rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 fade-in-up" id="jobs">
+                    <h3 class="card-title mb-4">
+                        <i class="bi bi-briefcase-fill text-primary me-2"></i>Việc làm đang tuyển
+                    </h3>
+                    <div class="job-list">
+                        <div class="job-item p-3 border rounded mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">Senior Web Developer</h5>
+                                    <div class="d-flex flex-wrap">
+                                        <span class="badge bg-light text-dark me-2 mb-2">
+                                            <i class="bi bi-geo-alt me-1"></i>@Model.CityName
+                                        </span>
+                                        <span class="badge bg-light text-dark me-2 mb-2">
+                                            <i class="bi bi-cash me-1"></i>15-25 triệu
+                                        </span>
+                                        <span class="badge bg-light text-dark mb-2">
+                                            <i class="bi bi-briefcase me-1"></i>Toàn thời gian
+                                        </span>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Ứng tuyển</a>
+                            </div>
+                        </div>
+                        <div class="job-item p-3 border rounded mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">UI/UX Designer</h5>
+                                    <div class="d-flex flex-wrap">
+                                        <span class="badge bg-light text-dark me-2 mb-2">
+                                            <i class="bi bi-geo-alt me-1"></i>@Model.CityName
+                                        </span>
+                                        <span class="badge bg-light text-dark me-2 mb-2">
+                                            <i class="bi bi-cash me-1"></i>12-18 triệu
+                                        </span>
+                                        <span class="badge bg-light text-dark mb-2">
+                                            <i class="bi bi-briefcase me-1"></i>Toàn thời gian
+                                        </span>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Ứng tuyển</a>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="#" class="btn btn-link">Xem tất cả việc làm <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 sticky-lg-top company-info-card fade-in-right" style="top: 1rem; z-index: 1;">
+                    <h3 class="card-title mb-4">
+                        <i class="bi bi-telephone-fill text-primary me-2"></i>Thông tin liên hệ
+                    </h3>
+                    <ul class="list-unstyled contact-info">
+                        <li class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-geo-alt-fill text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Địa chỉ</h6>
+                                <p class="mb-0 text-muted">@Model.CityName, Việt Nam</p>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-globe text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Website</h6>
+                                <p class="mb-0"><a href="#" class="text-primary">www.@(Model.CompanyName.ToLower().Replace(" ", "")).com</a></p>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-envelope-fill text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Email</h6>
+                                <p class="mb-0"><a href="mailto:contact@example.com" class="text-primary">hr@example.com</a></p>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-telephone-fill text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Điện thoại</h6>
+                                <p class="mb-0 text-muted">(+84) 28 1234 5678</p>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <h5 class="mb-3">Kết nối với @Model.CompanyName</h5>
+                        <div class="d-flex">
+                            <a href="#" class="social-link me-2">
+                                <div class="icon-box bg-facebook text-white rounded p-2">
+                                    <i class="bi bi-facebook"></i>
+                                </div>
+                            </a>
+                            <a href="#" class="social-link me-2">
+                                <div class="icon-box bg-linkedin text-white rounded p-2">
+                                    <i class="bi bi-linkedin"></i>
+                                </div>
+                            </a>
+                            <a href="#" class="social-link me-2">
+                                <div class="icon-box bg-twitter text-white rounded p-2">
+                                    <i class="bi bi-twitter"></i>
+                                </div>
+                            </a>
+                            <a href="#" class="social-link">
+                                <div class="icon-box bg-instagram text-white rounded p-2">
+                                    <i class="bi bi-instagram"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to job items
+            const jobItems = document.querySelectorAll('.job-item');
+            jobItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.classList.add('shadow-sm');
+                    this.classList.add('border-primary');
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.classList.remove('shadow-sm');
+                    this.classList.remove('border-primary');
+                });
+            });
+            
+            // Add zoom effect to gallery images
+            const galleryImages = document.querySelectorAll('.company-gallery img');
+            galleryImages.forEach(img => {
+                img.addEventListener('mouseenter', function() {
+                    this.classList.add('scale-animation');
+                });
+                img.addEventListener('mouseleave', function() {
+                    this.classList.remove('scale-animation');
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        .bg-facebook { background-color: #3b5998; }
+        .bg-linkedin { background-color: #0077b5; }
+        .bg-twitter { background-color: #1da1f2; }
+        .bg-instagram { background-color: #e1306c; }
+    </style>
+}

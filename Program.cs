@@ -1,22 +1,22 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
 using TVOnline.Helper;
-using CloudinaryDotNet;
+using TVOnline.Hubs;
+using TVOnline.Models;
+using TVOnline.Repository.Employers;
 using TVOnline.Repository.Job;
+using TVOnline.Repository.Location;
 using TVOnline.Repository.Posts;
+using TVOnline.Repository.UserCVs;
+using TVOnline.Service;
+using TVOnline.Service.Employers;
 using TVOnline.Service.Jobs;
+using TVOnline.Service.Location;
 using TVOnline.Service.Post;
 using TVOnline.Service.UserCVs;
 using TVOnline.Service.Vnpay;
-using Microsoft.Extensions.Logging;
-using TVOnline.Repository.Employers;
-using TVOnline.Repository.Location;
-using TVOnline.Service.Employers;
-using TVOnline.Service.Location;
-using TVOnline.Models;
-using TVOnline.Repository.UserCVs;
 using TVOnline.Services;
 
 namespace TVOnline
@@ -68,13 +68,19 @@ namespace TVOnline
             services.AddScoped<IEmployerRepository, EmployerRepository>();
             services.AddScoped<IJobsService, JobsService>();
             services.AddScoped<IUserCvService, UserCvService>();
+            services.AddScoped<IPremiumUserService, PremiumUserService>();
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IEmployersService, EmployersService>();
-            services.AddScoped<IPremiumUserService, PremiumUserService>();
+
+            // Đăng ký ChatService
+            services.AddScoped<IChatService, ChatService>();
+
+            // Thêm SignalR
+            services.AddSignalR();
 
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DatabaseConnection")));
+                options.UseSqlServer(configuration.GetConnectionString("Default")));
 
             services.AddIdentity<Users, IdentityRole>(options =>
             {
@@ -116,9 +122,10 @@ namespace TVOnline
                 options.AddPolicy("AllowAllOrigins",
                     builder =>
                     {
-                        builder.AllowAnyOrigin()
+                        builder.WithOrigins("https://localhost:7216", "http://localhost:5216")
                                .AllowAnyMethod()
-                               .AllowAnyHeader();
+                               .AllowAnyHeader()
+                               .AllowCredentials();
                     });
             });
         }
@@ -160,6 +167,9 @@ namespace TVOnline
                 name: "vnpay",
                 pattern: "payment/{action=Index}/{id?}",
                 defaults: new { controller = "Payment" });
+
+            // Thêm hub endpoints
+            app.MapHub<ChatHub>("/chatHub");
         }
 
         private static async Task SeedDataAsync(WebApplication app)
@@ -180,7 +190,7 @@ namespace TVOnline
 
                 // Then seed users and assign roles
                 await DbSeeder.SeedUsersAsync(userManager);
-                
+
                 // Seed admin user
                 await DbSeeder.SeedAdminUserAsync(userManager);
 

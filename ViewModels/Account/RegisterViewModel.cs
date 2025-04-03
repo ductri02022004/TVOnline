@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels.Account {
-    public class RegisterViewModel {
+namespace TVOnline.ViewModels.Account
+{
+    public class RegisterViewModel
+    {
 
         [Display(Name = "Thành phố")]
         public string? City { get; set; }

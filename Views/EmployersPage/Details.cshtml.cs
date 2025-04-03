@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace TVOnline.Views.Employers
+namespace TVOnline.Views.EmployersPage
 {
     public class DetailsModel : PageModel
     {

@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Net.payOS.Types;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Net.payOS;
-using System;
-using System.Threading.Tasks;
+using Net.payOS.Types;
+using System.Security.Claims;
 using TVOnline.Data;
 using TVOnline.Models;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.SqlClient;
-using System.Linq;
 
 [Route("Payment")]
 [ApiController]
@@ -122,7 +118,7 @@ public class PaymentController : Controller
             // Use direct SQL with parameters to insert payment record
             var sql = @"INSERT INTO Payments (PaymentId, PaymentDate, PaymentMethod, Amount, Status, UserId) 
                        VALUES (@PaymentId, @PaymentDate, @PaymentMethod, @Amount, @Status, @UserId)";
-            
+
             await _context.Database.ExecuteSqlRawAsync(sql,
                 new SqlParameter("@PaymentId", payment.PaymentId),
                 new SqlParameter("@PaymentDate", payment.PaymentDate),
@@ -130,7 +126,7 @@ public class PaymentController : Controller
                 new SqlParameter("@Amount", payment.Amount),
                 new SqlParameter("@Status", payment.Status),
                 new SqlParameter("@UserId", payment.UserId));
-            
+
             // Check if user is already premium
             var existingPremiumUser = await _context.PremiumUsers
                 .FirstOrDefaultAsync(p => p.UserId == userId);

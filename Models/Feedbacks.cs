@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace TVOnline.Models {
-    public class Feedbacks {
+namespace TVOnline.Models
+{
+    public class Feedbacks
+    {
         [Key]
         public string FeedbackId { get; set; } = Guid.NewGuid().ToString();
         public string? Content { get; set; }

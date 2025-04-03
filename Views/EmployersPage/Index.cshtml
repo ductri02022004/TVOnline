@@ -1,87 +1,191 @@
 @model TVOnline.ViewModels.Employer.CompaniesListViewModel
 
 @{
-    ViewData["Title"] = "Company";
+    ViewData["Title"] = "Danh Sách Công Ty";
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
 }
 
-<section class="py-5">
+<section class="employers-banner py-5">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2 class="mb-4">Danh Sách Công Ty Hàng Đầu</h2>
-                <div class="search-filters p-4 bg-light rounded mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" placeholder="Tên công ty...">
+        <div class="row align-items-center">
+            <div class="col-lg-6 fade-in-left">
+                <h1 class="fw-bold mb-3">Khám Phá Công Ty Hàng Đầu</h1>
+                <p class="text-muted mb-0">Tìm hiểu về những công ty tốt nhất và cơ hội việc làm tại đây</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="search-filters p-4 rounded-4 shadow-sm fade-in-right">
+                    <form class="row g-3">
+                        <div class="col-lg-4 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text border-0">
+                                    <i class="bi bi-building text-primary"></i>
+                                </span>
+                                <input type="text" class="form-control border-0 shadow-none" placeholder="Tên công ty...">
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <select class="form-select">
-                                <option selected>Lĩnh vực</option>
-                                <option>Công nghệ</option>
-                                <option>Tài chính</option>
-                                <option>Giáo dục</option>
-                            </select>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text border-0">
+                                    <i class="bi bi-briefcase text-primary"></i>
+                                </span>
+                                <select class="form-select border-0 shadow-none">
+                                    <option selected>Lĩnh vực</option>
+                                    <option>Công nghệ</option>
+                                    <option>Tài chính</option>
+                                    <option>Giáo dục</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <select class="form-select">
-                                <option selected value="">Địa điểm</option>
-                                @foreach (var cities in Model.Cities)
-                                {
-                                    <option value="@cities.Name">@cities.Name</option>
-                                }
-                            </select>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text border-0">
+                                    <i class="bi bi-geo-alt text-primary"></i>
+                                </span>
+                                <select class="form-select border-0 shadow-none">
+                                    <option selected value="">Địa điểm</option>
+                                    @foreach (var cities in Model.Cities)
+                                    {
+                                        <option value="@cities.Name">@cities.Name</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary w-100">Tìm kiếm</button>
+                        <div class="col-lg-2 col-md-2">
+                            <button class="btn btn-primary w-100">
+                                <i class="bi bi-search me-1"></i> Tìm kiếm
+                            </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="row g-4">
+<section class="employers-list py-5">
+    <div class="container">
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Danh Sách Công Ty</h2>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-sort-down me-1"></i> Sắp xếp theo
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Tên (A-Z)</a></li>
+                        <li><a class="dropdown-item" href="#">Tên (Z-A)</a></li>
+                        <li><a class="dropdown-item" href="#">Số lượng việc làm (Cao-Thấp)</a></li>
+                        <li><a class="dropdown-item" href="#">Mới nhất</a></li>
+                    </ul>
+                </div>
+            </div>
+            <p class="text-muted">Hiển thị <span class="fw-medium">@Model.Employers.Count()</span> công ty</p>
+        </div>
+
+        <div class="row g-4 employers-grid">
             @foreach (var employer in Model.Employers)
             {
-                <div class="col-md-6 col-lg-4">
-                    <div class="card company-card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="@employer.LogoURL" class="company-logo-md me-3" alt="Company Logo">
+                <div class="col-lg-4 col-md-6">
+                    <div class="company-card h-100 rounded-4 shadow-sm overflow-hidden fade-in-up position-relative">
+                        <div class="company-card-header p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="company-logo-wrapper me-3">
+                                    <img src="@employer.LogoUrl" class="company-logo-md rounded-circle p-1 shadow-sm" alt="@employer.CompanyName">
+                                </div>
                                 <div>
-                                    <h5 class="card-title mb-1"><a asp-controller="EmployersPage" asp-action="ViewEmployerDetail" asp-route-id="@employer.EmployerId" class="text-decoration-none">@employer.CompanyName</a></h5>
-                                    <span class="text-muted">@employer.Field</span>
+                                    <h5 class="mb-1">
+                                        <a asp-controller="EmployersPage" asp-action="ViewEmployerDetail" asp-route-id="@employer.EmployerId" 
+                                           class="company-name text-decoration-none">
+                                            @employer.CompanyName
+                                        </a>
+                                    </h5>
+                                    <p class="mb-0 text-muted small">@employer.Field</p>
                                 </div>
                             </div>
-                            <p class="card-text">@employer.Description</p>
-                            <div class="company-stats">
-                                <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>@employer.CompanyName</span>
+                        </div>
+                        <div class="company-card-body p-4">
+                            <p class="company-description text-muted mb-3">
+                                @(employer.Description?.Length > 120 ? employer.Description.Substring(0, 120) + "..." : employer.Description)
+                            </p>
+                            <div class="company-stats d-flex flex-wrap">
+                                <span class="badge bg-secondary-light text-secondary me-2 mb-2">
+                                    <i class="bi bi-geo-alt me-1"></i>@employer.CityName
+                                </span>
+                                <span class="badge bg-secondary-light text-secondary me-2 mb-2">
+                                    <i class="bi bi-building me-1"></i>@employer.Field
+                                </span>
+                                <span class="badge bg-primary-light text-primary mb-2">
+                                    <i class="bi bi-briefcase me-1"></i>5+ Việc làm
+                                </span>
                             </div>
                         </div>
+                        <a asp-controller="EmployersPage" asp-action="ViewEmployerDetail" asp-route-id="@employer.EmployerId" 
+                           class="card-link-overlay"></a>
                     </div>
                 </div>
             }
-
         </div>
 
         <nav class="mt-5">
             <ul class="pagination justify-content-center">
                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" href="?page=@(currentPage - 1)">Trước</a>
+                    <a class="page-link rounded-pill" href="?page=@(currentPage - 1)">
+                        <i class="bi bi-chevron-left"></i> Trước
+                    </a>
                 </li>
 
                 @for (int i = 1; i <= totalPages; i++)
                 {
                     <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" href="?page=@i">@i</a>
+                        <a class="page-link rounded-pill" href="?page=@i">@i</a>
                     </li>
                 }
 
                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" href="?page=@(currentPage + 1)">Sau</a>
+                    <a class="page-link rounded-pill" href="?page=@(currentPage + 1)">
+                        Sau <i class="bi bi-chevron-right"></i>
+                    </a>
                 </li>
             </ul>
         </nav>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("EmployersPage/Index scripts loaded");
+            
+            // Chỉ xử lý hover effect của card tại đây, không thêm các event listener khác
+            const companyCards = document.querySelectorAll('.company-card');
+            companyCards.forEach(card => {
+                // Dùng event để cung cấp feedback trực quan
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('shadow');
+                    this.classList.remove('shadow-sm');
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('shadow');
+                    this.classList.add('shadow-sm');
+                });
+                
+                // Vô hiệu hóa mọi event mặc định cho card-link-overlay để đảm bảo hoạt động đúng
+                const overlay = card.querySelector('.card-link-overlay');
+                if (overlay) {
+                    overlay.addEventListener('mouseenter', function(e) {
+                        // Thay đổi con trỏ chuột để biểu thị vùng có thể click
+                        this.style.cursor = 'pointer';
+                    });
+                }
+            });
+            
+            // Staggered animation cho company cards
+            const companyItems = document.querySelectorAll('.employers-grid > div');
+            companyItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+}

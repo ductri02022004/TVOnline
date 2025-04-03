@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels.Account {
-    public class LoginViewModel {
+namespace TVOnline.ViewModels.Account
+{
+    public class LoginViewModel
+    {
         [Required(ErrorMessage = " Yêu cầu nhập Email ")]
         [Display(Name = "Email")]
         public string UserName { get; set; }

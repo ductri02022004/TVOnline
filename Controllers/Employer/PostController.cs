@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using TVOnline.Data;
-using TVOnline.ViewModels.Post;
 using TVOnline.Models;
+using TVOnline.ViewModels.Post;
 
 namespace TVOnline.Controllers.Employer
 {
@@ -53,20 +52,20 @@ namespace TVOnline.Controllers.Employer
                         Text = c.CityName
                     })
                     .ToListAsync(),
-                JobTypes = new List<SelectListItem>
-                {
+                JobTypes =
+                [
                     new SelectListItem { Value = "Full-time", Text = "Toàn thời gian" },
                     new SelectListItem { Value = "Part-time", Text = "Bán thời gian" },
                     new SelectListItem { Value = "Freelance", Text = "Freelance" },
                     new SelectListItem { Value = "Intern", Text = "Thực tập sinh" }
-                },
-                ExperienceLevels = new List<SelectListItem>
-                {
+                ],
+                ExperienceLevels =
+                [
                     new SelectListItem { Value = "Fresher", Text = "Mới tốt nghiệp" },
                     new SelectListItem { Value = "Junior", Text = "1-2 năm kinh nghiệm" },
                     new SelectListItem { Value = "Middle", Text = "3-5 năm kinh nghiệm" },
                     new SelectListItem { Value = "Senior", Text = "Trên 5 năm kinh nghiệm" }
-                }
+                ]
             };
 
             return View(viewModel);
@@ -90,7 +89,7 @@ namespace TVOnline.Controllers.Employer
                 {
                     return RedirectToAction("Register", "EmployerRegistration");
                 }
-                
+
                 var post = new Post
                 {
                     PostId = Guid.NewGuid().ToString(),
@@ -129,20 +128,20 @@ namespace TVOnline.Controllers.Employer
                     Text = c.CityName
                 })
                 .ToListAsync();
-            model.JobTypes = new List<SelectListItem>
-            {
+            model.JobTypes =
+            [
                 new SelectListItem { Value = "Full-time", Text = "Toàn thời gian" },
                 new SelectListItem { Value = "Part-time", Text = "Bán thời gian" },
                 new SelectListItem { Value = "Freelance", Text = "Freelance" },
                 new SelectListItem { Value = "Intern", Text = "Thực tập sinh" }
-            };
-            model.ExperienceLevels = new List<SelectListItem>
-            {
+            ];
+            model.ExperienceLevels =
+            [
                 new SelectListItem { Value = "Fresher", Text = "Mới tốt nghiệp" },
                 new SelectListItem { Value = "Junior", Text = "1-2 năm kinh nghiệm" },
                 new SelectListItem { Value = "Middle", Text = "3-5 năm kinh nghiệm" },
                 new SelectListItem { Value = "Senior", Text = "Trên 5 năm kinh nghiệm" }
-            };
+            ];
 
             return View(model);
         }
@@ -198,20 +197,20 @@ namespace TVOnline.Controllers.Employer
                         Selected = c.CityId == post.CityId
                     })
                     .ToListAsync(),
-                JobTypes = new List<SelectListItem>
-                {
+                JobTypes =
+                [
                     new SelectListItem { Value = "Full-time", Text = "Toàn thời gian", Selected = post.JobType == "Full-time" },
                     new SelectListItem { Value = "Part-time", Text = "Bán thời gian", Selected = post.JobType == "Part-time" },
                     new SelectListItem { Value = "Freelance", Text = "Freelance", Selected = post.JobType == "Freelance" },
                     new SelectListItem { Value = "Intern", Text = "Thực tập sinh", Selected = post.JobType == "Intern" }
-                },
-                ExperienceLevels = new List<SelectListItem>
-                {
+                ],
+                ExperienceLevels =
+                [
                     new SelectListItem { Value = "Fresher", Text = "Mới tốt nghiệp", Selected = post.Experience == "Fresher" },
                     new SelectListItem { Value = "Junior", Text = "1-2 năm kinh nghiệm", Selected = post.Experience == "Junior" },
                     new SelectListItem { Value = "Middle", Text = "3-5 năm kinh nghiệm", Selected = post.Experience == "Middle" },
                     new SelectListItem { Value = "Senior", Text = "Trên 5 năm kinh nghiệm", Selected = post.Experience == "Senior" }
-                }
+                ]
             };
 
             return View(viewModel);
@@ -287,20 +286,20 @@ namespace TVOnline.Controllers.Employer
                     Selected = c.CityId == model.CityId
                 })
                 .ToListAsync();
-            model.JobTypes = new List<SelectListItem>
-            {
+            model.JobTypes =
+            [
                 new SelectListItem { Value = "Full-time", Text = "Toàn thời gian", Selected = model.JobType == "Full-time" },
                 new SelectListItem { Value = "Part-time", Text = "Bán thời gian", Selected = model.JobType == "Part-time" },
                 new SelectListItem { Value = "Freelance", Text = "Freelance", Selected = model.JobType == "Freelance" },
                 new SelectListItem { Value = "Intern", Text = "Thực tập sinh", Selected = model.JobType == "Intern" }
-            };
-            model.ExperienceLevels = new List<SelectListItem>
-            {
+            ];
+            model.ExperienceLevels =
+            [
                 new SelectListItem { Value = "Fresher", Text = "Mới tốt nghiệp", Selected = model.Experience == "Fresher" },
                 new SelectListItem { Value = "Junior", Text = "1-2 năm kinh nghiệm", Selected = model.Experience == "Junior" },
                 new SelectListItem { Value = "Middle", Text = "3-5 năm kinh nghiệm", Selected = model.Experience == "Middle" },
                 new SelectListItem { Value = "Senior", Text = "Trên 5 năm kinh nghiệm", Selected = model.Experience == "Senior" }
-            };
+            ];
 
             return View(model);
         }
@@ -331,12 +330,7 @@ namespace TVOnline.Controllers.Employer
                 .Include(p => p.Employer)
                 .FirstOrDefaultAsync(p => p.PostId == id && p.EmployerId == employer.EmployerId);
 
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            return View(post);
+            return post == null ? NotFound() : View(post);
         }
     }
 }

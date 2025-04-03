@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace TVOnline.Models {
-    public class PremiumUser {
+namespace TVOnline.Models
+{
+    public class PremiumUser
+    {
         [Key]
         public string PremiumUserId { get; set; }
 

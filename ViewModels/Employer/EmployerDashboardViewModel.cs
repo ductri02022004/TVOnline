@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace TVOnline.ViewModels.Employer
 {
     public class EmployerDashboardViewModel
@@ -34,7 +31,7 @@ namespace TVOnline.ViewModels.Employer
         public string Status { get; set; }
         public string CvId { get; set; }
     }
-    
+
     public class ApplicationStatisticsViewModel
     {
         public int TotalApplications { get; set; }

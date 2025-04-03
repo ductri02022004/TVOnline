@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore.Migrations;
-using static TVOnline.Models.Location;
 
 namespace TVOnline.Data.Migrations
 {

@@ -18,7 +18,10 @@
             return (CvId == userCvResponse.CvId) && (UserId == userCvResponse.UserId) && (CvFileUrl == userCvResponse.CvFileUrl) && (CvStatus == userCvResponse.CvStatus) && (PostId == userCvResponse.PostId);
         }
 
-        public override int GetHashCode() => base.GetHashCode();
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     public static class UserCvResponseExtension

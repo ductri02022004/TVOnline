@@ -16,16 +16,18 @@ namespace TVOnline.Helper
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             var emailMessage = new MimeMessage();
-            
+
             emailMessage.From.Add(new MailboxAddress(
                 _configuration["EmailSettings:SenderName"],
                 _configuration["EmailSettings:SenderEmail"]));
-            
+
             emailMessage.To.Add(MailboxAddress.Parse(email));
             emailMessage.Subject = subject;
 
-            var builder = new BodyBuilder();
-            builder.HtmlBody = htmlMessage;
+            var builder = new BodyBuilder
+            {
+                HtmlBody = htmlMessage
+            };
             emailMessage.Body = builder.ToMessageBody();
 
             using (var client = new SmtpClient())

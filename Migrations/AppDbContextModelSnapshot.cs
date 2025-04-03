@@ -155,6 +155,37 @@ namespace TVOnline.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TVOnline.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("TVOnline.Models.Employers", b =>
                 {
                     b.Property<string>("EmployerId")
@@ -182,7 +213,7 @@ namespace TVOnline.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LogoURL")
+                    b.Property<string>("LogoUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
@@ -459,7 +490,7 @@ namespace TVOnline.Migrations
                     b.Property<string>("PremiumUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("TemplateFileURL")
+                    b.Property<string>("TemplateFileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TemplateName")
@@ -472,9 +503,9 @@ namespace TVOnline.Migrations
                     b.ToTable("Templates");
                 });
 
-            modelBuilder.Entity("TVOnline.Models.UserCV", b =>
+            modelBuilder.Entity("TVOnline.Models.UserCv", b =>
                 {
-                    b.Property<string>("CvID")
+                    b.Property<string>("CvId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
@@ -485,10 +516,10 @@ namespace TVOnline.Migrations
                     b.Property<DateTime>("AppliedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CVFileUrl")
+                    b.Property<string>("CvFileUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CVStatus")
+                    b.Property<string>("CvStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployerNotes")
@@ -500,7 +531,7 @@ namespace TVOnline.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("CvID");
+                    b.HasKey("CvId");
 
                     b.HasIndex("PostId");
 
@@ -797,7 +828,7 @@ namespace TVOnline.Migrations
                     b.Navigation("PremiumUser");
                 });
 
-            modelBuilder.Entity("TVOnline.Models.UserCV", b =>
+            modelBuilder.Entity("TVOnline.Models.UserCv", b =>
                 {
                     b.HasOne("TVOnline.Models.Post", "Post")
                         .WithMany()
