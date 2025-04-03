@@ -1,0 +1,87 @@
+@model TVOnline.Areas.Admin.Models.UserRolesViewModel
+
+@{
+    ViewData["Title"] = "Quản lý quyền người dùng";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Quản lý quyền người dùng</h6>
+                    <a asp-action="UserDetails" asp-route-id="@Model.UserId" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Quay lại
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Thông tin người dùng</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Tên đăng nhập:</strong> @Model.UserName</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Email:</strong> @Model.Email</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="UpdateRoles" method="post">
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="UserName" />
+                        <input type="hidden" asp-for="Email" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-4">
+                            <h5>Quyền hạn</h5>
+                            <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Quyền</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Roles.Count; i++)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">@Model.Roles[i].RoleName</h6>
+                                                        </div>
+                                                    </div>
+                                                    <input type="hidden" asp-for="@Model.Roles[i].RoleId" />
+                                                    <input type="hidden" asp-for="@Model.Roles[i].RoleName" />
+                                                </td>
+                                                <td>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" asp-for="@Model.Roles[i].IsSelected">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

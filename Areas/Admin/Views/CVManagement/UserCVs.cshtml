@@ -1,0 +1,156 @@
+@model List<TVOnline.Areas.Admin.Models.UserCVDetailViewModel>
+@{
+    ViewData["Title"] = "CV của " + ViewBag.UserName;
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .table th {
+        color: #333 !important;
+        font-weight: 600 !important;
+    }
+    .table td {
+        color: #333 !important;
+    }
+    .text-secondary {
+        color: #333 !important;
+    }
+    .text-muted {
+        color: #555 !important;
+    }
+    .card-header h6 {
+        color: #333 !important;
+        font-weight: 600;
+    }
+    .badge {
+        font-weight: 600;
+    }
+    .badge-pending {
+        background-color: #f5c71a;
+        color: #333;
+    }
+    .badge-approved {
+        background-color: #2dce89;
+    }
+    .badge-rejected {
+        background-color: #f5365c;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="mb-0 opacity-9">CV của @ViewBag.UserName</h4>
+                            <p class="opacity-8 mb-0">Danh sách CV đã nộp</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="@Url.Action("Index", "CVManagement", new { area = "Admin" })" class="btn btn-outline-light">
+                                <i class="fas fa-arrow-left me-1"></i> Quay lại
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <h6>Danh sách CV</h6>
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">CV ID</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Vị trí ứng tuyển</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày nộp</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng thái</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <p class="text-muted mb-0">Người dùng chưa nộp CV nào</p>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var cv in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">@cv.CvID.Substring(0, 8)...</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">@cv.PostTitle</p>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <p class="text-xs font-weight-bold mb-0">@cv.AppliedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                @{
+                                                    string badgeClass = "badge-pending";
+                                                    if (cv.CVStatus == "Approved")
+                                                    {
+                                                        badgeClass = "badge-approved";
+                                                    }
+                                                    else if (cv.CVStatus == "Rejected")
+                                                    {
+                                                        badgeClass = "badge-rejected";
+                                                    }
+                                                }
+                                                <span class="badge @badgeClass">@(string.IsNullOrEmpty(cv.CVStatus) ? "Đang chờ" : cv.CVStatus)</span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("CVDetails", "CVManagement", new { area = "Admin", cvId = cv.CvID })" class="btn btn-sm btn-info">
+                                                        <i class="fas fa-eye me-1"></i> Chi tiết
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.table').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+                }
+            });
+        });
+    </script>
+}

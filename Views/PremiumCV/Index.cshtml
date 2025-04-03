@@ -1,0 +1,91 @@
+@model IEnumerable<TVOnline.Models.CVTemplate>
+
+@{
+    ViewData["Title"] = "Mẫu CV Premium";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Mẫu CV Premium</h1>
+            <p class="lead text-muted">
+                Chào mừng bạn đến với bộ sưu tập mẫu CV cao cấp dành riêng cho thành viên Premium.
+                Các mẫu CV này được thiết kế chuyên nghiệp để giúp bạn nổi bật trong mắt nhà tuyển dụng.
+            </p>
+        </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-end">
+            <div class="badge bg-warning text-dark p-2">
+                <i class="bi bi-star-fill me-1"></i> Đặc quyền thành viên Premium
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        @if (Model.Any())
+        {
+            foreach (var template in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="position-relative">
+                            @if (!string.IsNullOrEmpty(template.ThumbnailPath))
+                            {
+                                <img src="@template.ThumbnailPath" class="card-img-top" alt="@template.Name" style="height: 200px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="bg-light text-center py-5">
+                                    <i class="bi bi-file-earmark-text" style="font-size: 5rem;"></i>
+                                </div>
+                            }
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-success">Premium</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@template.Name</h5>
+                            <p class="card-text text-muted">@(template.Description.Length > 100 ? template.Description.Substring(0, 100) + "..." : template.Description)</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <div class="d-flex justify-content-between">
+                                <a asp-action="Preview" asp-route-id="@template.TemplateId" class="btn btn-outline-primary">
+                                    <i class="bi bi-eye me-1"></i> Xem trước
+                                </a>
+                                <a asp-action="Create" asp-route-id="@template.TemplateId" class="btn btn-primary">
+                                    <i class="bi bi-pencil-square me-1"></i> Tạo CV
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i> Hiện tại chưa có mẫu CV nào. Vui lòng quay lại sau.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Hiệu ứng hover cho card
+            $('.card').hover(
+                function() {
+                    $(this).addClass('shadow');
+                    $(this).css('transform', 'translateY(-5px)');
+                    $(this).css('transition', 'all 0.3s ease');
+                },
+                function() {
+                    $(this).removeClass('shadow');
+                    $(this).css('transform', 'translateY(0)');
+                }
+            );
+        });
+    </script>
+}

@@ -61,7 +61,7 @@ namespace TVOnline.Controllers.Account
                     if (user != null && await userManager.IsInRoleAsync(user, "Admin"))
                     {
                         // Nếu là Admin, chuyển hướng đến trang quản trị
-                        return RedirectToAction("Index", "Admin", new { area = "Admin" });
+                        return RedirectToAction("Index", "AdminDashboard", new { area = "Admin" });
                     }
 
                     // Nếu không phải Admin, chuyển hướng đến trang chủ như bình thường

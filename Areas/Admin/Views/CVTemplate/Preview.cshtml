@@ -1,0 +1,146 @@
+@model TVOnline.Models.CVTemplate
+
+@{
+    ViewData["Title"] = "Xem trước mẫu CV";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xem trước: @Model.Name - TVOnline</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .preview-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .preview-header {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .preview-actions a {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        
+        .preview-actions a:hover {
+            background-color: #0069d9;
+        }
+        
+        .preview-actions a.secondary {
+            background-color: #6c757d;
+        }
+        
+        .preview-actions a.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .preview-frame {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 30px;
+            position: relative;
+        }
+        
+        .preview-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(0,0,0,0.05);
+            pointer-events: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        
+        /* Mẫu CSS từ template */
+        #cv-template {
+            position: relative;
+            z-index: 5;
+        }
+        
+        /* CSS của mẫu CV */
+        @Html.Raw(Model.CssContent)
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <div class="preview-header">
+            <div class="preview-title">
+                Xem trước: @Model.Name
+            </div>
+            <div class="preview-actions">
+                <a href="javascript:window.print();" class="print-btn">
+                    <i class="fas fa-print"></i> In CV
+                </a>
+                <a href="@Url.Action("Edit", "CVTemplate", new { id = Model.TemplateId, area = "Admin" })" class="secondary">
+                    <i class="fas fa-edit"></i> Chỉnh sửa
+                </a>
+                <a href="@Url.Action("Index", "CVTemplate", new { area = "Admin" })" class="secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+        
+        <div class="preview-frame">
+            <div class="preview-watermark">TVONLINE PREVIEW</div>
+            
+            <div id="cv-template">
+                @Html.Raw(Model.HtmlContent
+                    .Replace("{{Name}}", "Nguyễn Văn A")
+                    .Replace("{{Email}}", "nguyenvana@example.com")
+                    .Replace("{{Phone}}", "0912 345 678")
+                    .Replace("{{Address}}", "123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh")
+                    .Replace("{{JobTitle}}", "Kỹ sư phần mềm")
+                    .Replace("{{Summary}}", "Kỹ sư phần mềm với hơn 5 năm kinh nghiệm phát triển ứng dụng web và di động. Có kiến thức sâu rộng về các công nghệ hiện đại và khả năng làm việc nhóm tốt.")
+                    .Replace("{{Education}}", "<div class='education-item'><h4>Đại học Bách Khoa Hà Nội</h4><p>Kỹ sư Công nghệ thông tin, 2015-2019</p><p>GPA: 3.8/4.0</p></div>")
+                    .Replace("{{Experience}}", "<div class='experience-item'><h4>Công ty ABC Technology</h4><p>Kỹ sư phần mềm, 2019-Hiện tại</p><ul><li>Phát triển và bảo trì các ứng dụng web sử dụng ASP.NET Core</li><li>Tối ưu hóa hiệu suất cơ sở dữ liệu</li><li>Làm việc trong môi trường Agile/Scrum</li></ul></div><div class='experience-item'><h4>Công ty XYZ Solutions</h4><p>Thực tập sinh, 2018-2019</p><ul><li>Hỗ trợ phát triển các tính năng mới</li><li>Sửa lỗi và cải thiện UI/UX</li></ul></div>")
+                    .Replace("{{Skills}}", "<ul><li>C#, ASP.NET Core, Entity Framework</li><li>JavaScript, React, Angular</li><li>SQL Server, MongoDB</li><li>Git, CI/CD</li><li>Agile/Scrum</li></ul>")
+                    .Replace("{{Languages}}", "<ul><li>Tiếng Việt (Bản ngữ)</li><li>Tiếng Anh (Thành thạo)</li></ul>")
+                    .Replace("{{Certificates}}", "<ul><li>Microsoft Certified: Azure Developer Associate (2021)</li><li>AWS Certified Developer – Associate (2020)</li></ul>")
+                    .Replace("{{Projects}}", "<div class='project-item'><h4>Hệ thống quản lý nhân sự</h4><p>Phát triển hệ thống quản lý nhân sự toàn diện cho doanh nghiệp lớn, sử dụng ASP.NET Core và React.</p></div><div class='project-item'><h4>Ứng dụng di động thương mại điện tử</h4><p>Xây dựng ứng dụng di động cho nền tảng thương mại điện tử sử dụng React Native và Node.js.</p></div>")
+                    .Replace("{{Interests}}", "<ul><li>Đọc sách về công nghệ</li><li>Chơi cờ vua</li><li>Du lịch khám phá</li></ul>")
+                )
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

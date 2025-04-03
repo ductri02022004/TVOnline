@@ -1,0 +1,271 @@
+@model TVOnline.ViewModels.CVEditorViewModel
+
+@{
+    ViewData["Title"] = "Tạo CV với mẫu " + Model.TemplateName;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Thông tin CV</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="TemplateId" />
+                        <input type="hidden" asp-for="TemplateName" />
+                        <input type="hidden" asp-for="HtmlContent" />
+                        <input type="hidden" asp-for="CssContent" />
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <input asp-for="Phone" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="JobTitle" class="form-label"></label>
+                            <input asp-for="JobTitle" class="form-control" />
+                            <span asp-validation-for="JobTitle" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Summary" class="form-label"></label>
+                            <textarea asp-for="Summary" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Summary" class="text-danger"></span>
+                        </div>
+
+                        <div class="accordion mb-3" id="cvAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingEducation">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducation" aria-expanded="false" aria-controls="collapseEducation">
+                                        <i class="bi bi-mortarboard me-2"></i> Học vấn
+                                    </button>
+                                </h2>
+                                <div id="collapseEducation" class="accordion-collapse collapse" aria-labelledby="headingEducation" data-bs-parent="#cvAccordion">
+                                    <div class="accordion-body">
+                                        <textarea asp-for="Education" class="form-control" rows="5" placeholder="Ví dụ:
+<div class='education-item'>
+    <h4>Đại học ABC</h4>
+    <p>Cử nhân Công nghệ thông tin, 2018-2022</p>
+    <p>GPA: 3.5/4.0</p>
+</div>"></textarea>
+                                        <small class="form-text text-muted">Sử dụng HTML để định dạng nội dung.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingExperience">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExperience" aria-expanded="false" aria-controls="collapseExperience">
+                                        <i class="bi bi-briefcase me-2"></i> Kinh nghiệm làm việc
+                                    </button>
+                                </h2>
+                                <div id="collapseExperience" class="accordion-collapse collapse" aria-labelledby="headingExperience" data-bs-parent="#cvAccordion">
+                                    <div class="accordion-body">
+                                        <textarea asp-for="Experience" class="form-control" rows="5" placeholder="Ví dụ:
+<div class='experience-item'>
+    <h4>Công ty XYZ</h4>
+    <p>Lập trình viên, 2022-Hiện tại</p>
+    <ul>
+        <li>Phát triển ứng dụng web</li>
+        <li>Tối ưu hóa cơ sở dữ liệu</li>
+    </ul>
+</div>"></textarea>
+                                        <small class="form-text text-muted">Sử dụng HTML để định dạng nội dung.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingSkills">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSkills" aria-expanded="false" aria-controls="collapseSkills">
+                                        <i class="bi bi-tools me-2"></i> Kỹ năng
+                                    </button>
+                                </h2>
+                                <div id="collapseSkills" class="accordion-collapse collapse" aria-labelledby="headingSkills" data-bs-parent="#cvAccordion">
+                                    <div class="accordion-body">
+                                        <textarea asp-for="Skills" class="form-control" rows="5" placeholder="Ví dụ:
+<ul>
+    <li>HTML, CSS, JavaScript</li>
+    <li>C#, ASP.NET Core</li>
+    <li>SQL Server</li>
+</ul>"></textarea>
+                                        <small class="form-text text-muted">Sử dụng HTML để định dạng nội dung.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingLanguages">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLanguages" aria-expanded="false" aria-controls="collapseLanguages">
+                                        <i class="bi bi-translate me-2"></i> Ngôn ngữ
+                                    </button>
+                                </h2>
+                                <div id="collapseLanguages" class="accordion-collapse collapse" aria-labelledby="headingLanguages" data-bs-parent="#cvAccordion">
+                                    <div class="accordion-body">
+                                        <textarea asp-for="Languages" class="form-control" rows="5" placeholder="Ví dụ:
+<ul>
+    <li>Tiếng Việt (Bản ngữ)</li>
+    <li>Tiếng Anh (Trình độ B2)</li>
+</ul>"></textarea>
+                                        <small class="form-text text-muted">Sử dụng HTML để định dạng nội dung.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingCertificates">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCertificates" aria-expanded="false" aria-controls="collapseCertificates">
+                                        <i class="bi bi-award me-2"></i> Chứng chỉ
+                                    </button>
+                                </h2>
+                                <div id="collapseCertificates" class="accordion-collapse collapse" aria-labelledby="headingCertificates" data-bs-parent="#cvAccordion">
+                                    <div class="accordion-body">
+                                        <textarea asp-for="Certificates" class="form-control" rows="5" placeholder="Ví dụ:
+<ul>
+    <li>Microsoft Certified: Azure Developer Associate (2022)</li>
+    <li>TOEIC 750 (2021)</li>
+</ul>"></textarea>
+                                        <small class="form-text text-muted">Sử dụng HTML để định dạng nội dung.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingProjects">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProjects" aria-expanded="false" aria-controls="collapseProjects">
+                                        <i class="bi bi-kanban me-2"></i> Dự án
+                                    </button>
+                                </h2>
+                                <div id="collapseProjects" class="accordion-collapse collapse" aria-labelledby="headingProjects" data-bs-parent="#cvAccordion">
+                                    <div class="accordion-body">
+                                        <textarea asp-for="Projects" class="form-control" rows="5" placeholder="Ví dụ:
+<div class='project-item'>
+    <h4>Website thương mại điện tử</h4>
+    <p>Phát triển website bán hàng sử dụng ASP.NET Core và Angular</p>
+</div>"></textarea>
+                                        <small class="form-text text-muted">Sử dụng HTML để định dạng nội dung.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingInterests">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInterests" aria-expanded="false" aria-controls="collapseInterests">
+                                        <i class="bi bi-heart me-2"></i> Sở thích
+                                    </button>
+                                </h2>
+                                <div id="collapseInterests" class="accordion-collapse collapse" aria-labelledby="headingInterests" data-bs-parent="#cvAccordion">
+                                    <div class="accordion-body">
+                                        <textarea asp-for="Interests" class="form-control" rows="5" placeholder="Ví dụ:
+<ul>
+    <li>Đọc sách</li>
+    <li>Chơi thể thao</li>
+    <li>Du lịch</li>
+</ul>"></textarea>
+                                        <small class="form-text text-muted">Sử dụng HTML để định dạng nội dung.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i> Lưu và tạo CV
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Xem trước CV</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="cv-preview-container" style="height: 800px; overflow-y: auto; padding: 20px;">
+                        <div class="preview-watermark" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80px; color: rgba(0,0,0,0.05); pointer-events: none; z-index: 10; white-space: nowrap;">
+                            TVONLINE PREVIEW
+                        </div>
+                        <div id="cv-preview" style="position: relative; z-index: 5;">
+                            <!-- CV Preview will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Lưu trữ template HTML và CSS
+            const templateHtml = `@Html.Raw(Model.HtmlContent.Replace("\"", "\\\""))`;
+            const templateCss = `@Html.Raw(Model.CssContent.Replace("\"", "\\\""))`;
+            
+            // Hàm cập nhật xem trước CV
+            function updatePreview() {
+                let previewHtml = templateHtml;
+                
+                // Thay thế các biến trong template bằng giá trị từ form
+                previewHtml = previewHtml
+                    .replace(/{{Name}}/g, $("#FullName").val() || "Họ và tên")
+                    .replace(/{{Email}}/g, $("#Email").val() || "email@example.com")
+                    .replace(/{{Phone}}/g, $("#Phone").val() || "0123456789")
+                    .replace(/{{Address}}/g, $("#Address").val() || "Địa chỉ của bạn")
+                    .replace(/{{JobTitle}}/g, $("#JobTitle").val() || "Vị trí ứng tuyển")
+                    .replace(/{{Summary}}/g, $("#Summary").val() || "Tóm tắt bản thân")
+                    .replace(/{{Education}}/g, $("#Education").val() || "")
+                    .replace(/{{Experience}}/g, $("#Experience").val() || "")
+                    .replace(/{{Skills}}/g, $("#Skills").val() || "")
+                    .replace(/{{Languages}}/g, $("#Languages").val() || "")
+                    .replace(/{{Certificates}}/g, $("#Certificates").val() || "")
+                    .replace(/{{Projects}}/g, $("#Projects").val() || "")
+                    .replace(/{{Interests}}/g, $("#Interests").val() || "");
+                
+                // Cập nhật xem trước
+                $("#cv-preview").html(previewHtml);
+                
+                // Thêm CSS
+                if ($("#cv-template-style").length === 0) {
+                    $("head").append(`<style id="cv-template-style">${templateCss}</style>`);
+                }
+            }
+            
+            // Cập nhật xem trước khi trang tải xong
+            updatePreview();
+            
+            // Cập nhật xem trước khi người dùng thay đổi bất kỳ trường nào
+            $("input, textarea").on("input", function() {
+                updatePreview();
+            });
+        });
+    </script>
+}

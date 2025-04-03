@@ -10,7 +10,16 @@
     {
         var user = await UserManager.GetUserAsync(User);
         var isPremium = await PremiumUserService.IsUserPremium(user.Id);
-
+        
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">
+                    <i class="bi bi-briefcase"></i> Trang chủ Admin
+                </a>
+            </li>
+        }
+        
         <li class="nav-item">
             <a class="nav-link text-dark" asp-controller="Home" asp-action="BecomeEmployer">
                 <i class="bi bi-briefcase"></i> Trở thành nhà tuyển dụng
@@ -22,10 +31,15 @@
                 <img src="~/images/account-bg.jpg" alt="User Avatar" class="rounded-circle" width="32" height="32">
                 <span class="ms-2">@User.Identity.Name</span>
             </a>
+
             <ul class="dropdown-menu user-dropdown-menu" aria-labelledby="userDropdown">
                 <li class="user-info">@User.Identity.Name</li>
                 <li><a class="dropdown-item" asp-controller="EditUserProfile" asp-action="Index"><i class="bi bi-person"></i> Chỉnh sửa tài khoản</a></li>
                 <li><a class="dropdown-item" asp-controller="Account" asp-action="AppliedJob"><i class="bi bi-file-earmark-text"></i> CV của tôi</a></li>
+                @if (isPremium)
+                {
+                    <li><a class="dropdown-item" asp-controller="PremiumCV" asp-action="Index"><i class="bi bi-star-fill"></i> Mẫu CV Premium</a></li>
+                }
                 <li><a class="dropdown-item" asp-controller="Account" asp-action="GetSavedJobs"><i class="bi bi-bookmark"></i> Công việc đã lưu</a></li>
                 <li><a class="dropdown-item" asp-controller="AccountStatus" asp-action="Index"><i class="bi bi-person-badge"></i> Trạng thái tài khoản</a></li>
                 @if (isPremium)

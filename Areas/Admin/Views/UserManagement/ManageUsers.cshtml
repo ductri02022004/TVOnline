@@ -3,6 +3,29 @@
     ViewData["Title"] = "Quản lý người dùng";
 }
 
+<style>
+    .table th {
+        color: #333 !important;
+        font-weight: 600 !important;
+    }
+    .table td {
+        color: #333 !important;
+    }
+    .text-secondary {
+        color: #333 !important;
+    }
+    .text-muted {
+        color: #555 !important;
+    }
+    .card-header h6 {
+        color: #333 !important;
+        font-weight: 600;
+    }
+    .badge {
+        font-weight: 600;
+    }
+</style>
+
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
@@ -81,14 +104,14 @@
                                         </td>
                                         <td class="align-middle">
                                             <div class="btn-group" role="group">
-                                                <a href="@Url.Action("UserDetails", "Admin", new { area = "Admin", id = user.Id })" class="btn btn-sm btn-info">
+                                                <a href="@Url.Action("UserDetails", "UserManagement", new { area = "Admin", id = user.Id })" class="btn btn-sm btn-info">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 @if (!user.Roles.Contains("Admin"))
                                                 {
                                                     if (user.IsLocked)
                                                     {
-                                                        <form method="post" action="@Url.Action("UnlockUser", "Admin", new { area = "Admin", id = user.Id })">
+                                                        <form method="post" action="@Url.Action("UnlockUser", "UserManagement", new { area = "Admin", id = user.Id })">
                                                             <button type="submit" class="btn btn-sm btn-success">
                                                                 <i class="fas fa-unlock"></i>
                                                             </button>
@@ -96,7 +119,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <form method="post" action="@Url.Action("LockUser", "Admin", new { area = "Admin", id = user.Id })">
+                                                        <form method="post" action="@Url.Action("LockUser", "UserManagement", new { area = "Admin", id = user.Id })">
                                                             <button type="submit" class="btn btn-sm btn-warning">
                                                                 <i class="fas fa-lock"></i>
                                                             </button>
@@ -105,7 +128,7 @@
                                                 }
                                                 @if (!user.EmailConfirmed)
                                                 {
-                                                    <form method="post" action="@Url.Action("ConfirmEmail", "Admin", new { area = "Admin", id = user.Id })">
+                                                    <form method="post" action="@Url.Action("ConfirmEmail", "UserManagement", new { area = "Admin", id = user.Id })">
                                                         <button type="submit" class="btn btn-sm btn-primary">
                                                             <i class="fas fa-check"></i>
                                                         </button>

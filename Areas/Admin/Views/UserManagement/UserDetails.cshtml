@@ -1,0 +1,300 @@
+@model TVOnline.Areas.Admin.Models.UserViewModel
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .text-shadow {
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    .card-body p, .card-body h6, .card-body span {
+        color: #333 !important;
+    }
+    .text-muted {
+        color: #555 !important;
+    }
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .bg-warning .text-dark {
+        color: #333 !important;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Thông tin người dùng: @Model.UserName</h6>
+                    <a asp-action="ManageUsers" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header pb-0 bg-light">
+                                    <h6 class="mb-0">Thông tin cơ bản</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-column">
+                                        <div class="text-center mb-4">
+                                            <div class="avatar avatar-xl rounded-circle bg-gradient-primary mb-2">
+                                                <h1 class="text-dark font-weight-bold text-shadow" style="text-shadow: 1px 1px 2px black;">@Model.UserName.Substring(0, 1).ToUpper()</h1>
+                                            </div>
+                                            <h5 class="text-dark">@Model.UserName</h5>
+                                            <p class="text-muted text-dark">@Model.Email</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <h6 class="text-uppercase text-muted text-xs font-weight-bolder">Vai trò</h6>
+                                            <div>
+                                                @foreach (var role in Model.Roles)
+                                                {
+                                                    <span class="badge bg-primary mb-1 me-1">@role</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <h6 class="text-uppercase text-muted text-xs font-weight-bolder">Trạng thái tài khoản</h6>
+                                            <div>
+                                                @if (Model.IsLocked)
+                                                {
+                                                    <span class="badge bg-danger mb-1">Đã khóa (đến @Model.LockoutEnd?.LocalDateTime.ToString("dd/MM/yyyy HH:mm"))</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success mb-1">Hoạt động</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <h6 class="text-uppercase text-muted text-xs font-weight-bolder">Trạng thái email</h6>
+                                            <div>
+                                                @if (Model.EmailConfirmed)
+                                                {
+                                                    <span class="badge bg-success">Email đã xác nhận</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Email chưa xác nhận</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header pb-0 bg-light">
+                                    <h6 class="mb-0">Quản lý tài khoản</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <!-- Quản lý quyền -->
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border shadow-none">
+                                                <div class="card-header bg-primary">
+                                                    <h6 class="mb-0 text-white"><i class="bi bi-shield-lock me-1"></i> Quản lý quyền</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p class="text-sm mb-3">Quản lý các quyền và vai trò của người dùng trong hệ thống</p>
+                                                    <a asp-action="ManageRoles" asp-route-id="@Model.Id" class="btn btn-primary w-100">
+                                                        <i class="bi bi-shield-lock me-1"></i> Quản lý quyền
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Quản lý quyền Premium -->
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border shadow-none">
+                                                <div class="card-header bg-success">
+                                                    <h6 class="mb-0 text-white"><i class="bi bi-star-fill me-1"></i> Quyền Premium</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (Model.Roles.Contains("Premium"))
+                                                    {
+                                                        <p class="text-sm mb-3">Người dùng hiện đang có quyền Premium</p>
+                                                        <form asp-action="RemovePremium" method="post">
+                                                            <input type="hidden" name="id" value="@Model.Id" />
+                                                            <button type="submit" class="btn btn-danger w-100">
+                                                                <i class="bi bi-x-circle me-1"></i> Hủy quyền Premium
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-sm mb-3">Gán quyền Premium cho người dùng</p>
+                                                        <form asp-action="SetPremium" method="post">
+                                                            <input type="hidden" name="id" value="@Model.Id" />
+                                                            <button type="submit" class="btn btn-success w-100">
+                                                                <i class="bi bi-star-fill me-1"></i> Gán quyền Premium
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Quản lý trạng thái tài khoản -->
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border shadow-none">
+                                                <div class="card-header bg-warning">
+                                                    <h6 class="mb-0 text-dark"><i class="bi bi-lock me-1"></i> Trạng thái tài khoản</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (!Model.Roles.Contains("Admin"))
+                                                    {
+                                                        @if (Model.IsLocked)
+                                                        {
+                                                            <p class="text-sm mb-3">Tài khoản hiện đang bị khóa</p>
+                                                            <form asp-action="UnlockUser" method="post">
+                                                                <input type="hidden" name="id" value="@Model.Id" />
+                                                                <button type="submit" class="btn btn-success w-100">
+                                                                    <i class="bi bi-unlock me-1"></i> Mở khóa tài khoản
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="text-sm mb-3">Tài khoản hiện đang hoạt động</p>
+                                                            <form asp-action="LockUser" method="post">
+                                                                <input type="hidden" name="id" value="@Model.Id" />
+                                                                <button type="submit" class="btn btn-warning w-100">
+                                                                    <i class="bi bi-lock me-1"></i> Khóa tài khoản
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-sm mb-3">Không thể khóa tài khoản Admin</p>
+                                                        <button type="button" class="btn btn-secondary w-100" disabled>
+                                                            <i class="bi bi-lock me-1"></i> Khóa tài khoản
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Xác nhận email -->
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border shadow-none">
+                                                <div class="card-header bg-info">
+                                                    <h6 class="mb-0 text-white"><i class="bi bi-envelope-check me-1"></i> Xác nhận email</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (Model.EmailConfirmed)
+                                                    {
+                                                        <p class="text-sm mb-3">Email đã được xác nhận</p>
+                                                        <button type="button" class="btn btn-secondary w-100" disabled>
+                                                            <i class="bi bi-check-circle me-1"></i> Đã xác nhận
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-sm mb-3">Email chưa được xác nhận</p>
+                                                        <form asp-action="ConfirmEmail" method="post">
+                                                            <input type="hidden" name="id" value="@Model.Id" />
+                                                            <button type="submit" class="btn btn-info w-100">
+                                                                <i class="bi bi-envelope-check me-1"></i> Xác nhận email
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @if (Model.EmployerDetails != null || Model.JobSeekerDetails != null)
+                    {
+                        <div class="row">
+                            @if (Model.EmployerDetails != null)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-header pb-0 bg-light">
+                                            <h6 class="mb-0"><i class="bi bi-building me-1"></i> Thông tin nhà tuyển dụng</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th width="30%">Tên công ty</th>
+                                                            <td>@Model.EmployerDetails.CompanyName</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Lĩnh vực</th>
+                                                            <td>@Model.EmployerDetails.Field</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Mô tả</th>
+                                                            <td>@Model.EmployerDetails.Description</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Ngày tạo</th>
+                                                            <td>@Model.EmployerDetails.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.JobSeekerDetails != null)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-header pb-0 bg-light">
+                                            <h6 class="mb-0"><i class="bi bi-person me-1"></i> Thông tin người tìm việc</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th width="30%">Họ tên</th>
+                                                            <td>@Model.JobSeekerDetails.FullName</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Số điện thoại</th>
+                                                            <td>@Model.JobSeekerDetails.Phone</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Địa chỉ</th>
+                                                            <td>@Model.JobSeekerDetails.Address</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Ngày tạo</th>
+                                                            <td>@Model.JobSeekerDetails.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
