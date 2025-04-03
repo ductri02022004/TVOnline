@@ -1,0 +1,134 @@
+@model TVOnline.Models.Post
+@{
+    ViewData["Title"] = "Chi tiết bài đăng";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between">
+                        <h6>Chi tiết bài đăng</h6>
+                        <div>
+                            <form method="post" action="@Url.Action("TogglePostStatus", "PostManagement", new { area = "Admin", id = Model.PostId })" class="d-inline">
+                                <button type="submit" class="btn btn-sm @(Model.IsActive ? "btn-warning" : "btn-success")">
+                                    @(Model.IsActive ? "Vô hiệu hóa" : "Kích hoạt")
+                                </button>
+                            </form>
+                            <form method="post" action="@Url.Action("DeletePost", "PostManagement", new { area = "Admin", id = Model.PostId })" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài đăng này?');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="p-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h3 class="mb-3">@Model.Title</h3>
+                                <div class="mb-4">
+                                    <span class="badge bg-primary">@Model.JobType</span>
+                                    <span class="badge bg-info">@Model.Experience</span>
+                                    <span class="badge bg-@(Model.IsActive ? "success" : "danger")">@(Model.IsActive ? "Đang hoạt động" : "Đã vô hiệu hóa")</span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h5>Mô tả công việc</h5>
+                                    <div class="text-muted">@Html.Raw(Model.Description)</div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h5>Yêu cầu</h5>
+                                    <div class="text-muted">@Html.Raw(Model.Requirements)</div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h5>Quyền lợi</h5>
+                                    <div class="text-muted">@Html.Raw(Model.Benefits)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Thông tin bài đăng</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Mã bài đăng:</span>
+                                                <strong>@Model.PostId</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Vị trí:</span>
+                                                <strong>@Model.Position</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Mức lương:</span>
+                                                <strong>@Model.Salary</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Địa điểm:</span>
+                                                <strong>@Model.City?.CityName</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Loại công việc:</span>
+                                                <strong>@Model.JobType</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Kinh nghiệm:</span>
+                                                <strong>@Model.Experience</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Ngày đăng:</span>
+                                                <strong>@Model.CreatedAt.ToString("dd/MM/yyyy")</strong>
+                                            </li>
+                                            @if (Model.UpdatedAt.HasValue)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between">
+                                                    <span>Cập nhật lần cuối:</span>
+                                                    <strong>@Model.UpdatedAt.Value.ToString("dd/MM/yyyy")</strong>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mt-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Thông tin nhà tuyển dụng</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Tên công ty:</span>
+                                                <strong>@Model.Employer?.CompanyName</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Email:</span>
+                                                <strong>@Model.Employer?.User?.Email</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Website:</span>
+                                                <strong>@(Model.Employer?.Website ?? "Không có")</strong>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Địa chỉ:</span>
+                                                <strong>@(Model.Employer?.City?.CityName ?? "Không có")</strong>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 border-top">
+                        <a href="@Url.Action("ManagePosts", "PostManagement", new { area = "Admin" })" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

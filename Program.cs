@@ -19,14 +19,11 @@ using TVOnline.Models;
 using TVOnline.Repository.UserCVs;
 using TVOnline.Services;
 
-namespace TVOnline
-{
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
+namespace TVOnline {
+    public class Program {
+        public static async Task Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
-
+       
             // Configure services
             ConfigureServices(builder.Services, builder.Configuration);
 
@@ -36,21 +33,18 @@ namespace TVOnline
             ConfigureMiddleware(app, builder.Environment);
 
             // Seed data
-            try
-            {
+            try {
                 await SeedDataAsync(app);
                 Console.WriteLine("Database seeded successfully!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error seeding database: {ex.Message}");
+            } catch (Exception ex) {
+                var logger = app.Services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "Error seeding database");
             }
 
             await app.RunAsync();
         }
 
-        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
-        {
+        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration) {
             // Configure HttpClient
             services.AddHttpClient<VnPayService>();
 
@@ -72,12 +66,12 @@ namespace TVOnline
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IEmployersService, EmployersService>();
             services.AddScoped<IPremiumUserService, PremiumUserService>();
+            services.AddScoped<ICVTemplateService, CVTemplateService>();
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DatabaseConnection")));
 
-            services.AddIdentity<Users, IdentityRole>(options =>
-            {
+            services.AddIdentity<Users, IdentityRole>(options => {
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequireUppercase = false;
@@ -87,16 +81,16 @@ namespace TVOnline
                 options.SignIn.RequireConfirmedEmail = true;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
             })
+
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-
+            services.AddRazorPages();
             // Configure Email Service
             services.AddScoped<IEmailSender, EmailSender>();
 
             // Google login
             services.AddAuthentication()
-                .AddGoogle(googleOptions =>
-                {
+                .AddGoogle(googleOptions => {
                     var googleAuthNSection = configuration.GetSection("Authentication:Google");
                     googleOptions.ClientId = googleAuthNSection.GetValue<string>("ClientId") ?? throw new InvalidOperationException("Google ClientId is not configured");
                     googleOptions.ClientSecret = googleAuthNSection.GetValue<string>("ClientSecret") ?? throw new InvalidOperationException("Google ClientSecret is not configured");
@@ -104,18 +98,15 @@ namespace TVOnline
                 });
 
             // Add logging
-            services.AddLogging(loggingBuilder =>
-            {
+            services.AddLogging(loggingBuilder => {
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddDebug();
             });
 
             // Add CORS policy
-            services.AddCors(options =>
-            {
+            services.AddCors(options => {
                 options.AddPolicy("AllowAllOrigins",
-                    builder =>
-                    {
+                    builder => {
                         builder.AllowAnyOrigin()
                                .AllowAnyMethod()
                                .AllowAnyHeader();
@@ -123,14 +114,10 @@ namespace TVOnline
             });
         }
 
-        private static void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        private static void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env) {
+            if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
+            } else {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
@@ -148,9 +135,11 @@ namespace TVOnline
             app.UseAuthorization();
 
             // Modern .NET 6+ routing configuration
+            app.MapRazorPages();
+
             app.MapControllerRoute(
-                name: "areas",
-                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                name: "Areas",
+                pattern: "{area:exists}/{controller=AdminDashboard}/{action=Index}/{id?}");
 
             app.MapControllerRoute(
                 name: "default",
@@ -162,16 +151,14 @@ namespace TVOnline
                 defaults: new { controller = "Payment" });
         }
 
-        private static async Task SeedDataAsync(WebApplication app)
-        {
+        private static async Task SeedDataAsync(WebApplication app) {
             using var scope = app.Services.CreateScope();
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<AppDbContext>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = services.GetRequiredService<UserManager<Users>>();
 
-            try
-            {
+            try {
                 // Apply any pending migrations
                 await context.Database.MigrateAsync();
 
@@ -180,7 +167,7 @@ namespace TVOnline
 
                 // Then seed users and assign roles
                 await DbSeeder.SeedUsersAsync(userManager);
-                
+
                 // Seed admin user
                 await DbSeeder.SeedAdminUserAsync(userManager);
 
@@ -190,9 +177,7 @@ namespace TVOnline
                 // Seed employers and posts
                 await DbSeeder.SeedEmployersAsync(context);
                 await DbSeeder.SeedPostsAsync(context);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occurred while seeding the database.");
                 throw; // Re-throw to handle in the Main method

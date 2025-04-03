@@ -21,6 +21,8 @@ namespace TVOnline.Data
         public DbSet<PremiumUser> PremiumUsers { get; set; }
         public DbSet<Template> Templates { get; set; }
         public DbSet<SavedJob> SavedJobs { get; set; }
+        public DbSet<CVTemplate> CVTemplates { get; set; }
+        public DbSet<AccountStatus> AccountStatuses { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

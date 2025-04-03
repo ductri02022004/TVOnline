@@ -1,0 +1,122 @@
+@model TVOnline.Models.CVTemplate
+
+@{
+    ViewData["Title"] = "Chỉnh sửa mẫu CV";
+}
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-edit me-1"></i>
+        Chỉnh sửa mẫu CV
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TemplateId" />
+            <input type="hidden" asp-for="CreatedAt" />
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Tên mẫu CV</label>
+                        <input asp-for="Name" class="form-control" placeholder="Nhập tên mẫu CV" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Mô tả</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mô tả ngắn về mẫu CV này" required></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Hình ảnh thu nhỏ hiện tại</label>
+                        @if (!string.IsNullOrEmpty(Model.ThumbnailPath))
+                        {
+                            <div class="mb-2">
+                                <img src="@Model.ThumbnailPath" alt="@Model.Name" class="img-thumbnail" style="max-width: 200px;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Chưa có hình ảnh</p>
+                        }
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Thay đổi hình ảnh thu nhỏ</label>
+                        <input type="file" name="thumbnailImage" class="form-control" accept="image/*" />
+                        <small class="form-text text-muted">Để trống nếu không muốn thay đổi hình ảnh hiện tại</small>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label">Kích hoạt</label>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="HtmlContent" class="form-label">Mã HTML</label>
+                        <textarea asp-for="HtmlContent" class="form-control code-editor" rows="10" placeholder="Nhập mã HTML của mẫu CV" required></textarea>
+                        <span asp-validation-for="HtmlContent" class="text-danger"></span>
+                        <small class="form-text text-muted">Sử dụng các biến sau để đánh dấu nơi sẽ điền thông tin: {{Name}}, {{Email}}, {{Phone}}, {{Address}}, {{Education}}, {{Experience}}, {{Skills}}, v.v.</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="CssContent" class="form-label">Mã CSS</label>
+                        <textarea asp-for="CssContent" class="form-control code-editor" rows="10" placeholder="Nhập mã CSS của mẫu CV" required></textarea>
+                        <span asp-validation-for="CssContent" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Cập nhật mẫu CV
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    
+    <script>
+        $(document).ready(function() {
+            // Khởi tạo CodeMirror cho HTML editor
+            var htmlEditor = CodeMirror.fromTextArea(document.getElementById("HtmlContent"), {
+                mode: "htmlmixed",
+                theme: "monokai",
+                lineNumbers: true,
+                indentUnit: 4,
+                lineWrapping: true
+            });
+            
+            // Khởi tạo CodeMirror cho CSS editor
+            var cssEditor = CodeMirror.fromTextArea(document.getElementById("CssContent"), {
+                mode: "css",
+                theme: "monokai",
+                lineNumbers: true,
+                indentUnit: 4,
+                lineWrapping: true
+            });
+            
+            // Đảm bảo nội dung được cập nhật khi submit form
+            $('form').submit(function() {
+                htmlEditor.save();
+                cssEditor.save();
+            });
+        });
+    </script>
+}

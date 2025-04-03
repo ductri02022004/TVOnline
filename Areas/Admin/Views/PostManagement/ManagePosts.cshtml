@@ -63,15 +63,15 @@
                                         </td>
                                         <td class="align-middle">
                                             <div class="btn-group" role="group">
-                                                <a href="/Post/Details/@post.PostId" target="_blank" class="btn btn-sm btn-info">
+                                                <a href="@Url.Action("PostDetails", "PostManagement", new { area = "Admin", id = post.PostId })" class="btn btn-sm btn-info">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <form method="post" action="@Url.Action("TogglePostStatus", "Admin", new { area = "Admin", id = post.PostId })">
+                                                <form method="post" action="@Url.Action("TogglePostStatus", "PostManagement", new { area = "Admin", id = post.PostId })">
                                                     <button type="submit" class="btn btn-sm @(post.IsActive ? "btn-warning" : "btn-success")">
                                                         <i class="fas @(post.IsActive ? "fa-ban" : "fa-check")"></i>
                                                     </button>
                                                 </form>
-                                                <form method="post" action="@Url.Action("DeletePost", "Admin", new { area = "Admin", id = post.PostId })" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài đăng này?');">
+                                                <form method="post" action="@Url.Action("DeletePost", "PostManagement", new { area = "Admin", id = post.PostId })" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài đăng này?');">
                                                     <button type="submit" class="btn btn-sm btn-danger">
                                                         <i class="fas fa-trash"></i>
                                                     </button>

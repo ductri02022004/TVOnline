@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Chuyên Nghiệp</title>
+</head>
+<body>
+    <div class="cv-container">
+        <!-- Header -->
+        <header class="cv-header">
+            <div class="profile-info">
+                <h1 class="name">{{Name}}</h1>
+                <h2 class="job-title">{{JobTitle}}</h2>
+                <div class="summary">
+                    <p>{{Summary}}</p>
+                </div>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="bi bi-envelope"></i>
+                    <span>{{Email}}</span>
+                </div>
+                <div class="contact-item">
+                    <i class="bi bi-telephone"></i>
+                    <span>{{Phone}}</span>
+                </div>
+                <div class="contact-item">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>{{Address}}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="cv-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <section class="cv-section">
+                    <h3 class="section-title">Học vấn</h3>
+                    <div class="section-content education-content">
+                        {{Education}}
+                    </div>
+                </section>
+
+                <section class="cv-section">
+                    <h3 class="section-title">Kỹ năng</h3>
+                    <div class="section-content skills-content">
+                        {{Skills}}
+                    </div>
+                </section>
+
+                <section class="cv-section">
+                    <h3 class="section-title">Ngôn ngữ</h3>
+                    <div class="section-content languages-content">
+                        {{Languages}}
+                    </div>
+                </section>
+
+                <section class="cv-section">
+                    <h3 class="section-title">Sở thích</h3>
+                    <div class="section-content interests-content">
+                        {{Interests}}
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <section class="cv-section">
+                    <h3 class="section-title">Kinh nghiệm làm việc</h3>
+                    <div class="section-content experience-content">
+                        {{Experience}}
+                    </div>
+                </section>
+
+                <section class="cv-section">
+                    <h3 class="section-title">Dự án</h3>
+                    <div class="section-content projects-content">
+                        {{Projects}}
+                    </div>
+                </section>
+
+                <section class="cv-section">
+                    <h3 class="section-title">Chứng chỉ</h3>
+                    <div class="section-content certificates-content">
+                        {{Certificates}}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

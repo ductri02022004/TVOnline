@@ -27,7 +27,7 @@ namespace TVOnline.Controllers {
             Users? user = await _userManager.GetUserAsync(User);
             string? userId = user?.Id; // Lấy ID nếu có, không có thì null
 
-            var posts = await _postService.GetAllPosts(user.Id);
+            var posts = await _postService.GetAllPosts(userId);
             var cities = await _locationService.GetAllCities();
 
             int pageSize = 5;
@@ -169,10 +169,18 @@ namespace TVOnline.Controllers {
                 return BadRequest("Post ID is required.");
             }
 
+            // Check if user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Store the post ID in TempData to potentially use it after login
+                TempData["PostToSave"] = postId;
+                return RedirectToAction("Login", "Account");
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
+                return RedirectToAction("Login", "Account");
             }
 
             bool isSaved = await _postService.SaveJobForJobSeeker(postId, userId);
@@ -194,10 +202,16 @@ namespace TVOnline.Controllers {
                 return BadRequest("Post ID is required.");
             }
 
+            // Check if user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
+                return RedirectToAction("Login", "Account");
             }
 
             bool isUnsaved = await _postService.DeleteSavedJobForJobSeeker(postId, userId);

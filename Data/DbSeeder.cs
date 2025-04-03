@@ -18,6 +18,9 @@ namespace TVOnline.Data
 
             if (!await roleManager.RoleExistsAsync("Admin"))
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
+                
+            if (!await roleManager.RoleExistsAsync("Premium"))
+                await roleManager.CreateAsync(new IdentityRole("Premium"));
         }
 
         public static async Task SeedUsersAsync(UserManager<Users> userManager)
@@ -62,7 +65,7 @@ namespace TVOnline.Data
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true
                 };
-                var result = await userManager.CreateAsync(admin, "Admin@123456");
+                var result = await userManager.CreateAsync(admin, "123123");
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(admin, "Admin");
