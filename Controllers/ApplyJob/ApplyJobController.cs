@@ -27,7 +27,7 @@ namespace TVOnline.Controllers {
             Users? user = await _userManager.GetUserAsync(User);
            
 
-            var posts = await _postService.GetAllPosts(userId);
+            var posts = await _postService.GetAllPosts(user.Id);
             var cities = await _locationService.GetAllCities();
 
             int pageSize = 5;
