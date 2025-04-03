@@ -1,14 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using TVOnline.Data;
+using TVOnline.Models;
 using TVOnline.Service.Employers;
 using TVOnline.Service.Location;
 using TVOnline.ViewModels.Employer;
-using static TVOnline.Models.Location;
-using TVOnline.ViewModels.JobsViewModel;
-using TVOnline.Models;
 
 namespace TVOnline.Controllers.Employer
 {

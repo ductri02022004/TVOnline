@@ -15,17 +15,20 @@ namespace TVOnline.Service.Post
             return post?.ToPostResponse();
         }
 
-        public async Task<List<PostResponse>> GetAllPosts(string userId)
+        public async Task<List<PostResponse>> GetAllPosts(string? userId)
         {
             var posts = await _postRepository.GetAllPosts();
+
             var postResponses = posts.Select(p => p.ToPostResponse()).ToList();
             //return posts.Select(p => p.ToPostResponse()).ToList();
+            if (userId == null) return postResponses;
             foreach (var postResponse in postResponses)
             {
                 var savedJob = await _postRepository.FindSavedJob(postResponse.PostId, userId);
                 postResponse.IsSaved = savedJob != null;
             }
             return postResponses;
+
         }
 
         public async Task<List<PostResponse>> GetSeveralPosts(int quantity)
@@ -76,6 +79,40 @@ namespace TVOnline.Service.Post
             }
 
             return await _postRepository.DeleteSavedJob(existingSavedJob);
+        }
+
+        public async Task<List<PostResponse>> SearchPosts(string keyword, int? cityId, int page, int pageSize)
+        {
+            var posts = await _postRepository.SearchPosts(keyword, cityId, page, pageSize);
+            return posts.Select(p => p.ToPostResponse()).ToList();
+        }
+
+        public async Task<int> CountSearchPosts(string keyword, int? cityId)
+        {
+            return await _postRepository.CountSearchPosts(keyword, cityId);
+        }
+
+        public async Task<List<PostResponse>> FilterPosts(string keyword, int? cityId, decimal? minSalary, decimal? maxSalary, int? minExperience, int? maxExperience, int page, int pageSize, string? userId = null)
+        {
+            var posts = await _postRepository.FilterPosts(keyword, cityId, minSalary, maxSalary, minExperience, maxExperience, page, pageSize);
+
+            var postResponses = posts.Select(p => p.ToPostResponse()).ToList();
+
+            if (userId == null) return postResponses;
+
+            // Mark saved jobs for the current user
+            foreach (var postResponse in postResponses)
+            {
+                var savedJob = await _postRepository.FindSavedJob(postResponse.PostId, userId);
+                postResponse.IsSaved = savedJob != null;
+            }
+
+            return postResponses;
+        }
+
+        public async Task<int> CountFilteredPosts(string keyword, int? cityId, decimal? minSalary, decimal? maxSalary, int? minExperience, int? maxExperience)
+        {
+            return await _postRepository.CountFilteredPosts(keyword, cityId, minSalary, maxSalary, minExperience, maxExperience);
         }
     }
 }

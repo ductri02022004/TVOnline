@@ -7,66 +7,97 @@
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/account.css" />
 
-<div class="account-container">
-    <div class="account-box">
-        <h2 class="text-center mb-4">Đăng Kí</h2>
+<div class="register-container">
+    <div class="register-box">
+        <div class="register-header">
+            <h2>Đăng ký tài khoản</h2>
+            <p>Tạo tài khoản để bắt đầu tìm kiếm công việc mơ ước</p>
+        </div>
         
-        <form asp-action="Register" method="post">
+        <form asp-action="Register" method="post" class="register-form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-envelope"></i>
+                    </span>
+                    <input asp-for="Email" class="form-control" placeholder="Email" />
+                </div>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input asp-for="Name" class="form-control" placeholder="Họ và tên" />
+                </div>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="PhoneNumber" class="form-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" data-val="false" />
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="City" class="form-label"></label>
-                <input asp-for="City" class="form-control" data-val="false" />
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
+            <div class="form-group">
                 <div class="input-group">
-                    <input asp-for="Password" class="form-control" id="password" type="password" />
-                    <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', 'toggleIcon1')">
+                    <span class="input-group-text">
+                        <i class="bi bi-phone"></i>
+                    </span>
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="Số điện thoại" data-val="false" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-geo-alt"></i>
+                    </span>
+                    <input asp-for="City" class="form-control" placeholder="Thành phố" data-val="false" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input asp-for="Password" class="form-control" id="password" type="password" placeholder="Mật khẩu" />
+                    <button type="button" class="btn btn-outline-secondary password-toggle" onclick="togglePassword('password', 'toggleIcon1')">
                         <i id="toggleIcon1" class="bi bi-eye-slash"></i>
                     </button>
                 </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="ConfirmPassword" class="form-label"></label>
+            <div class="form-group">
                 <div class="input-group">
-                    <input asp-for="ConfirmPassword" class="form-control" id="confirmPassword" type="password" />
-                    <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('confirmPassword', 'toggleIcon2')">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock-fill"></i>
+                    </span>
+                    <input asp-for="ConfirmPassword" class="form-control" id="confirmPassword" type="password" placeholder="Xác nhận mật khẩu" />
+                    <button type="button" class="btn btn-outline-secondary password-toggle" onclick="togglePassword('confirmPassword', 'toggleIcon2')">
                         <i id="toggleIcon2" class="bi bi-eye-slash"></i>
                     </button>
                 </div>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
 
-            <input style="background-color: #0866FF" type="submit" value="Đăng kí" class="btn btn-success w-100 p-2" />
+            <button type="submit" class="btn btn-primary register-btn">
+                <i class="bi bi-person-plus"></i>
+                Đăng ký
+            </button>
 
-            <p class="text-center mt-2">
-                Đã có tài khoản ? <a asp-controller="Account" asp-action="Login" class="text-decoration-none">Đăng nhập</a>
-            </p>
+            <div class="login-link">
+                Đã có tài khoản? 
+                <a asp-controller="Account" asp-action="Login">Đăng nhập ngay</a>
+            </div>
 
-            <div class="text-center">
-                <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Trở về</a>
+            <div class="back-link">
+                <a asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-arrow-left"></i>
+                    Trở về trang chủ
+                </a>
             </div>
         </form>
     </div>
@@ -76,19 +107,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        function togglePassword(inputId, iconId) {
-            var passwordField = document.getElementById(inputId);
-            var toggleIcon = document.getElementById(iconId);
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleIcon.classList.remove("bi-eye-slash");
-                toggleIcon.classList.add("bi-eye");
-            } else {
-                passwordField.type = "password";
-                toggleIcon.classList.remove("bi-eye");
-                toggleIcon.classList.add("bi-eye-slash");
-            }
-        }
-    </script>
+    <script src="~/js/account.js"></script>
 }

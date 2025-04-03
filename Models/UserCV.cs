@@ -1,7 +1,6 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.AspNetCore.Http;
 
 namespace TVOnline.Models
 {
@@ -26,9 +25,9 @@ namespace TVOnline.Models
         [ValidateNever]
         public Post? Post { get; set; }
         public string? PostId { get; set; }
-        
+
         public DateTime AppliedDate { get; set; } = DateTime.Now;
-        
+
         public string? EmployerNotes { get; set; }
     }
 }

@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TVOnline.Data;
 using TVOnline.Models;
-using System;
-using System.Threading.Tasks;
-using System.Security.Claims;
 
 namespace TVOnline.Controllers
 {
@@ -67,4 +64,4 @@ namespace TVOnline.Controllers
             return View("Index", feedback);
         }
     }
-} 
+}

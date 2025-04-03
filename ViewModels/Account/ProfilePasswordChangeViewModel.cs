@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels.Account {
-    public class ProfilePasswordChangeViewModel {
+namespace TVOnline.ViewModels.Account
+{
+    public class ProfilePasswordChangeViewModel
+    {
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu hiện tại")]
         [Display(Name = "Mật khẩu hiện tại")]
         [DataType(DataType.Password)]

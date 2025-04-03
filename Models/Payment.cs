@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TVOnline.Models
 {
@@ -18,7 +18,7 @@ namespace TVOnline.Models
         public string? UserId { get; set; }
 
         public double? Amount { get; set; }
-        
+
         // This maps to the existing Status column in the database
         [Column("Status")]
         public string? Status { get; set; }

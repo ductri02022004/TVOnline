@@ -1,20 +1,13 @@
-using System;
-using System.Net;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using TVOnline.Data;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using TVOnline.ViewModels.Account;
-using System.Text.Json;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CSharp.RuntimeBinder;
-using System.Collections;
+using Microsoft.Extensions.Caching.Memory;
+using System.Security.Claims;
 using TVOnline.Models;
-using TVOnline.Service.UserCVs;
 using TVOnline.Service.Post;
+using TVOnline.Service.UserCVs;
+using TVOnline.ViewModels.Account;
 
 namespace TVOnline.Controllers.Account
 {
@@ -63,14 +56,14 @@ namespace TVOnline.Controllers.Account
                 {
                     // Lấy thông tin người dùng đã đăng nhập
                     var user = await userManager.FindByNameAsync(model.UserName);
-                    
+
                     // Kiểm tra xem người dùng có vai trò Admin không
                     if (user != null && await userManager.IsInRoleAsync(user, "Admin"))
                     {
                         // Nếu là Admin, chuyển hướng đến trang quản trị
                         return RedirectToAction("Index", "AdminDashboard", new { area = "Admin" });
                     }
-                    
+
                     // Nếu không phải Admin, chuyển hướng đến trang chủ như bình thường
                     return RedirectToAction("Index", "Home");
                 }
@@ -192,12 +185,7 @@ namespace TVOnline.Controllers.Account
 
         private IActionResult RedirectToLocal(string returnUrl)
         {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToAction("Index", "Home");
+            return Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToAction("Index", "Home");
         }
 
         public IActionResult Register()

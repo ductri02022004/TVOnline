@@ -1,25 +1,30 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TVOnline.ViewModels.UserProfile;
 using TVOnline.Models;
+using TVOnline.ViewModels.UserProfile;
 
-namespace TVOnline.Controllers.EditUserProfile {
+namespace TVOnline.Controllers.EditUserProfile
+{
     [Authorize]
-    public class EditUserProfileController : Controller {
+    public class EditUserProfileController : Controller
+    {
         private readonly UserManager<Users> _userManager;
         private readonly SignInManager<Users> _signInManager;
 
         public EditUserProfileController(
             UserManager<Users> userManager,
-            SignInManager<Users> signInManager) {
+            SignInManager<Users> signInManager)
+        {
             _userManager = userManager;
             _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> Index() {
+        public async Task<IActionResult> Index()
+        {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) {
+            if (user == null)
+            {
                 return RedirectToAction("Login", "Account");
             }
 
@@ -27,7 +32,8 @@ namespace TVOnline.Controllers.EditUserProfile {
             var hasPassword = await _userManager.HasPasswordAsync(user);
             ViewBag.HasPassword = hasPassword;
 
-            var model = new EditUserProfileViewModel {
+            var model = new EditUserProfileViewModel
+            {
                 Id = user.Id,
                 Name = user.FullName,
                 Email = user.Email,
@@ -42,14 +48,17 @@ namespace TVOnline.Controllers.EditUserProfile {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile(EditUserProfileViewModel model) {
-            if (!ModelState.IsValid) {
+        public async Task<IActionResult> UpdateProfile(EditUserProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
                 ViewBag.HasPassword = await _userManager.HasPasswordAsync(await _userManager.GetUserAsync(User));
                 return View("Index", model);
             }
 
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) {
+            if (user == null)
+            {
                 return RedirectToAction("Login", "Account");
             }
 
@@ -60,11 +69,13 @@ namespace TVOnline.Controllers.EditUserProfile {
             user.Dob = model.Dob;
 
             var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded) {
+            if (result.Succeeded)
+            {
                 return RedirectToAction("Index", new { success = "Cập nhật thông tin thành công" });
             }
 
-            foreach (var error in result.Errors) {
+            foreach (var error in result.Errors)
+            {
                 ModelState.AddModelError("", error.Description);
             }
             ViewBag.HasPassword = await _userManager.HasPasswordAsync(user);
@@ -73,27 +84,33 @@ namespace TVOnline.Controllers.EditUserProfile {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ProfilePasswordChangeViewModel model) {
+        public async Task<IActionResult> ChangePassword(ProfilePasswordChangeViewModel model)
+        {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) {
+            if (user == null)
+            {
                 return RedirectToAction("Login", "Account");
             }
 
             var hasPassword = await _userManager.HasPasswordAsync(user);
 
             // Kiểm tra mật khẩu mới và xác nhận mật khẩu
-            if (model.NewPassword != model.ConfirmNewPassword) {
+            if (model.NewPassword != model.ConfirmNewPassword)
+            {
                 return RedirectToAction("Index", new { error = "Mật khẩu xác nhận không khớp" });
             }
 
-            if (model.NewPassword.Length < 6) {
+            if (model.NewPassword.Length < 6)
+            {
                 return RedirectToAction("Index", new { error = "Mật khẩu phải có ít nhất 6 ký tự" });
             }
 
-            if (!hasPassword) {
+            if (!hasPassword)
+            {
                 // Nếu chưa có mật khẩu, tạo mật khẩu mới
                 var addPasswordResult = await _userManager.AddPasswordAsync(user, model.NewPassword);
-                if (addPasswordResult.Succeeded) {
+                if (addPasswordResult.Succeeded)
+                {
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", new { success = "Tạo mật khẩu thành công" });
                 }
@@ -103,12 +120,14 @@ namespace TVOnline.Controllers.EditUserProfile {
             }
 
             // Nếu đã có mật khẩu, kiểm tra mật khẩu hiện tại
-            if (string.IsNullOrEmpty(model.CurrentPassword)) {
+            if (string.IsNullOrEmpty(model.CurrentPassword))
+            {
                 return RedirectToAction("Index", new { error = "Vui lòng nhập mật khẩu hiện tại" });
             }
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (changePasswordResult.Succeeded) {
+            if (changePasswordResult.Succeeded)
+            {
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", new { success = "Đổi mật khẩu thành công" });
             }

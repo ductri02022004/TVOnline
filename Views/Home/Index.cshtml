@@ -4,130 +4,195 @@
     ViewData["Title"] = "Trang chủ";
 }
 
-<header class="hero-section py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold">Tìm Công Việc Mơ Ước</h1>
-                <p class="lead">Tìm kiếm trong hàng nghìn cơ hội việc làm</p>
-                <div class="search-box p-3 bg-white rounded shadow-sm">
-                    <form class="row g-3">
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" placeholder="Tên công việc hoặc từ khóa">
+<section class="hero-banner position-relative overflow-hidden">
+    <div class="container py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 fade-in-left">
+                <h1 class="display-4 fw-bold mb-3 hero-title">Khám Phá Cơ Hội Nghề Nghiệp</h1>
+                <p class="lead mb-4 hero-subtitle">Tìm kiếm công việc phù hợp với kỹ năng và nguyện vọng của bạn</p>
+                
+                <div class="search-box bg-white rounded-4 shadow p-4 mb-4">
+                    <form class="row g-3" asp-controller="Home" asp-action="SearchJobs" method="get">
+                        <div class="col-lg-5 col-md-5">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="bi bi-search text-primary"></i>
+                                </span>
+                                <input type="text" class="form-control border-0 shadow-none" placeholder="Tên công việc hoặc từ khóa" name="keyword">
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <select class="form-select">
-                                <option selected value="">Chọn địa điểm</option>
-                                @foreach (var city in Model.Locations)
-                                {
-                                    <option value="@city.Name">@city.Name</option>
-                                })
-                            </select>
+                        <div class="col-lg-4 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="bi bi-geo-alt text-primary"></i>
+                                </span>
+                                <select class="form-select border-0 shadow-none" name="cityId">
+                                    <option selected value="">Chọn địa điểm</option>
+                                    @foreach (var city in Model.Locations)
+                                    {
+                                        <option value="@city.Id">@city.Name</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary w-100">Tìm Kiếm</button>
+                        <div class="col-lg-3 col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search me-2"></i>Tìm Kiếm
+                            </button>
                         </div>
                     </form>
                 </div>
+                
+                <div class="d-flex justify-content-start gap-3">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                            <i class="bi bi-briefcase text-primary"></i>
+                        </div>
+                        <span>10,000+ Việc làm</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-success bg-opacity-10 rounded-circle p-2 me-2">
+                            <i class="bi bi-building text-success"></i>
+                        </div>
+                        <span>5,000+ Công ty</span>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-6">
-                <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998" class="img-fluid rounded" alt="Job Search">
+            <div class="col-lg-6 d-none d-lg-block fade-in-right">
+                <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998" class="img-fluid rounded-4 hero-image shadow" alt="Job Search">
             </div>
         </div>
     </div>
-</header>
+    <div class="bg-shape-1 position-absolute d-none d-lg-block"></div>
+    <div class="bg-shape-2 position-absolute d-none d-lg-block"></div>
+</section>
 
-<div class="container">
-    <section class="categories py-5">
-        <div class="container">
-            <h2 class="section-title text-center mb-4">Danh Mục Phổ Biến</h2>
-            <div class="row g-4">
-                <div class="col-md-3 col-sm-6">
-                    <div class="category-card p-4 text-center rounded">
-                        <i class="bi bi-code-square fs-2 mb-3"></i>
-                        <h5>Công Nghệ</h5>
-                        <p class="text-muted">1200+ Việc làm</p>
+<section class="categories-section py-5 bg-light">
+    <div class="container">
+        <div class="section-heading text-center mb-5">
+            <h2 class="fw-bold">Các Ngành Nghề Hot</h2>
+            <p class="text-muted">Khám phá các cơ hội việc làm theo lĩnh vực phù hợp với bạn</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="category-card bg-white rounded-4 p-4 shadow-sm text-center h-100 stagger-item">
+                    <div class="icon-box mx-auto bg-primary bg-opacity-10 rounded-circle p-3 mb-3">
+                        <i class="bi bi-code-square fs-3 text-primary"></i>
                     </div>
+                    <h5>Công Nghệ</h5>
+                    <p class="text-muted small mb-0">1200+ Việc làm</p>
                 </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="category-card p-4 text-center rounded">
-                        <i class="bi bi-bank fs-2 mb-3"></i>
-                        <h5>Tài Chính</h5>
-                        <p class="text-muted">800+ Việc làm</p>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="category-card bg-white rounded-4 p-4 shadow-sm text-center h-100 stagger-item">
+                    <div class="icon-box mx-auto bg-success bg-opacity-10 rounded-circle p-3 mb-3">
+                        <i class="bi bi-bank fs-3 text-success"></i>
                     </div>
+                    <h5>Tài Chính</h5>
+                    <p class="text-muted small mb-0">800+ Việc làm</p>
                 </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="category-card p-4 text-center rounded">
-                        <i class="bi bi-basket fs-2 mb-3"></i>
-                        <h5>Marketing</h5>
-                        <p class="text-muted">600+ Việc làm</p>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="category-card bg-white rounded-4 p-4 shadow-sm text-center h-100 stagger-item">
+                    <div class="icon-box mx-auto bg-warning bg-opacity-10 rounded-circle p-3 mb-3">
+                        <i class="bi bi-basket fs-3 text-warning"></i>
                     </div>
+                    <h5>Marketing</h5>
+                    <p class="text-muted small mb-0">600+ Việc làm</p>
                 </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="category-card p-4 text-center rounded">
-                        <i class="bi bi-heart-pulse fs-2 mb-3"></i>
-                        <h5>Y Tế</h5>
-                        <p class="text-muted">900+ Việc làm</p>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="category-card bg-white rounded-4 p-4 shadow-sm text-center h-100 stagger-item">
+                    <div class="icon-box mx-auto bg-danger bg-opacity-10 rounded-circle p-3 mb-3">
+                        <i class="bi bi-heart-pulse fs-3 text-danger"></i>
                     </div>
+                    <h5>Y Tế</h5>
+                    <p class="text-muted small mb-0">900+ Việc làm</p>
                 </div>
-
-                <section class="featured-jobs py-5 bg-light">
-                    <div class="container">
-                        <h2 class="section-title text-center mb-4">Việc Làm Nổi Bật</h2>
-                        <div class="row g-4">
-                            @foreach (var post in Model.Posts)
-                            {
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="job-card p-4 bg-white rounded shadow-sm">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" class="company-logo me-3" alt="Company">
-                                            <div>
-                                                <h5 class="mb-1">@post.Title</h5>
-                                                <p class="text-muted mb-0">@post.CompanyName</p>
-                                            </div>
-                                        </div>
-                                        <div class="job-tags mb-3">
-                                            <span class="badge bg-light text-dark me-2">@post.JobType</span>
-                                            <span class="badge bg-light text-dark">@post.CityName</span>
-                                        </div>
-                                        <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId" class="btn btn-outline-primary">Ứng Tuyển Ngay</a>
-                                    </div>
-                                </div>
-                                @* <div class="d-flex align-items-center mb-2"> *@
-                                @*     <i class="bi bi-cash me-2"></i> *@
-                                @*     <span>@post.Salary.ToString("N0") VNĐ</span> *@
-                                @* </div> *@
-                                @* <div class="d-flex align-items-center mb-2"> *@
-                                @*     <i class="bi bi-briefcase me-2"></i> *@
-                                @*     <span>@post.JobType</span> *@
-                                @* </div> *@
-                                @* <div class="d-flex align-items-center mb-2"> *@
-                                @*     <i class="bi bi-person-workspace me-2"></i> *@
-                                @*     <span>@post.Experience</span> *@
-                                @* </div> *@
-                                @* <div class="d-flex align-items-center"> *@
-                                @*     <i class="bi bi-calendar me-2"></i> *@
-                                @*     <span>Hạn nộp: @post.Deadline.ToString("dd/MM/yyyy")</span> *@
-                                @* </div> *@
-                                @* <a href="#" class="btn btn-primary"> *@
-                                @*     <i class="bi bi-eye"></i> Xem chi tiết *@
-                                @* </a> *@
-                                @* <div class="card-footer text-muted"> *@
-                                @*     <small>Đăng ngày: @post.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small> *@
-                                @* </div> *@
-                            }
-                        </div>
-                    </div>
-                </section>
             </div>
         </div>
-    </section>
-</div>
+    </div>
+</section>
+
+<section class="featured-jobs-section py-5">
+    <div class="container">
+        <div class="section-heading text-center mb-5">
+            <h2 class="fw-bold">Việc Làm Nổi Bật</h2>
+            <p class="text-muted">Những cơ hội việc làm tốt nhất đang chờ đón bạn</p>
+        </div>
+        
+        <div class="row g-4 job-cards-container">
+            @foreach (var post in Model.Posts)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="job-card bg-white rounded-4 shadow-sm h-100 fade-in-up">
+                        <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="company-logo-wrapper me-3">
+                                    <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea" 
+                                         class="company-logo-md" alt="@post.CompanyName">
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-1">@post.Title</h5>
+                                    <p class="company-name text-muted mb-0">@post.CompanyName</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body px-4 py-3">
+                            <div class="job-tags mb-3">
+                                <span class="badge bg-primary-light text-primary me-2">
+                                    <i class="bi bi-briefcase-fill me-1"></i>@post.JobType
+                                </span>
+                                <span class="badge bg-secondary-light text-secondary">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>@post.CityName
+                                </span>
+                            </div>
+                            <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId" 
+                               class="btn btn-outline-primary w-100 mt-3">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Ứng Tuyển Ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <div class="text-center mt-5">
+            <a asp-controller="ApplyJob" asp-action="Index" class="btn btn-primary btn-lg px-4 py-2">
+                <i class="bi bi-briefcase me-2"></i>Xem tất cả việc làm
+            </a>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
     <script>
-        // Format all salary numbers
         document.addEventListener('DOMContentLoaded', function() {
+            // Animate counters
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                counter.classList.add('animate__animated', 'animate__fadeIn');
+            });
+            
+            // Animate stagger items
+            const staggerItems = document.querySelectorAll('.stagger-item');
+            staggerItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Hover effects for category cards
+            const categoryCards = document.querySelectorAll('.category-card');
+            categoryCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('scale-animation');
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('scale-animation');
+                });
+            });
+            
+            // Format salary numbers
             const salaryElements = document.querySelectorAll('.salary');
             salaryElements.forEach(function(element) {
                 const value = parseInt(element.textContent);

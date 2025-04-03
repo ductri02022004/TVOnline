@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using TVOnline.Models;
 using TVOnline.Services;
-using Microsoft.Extensions.Logging;
 
-namespace TVOnline.Controllers
+namespace TVOnline.Controllers.Account
 {
     public class AccountStatusController : Controller
     {
@@ -51,4 +50,4 @@ namespace TVOnline.Controllers
             }
         }
     }
-} 
+}
