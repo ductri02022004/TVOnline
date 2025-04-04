@@ -114,15 +114,16 @@ namespace TVOnline {
             services.AddCors(options => {
                 options.AddPolicy("AllowAllOrigins",
                     builder => {
-                        builder.AllowAnyOrigin()
-                    builder =>
-                    {
-                        builder.WithOrigins("https://localhost:7216", "http://localhost:5216")
+                        builder.WithOrigins("http://localhost:5000", "http://localhost:5001", 
+                                           "https://localhost:5000", "https://localhost:5001", 
+                                           "https://localhost:7223", "http://localhost:7223",
+                                           "http://localhost:44351", "https://localhost:44351")
                                .AllowAnyMethod()
                                .AllowAnyHeader()
                                .AllowCredentials();
                     });
             });
+
         }
 
         private static void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env) {
@@ -135,7 +136,7 @@ namespace TVOnline {
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+             
             app.UseRouting();
 
             // Use CORS policy

@@ -74,11 +74,31 @@ namespace TVOnline.Areas.Admin.Controllers {
                 return NotFound();
             }
 
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            try {
+                // Tìm tất cả các UserCV liên quan đến bài đăng này
+                var relatedUserCVs = await _context.UserCVs
+                    .Where(cv => cv.PostId == id)
+                    .ToListAsync();
 
-            TempData["SuccessMessage"] = "Đã xóa bài đăng thành công!";
-            return RedirectToAction(nameof(ManagePosts));
+                // Cập nhật PostId thành null cho tất cả các UserCV liên quan
+                foreach (var userCV in relatedUserCVs) {
+                    userCV.PostId = null;
+                }
+
+                // Lưu thay đổi trước khi xóa bài đăng
+                await _context.SaveChangesAsync();
+
+                // Sau đó xóa bài đăng
+                _context.Posts.Remove(post);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Đã xóa bài đăng thành công!";
+                return RedirectToAction(nameof(ManagePosts));
+            }
+            catch (Exception ex) {
+                TempData["ErrorMessage"] = $"Không thể xóa bài đăng: {ex.Message}";
+                return RedirectToAction(nameof(ManagePosts));
+            }
         }
     }
 }

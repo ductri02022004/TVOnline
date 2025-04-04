@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TVOnline.Data;
 
@@ -11,9 +12,11 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250404023510_UpdateAccountStatusCheck")]
+    partial class UpdateAccountStatusCheck
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,7 +189,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AccountStatuses", (string)null);
+                    b.ToTable("AccountStatuses");
                 });
 
             modelBuilder.Entity("TVOnline.Models.CVTemplate", b =>
@@ -228,7 +231,7 @@ namespace TVOnline.Migrations
 
                     b.HasKey("TemplateId");
 
-                    b.ToTable("CVTemplates", (string)null);
+                    b.ToTable("CVTemplates");
                 });
 
             modelBuilder.Entity("TVOnline.Models.ChatMessage", b =>
@@ -259,7 +262,7 @@ namespace TVOnline.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChatMessages", (string)null);
+                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Employers", b =>
@@ -311,7 +314,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("ZoneId");
 
-                    b.ToTable("Employers", (string)null);
+                    b.ToTable("Employers");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Feedbacks", b =>
@@ -339,7 +342,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks", (string)null);
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("TVOnline.Models.InterviewInvitation", b =>
@@ -364,7 +367,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("InterviewInvitations", (string)null);
+                    b.ToTable("InterviewInvitations");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Job", b =>
@@ -380,7 +383,7 @@ namespace TVOnline.Migrations
 
                     b.HasKey("JobId");
 
-                    b.ToTable("Jobs", (string)null);
+                    b.ToTable("Jobs");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Location+Cities", b =>
@@ -402,7 +405,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("ZoneId");
 
-                    b.ToTable("Cities", (string)null);
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Location+Zone", b =>
@@ -419,7 +422,7 @@ namespace TVOnline.Migrations
 
                     b.HasKey("ZoneId");
 
-                    b.ToTable("Zones", (string)null);
+                    b.ToTable("Zones");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Payment", b =>
@@ -449,7 +452,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
@@ -510,7 +513,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("EmployerId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("TVOnline.Models.PremiumUser", b =>
@@ -528,7 +531,7 @@ namespace TVOnline.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("PremiumUsers", (string)null);
+                    b.ToTable("PremiumUsers");
                 });
 
             modelBuilder.Entity("TVOnline.Models.SavedJob", b =>
@@ -553,7 +556,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SavedJobs", (string)null);
+                    b.ToTable("SavedJobs");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Template", b =>
@@ -576,7 +579,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("PremiumUserId");
 
-                    b.ToTable("Templates", (string)null);
+                    b.ToTable("Templates");
                 });
 
             modelBuilder.Entity("TVOnline.Models.UserCV", b =>
@@ -613,7 +616,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserCVs", (string)null);
+                    b.ToTable("UserCVs");
                 });
 
             modelBuilder.Entity("TVOnline.Models.Users", b =>
@@ -725,7 +728,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("PaymentInformationModel", (string)null);
+                    b.ToTable("PaymentInformationModel");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
