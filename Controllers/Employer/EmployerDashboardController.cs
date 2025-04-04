@@ -186,8 +186,15 @@ namespace TVOnline.Controllers.Employer
             return View(applications);
         }
 
-        public async Task<IActionResult> ApplicationDetails(string cvId)
+        [Route("[action]/{cvId?}")]
+        public async Task<IActionResult> ApplicationDetails(string? cvId, [FromQuery] string? id)
         {
+            var cvIdToUse = cvId ?? id;
+            if (string.IsNullOrEmpty(cvIdToUse))
+            {
+                return NotFound();
+            }
+
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account");
@@ -218,7 +225,7 @@ namespace TVOnline.Controllers.Employer
             var application = await _context.UserCVs
                 .Include(cv => cv.Users)
                 .Include(cv => cv.Post)
-                .FirstOrDefaultAsync(cv => cv.CvID == cvId && cv.Post.EmployerId == employer.EmployerId);
+                .FirstOrDefaultAsync(cv => cv.CvID == cvIdToUse && cv.Post.EmployerId == employer.EmployerId);
 
             return application == null ? NotFound() : View(application);
         }
