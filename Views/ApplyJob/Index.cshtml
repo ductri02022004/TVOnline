@@ -4,15 +4,36 @@
 @using Microsoft.IdentityModel.Tokens
 @using TVOnline.Models
 @inject SignInManager<Users> signInManager;
+@inject TVOnline.Services.IPremiumUserService PremiumUserService
 
 @{
     ViewData["Title"] = "Việc làm";
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
+    bool isPremium = false;
+    if (User.Identity.IsAuthenticated)
+    {
+        var user = await signInManager.UserManager.GetUserAsync(User);
+        isPremium = await PremiumUserService.IsUserPremium(user.Id);
+    }
 }
 
 <section class="job-filters py-4">
     <div class="container">
+        @if (!isPremium && User.Identity.IsAuthenticated)
+        {
+            <div class="alert alert-info mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        <strong>Nâng cấp tài khoản Premium</strong> để có nhiều lợi ích hơn!
+                    </div>
+                    <a href="/Payment" class="btn btn-warning">
+                        <i class="bi bi-arrow-up-circle me-2"></i>Nâng cấp ngay
+                    </a>
+                </div>
+            </div>
+        }
         <form class="row g-3" asp-controller="Home" asp-action="SearchJobs" method="get">
             <div class="col-md-5">
                 <input type="text" value="@Model.SearchKeyword" class="form-control" placeholder="Tên công việc hoặc từ khóa" name="keyword">

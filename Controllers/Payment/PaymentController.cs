@@ -140,8 +140,29 @@ public class PaymentController : Controller
                     UserId = userId
                 };
                 _context.PremiumUsers.Add(premiumUser);
-                await _context.SaveChangesAsync();
             }
+
+            // Update or create account status
+            var accountStatus = await _context.AccountStatuses
+                .FirstOrDefaultAsync(a => a.UserId == userId);
+
+            if (accountStatus == null)
+            {
+                accountStatus = new AccountStatus
+                {
+                    UserId = userId,
+                    IsPremium = true,
+                    PremiumExpiryDate = vietnamTime.AddYears(1) // Premium for 1 year
+                };
+                _context.AccountStatuses.Add(accountStatus);
+            }
+            else
+            {
+                accountStatus.IsPremium = true;
+                accountStatus.PremiumExpiryDate = vietnamTime.AddYears(1);
+            }
+
+            await _context.SaveChangesAsync();
 
             return View("Success", payment);
         }

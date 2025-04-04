@@ -11,7 +11,7 @@ using TVOnline.ViewModels.JobsViewModel;
 
 namespace TVOnline.Controllers.ApplyJob
 {
-    [Route("[controller]")]
+    [Route("ApplyJob")]
     public class ApplyJobController(IUserCvService userCvService, IPostService postService, UserManager<Users> userManager, ILocationService locationService) : Controller
     {
         private readonly IUserCvService _userCvService = userCvService;
@@ -19,11 +19,11 @@ namespace TVOnline.Controllers.ApplyJob
         private readonly ILocationService _locationService = locationService;
         private readonly UserManager<Users> _userManager = userManager;
 
-        [Route("[action]")]
+        [Route("")]
+        [Route("Index")]
         public async Task<IActionResult> Index(int page = 1)
         {
             Users? user = await _userManager.GetUserAsync(User);
-
 
             var posts = await _postService.GetAllPosts(user?.Id);
             var cities = await _locationService.GetAllCities();
