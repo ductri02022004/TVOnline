@@ -6,55 +6,103 @@
     int totalPages = ViewBag.TotalPages ?? 1;
 }
 
-<section class="employers-banner py-5">
+<section class="employers-banner py-5 bg-light">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 fade-in-left">
-                <h1 class="fw-bold mb-3">Khám Phá Công Ty Hàng Đầu</h1>
-                <p class="text-muted mb-0">Tìm hiểu về những công ty tốt nhất và cơ hội việc làm tại đây</p>
+        <div class="row g-4">
+            <div class="col-lg-5 fade-in-left">
+                <div class="banner-content pe-lg-4">
+                    <span class="badge bg-primary-light text-primary mb-3">Khám Phá</span>
+                    <h1 class="display-5 fw-bold mb-3">Khám Phá Công Ty Hàng Đầu</h1>
+                    <p class="text-muted fs-5 mb-4">Tìm hiểu về những công ty tốt nhất và cơ hội việc làm tại đây</p>
+                    <div class="d-flex align-items-center">
+                        <div class="banner-stats d-flex align-items-center me-4">
+                            <div class="banner-stat-icon rounded-circle bg-primary text-white me-2 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; box-shadow: 0 3px 10px rgba(13, 110, 253, 0.2);">
+                                <i class="bi bi-building fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">@Model.Employers.Count()</h5>
+                                <p class="mb-0 small text-muted">Công ty</p>
+                            </div>
+                        </div>
+                        <div class="banner-stats d-flex align-items-center">
+                            <div class="banner-stat-icon rounded-circle bg-success text-white me-2 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; box-shadow: 0 3px 10px rgba(25, 135, 84, 0.2);">
+                                <i class="bi bi-briefcase fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">100+</h5>
+                                <p class="mb-0 small text-muted">Việc làm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-6">
-                <div class="search-filters p-4 rounded-4 shadow-sm fade-in-right">
-                    <form class="row g-3">
-                        <div class="col-lg-4 col-md-4">
+            <div class="col-lg-7">
+                <div class="search-filters p-4 rounded-4 bg-white border shadow fade-in-right">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-search text-primary me-2"></i>Tìm Kiếm Công Ty</h5>
+                    <form class="row g-3" method="get" action="@Url.Action("Index", "EmployersPage")">
+                        <div class="col-lg-6 col-md-6">
+                            <label class="form-label small fw-medium">Tên công ty</label>
                             <div class="input-group">
-                                <span class="input-group-text border-0">
+                                <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-building text-primary"></i>
                                 </span>
-                                <input type="text" class="form-control border-0 shadow-none" placeholder="Tên công ty...">
+                                <input type="text" name="companyName" class="form-control bg-light border-start-0" placeholder="Nhập tên công ty..." value="@Model.SearchCompanyName">
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-3">
+                        <div class="col-lg-6 col-md-6">
+                            <label class="form-label small fw-medium">Lĩnh vực</label>
                             <div class="input-group">
-                                <span class="input-group-text border-0">
+                                <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-briefcase text-primary"></i>
                                 </span>
-                                <select class="form-select border-0 shadow-none">
-                                    <option selected>Lĩnh vực</option>
-                                    <option>Công nghệ</option>
-                                    <option>Tài chính</option>
-                                    <option>Giáo dục</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text border-0">
-                                    <i class="bi bi-geo-alt text-primary"></i>
-                                </span>
-                                <select class="form-select border-0 shadow-none">
-                                    <option selected value="">Địa điểm</option>
-                                    @foreach (var cities in Model.Cities)
+                                <select name="field" class="form-select bg-light border-start-0">
+                                    <option value="">Tất cả lĩnh vực</option>
+                                    @foreach (var field in Model.Fields)
                                     {
-                                        <option value="@cities.Name">@cities.Name</option>
+                                        if (Model.SearchField == field.Name)
+                                        {
+                                            <option value="@field.Name" selected>@field.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@field.Name">@field.Name</option>
+                                        }
                                     }
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-2 col-md-2">
-                            <button class="btn btn-primary w-100">
-                                <i class="bi bi-search me-1"></i> Tìm kiếm
+                        <div class="col-lg-6 col-md-6">
+                            <label class="form-label small fw-medium">Địa điểm</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-geo-alt text-primary"></i>
+                                </span>
+                                <select name="location" class="form-select bg-light border-start-0">
+                                    <option value="">Tất cả địa điểm</option>
+                                    @foreach (var city in Model.Cities)
+                                    {
+                                        if (Model.SearchLocation == city.Name)
+                                        {
+                                            <option value="@city.Name" selected>@city.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@city.Name">@city.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <label class="form-label small fw-medium">Hành động</label>
+                            <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-search me-2"></i> Tìm kiếm công ty
                             </button>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="small text-muted"><i class="bi bi-info-circle me-1"></i> Tìm kiếm nhanh chóng và chính xác</span>
+                            </div>
                         </div>
                     </form>
                 </div>

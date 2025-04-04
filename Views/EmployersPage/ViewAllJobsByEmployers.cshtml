@@ -1,0 +1,831 @@
+﻿@model List<TVOnline.Service.DTO.PostResponse>
+
+@{
+    ViewData["Title"] = "Tất cả việc làm đang tuyển";
+    
+    // Get the first post to extract employer info (all posts are from same employer)
+    var employerName = Model.FirstOrDefault()?.CompanyName ?? "Nhà tuyển dụng";
+    var employerId = Model.FirstOrDefault()?.EmployerId ?? ViewBag.EmployerId;
+    var employerLogo = Model.FirstOrDefault()?.CompanyLogoUrl;
+    
+    // Prepare for filtering
+    var jobTypes = Model.Select(p => p.JobType).Distinct().ToList();
+    var locations = Model.Select(p => p.CityName).Distinct().ToList();
+    var experienceLevels = Model.Select(p => p.Experience).Distinct().ToList();
+    
+    // Pagination variables
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int totalPosts = ViewBag.TotalPosts;
+    string searchKeyword = ViewBag.SearchKeyword ?? "";
+    string sortOrder = ViewBag.SortOrder ?? "";
+}
+
+<div class="job-listing-header py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="EmployersPage" asp-action="Index" class="text-decoration-none">Công ty</a></li>
+                <li class="breadcrumb-item"><a asp-controller="EmployersPage" asp-action="ViewEmployerDetail" asp-route-employerId="@employerId" class="text-decoration-none">@employerName</a></li>
+                <li class="breadcrumb-item active fw-semibold" aria-current="page">Tất cả việc làm</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="employer-jobs-banner py-5 bg-gradient" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <div class="d-flex align-items-center mb-3">
+                    @if (!string.IsNullOrEmpty(employerLogo))
+                    {
+                        <img src="@employerLogo" alt="@employerName" class="me-3 rounded-circle border shadow-sm" style="width: 64px; height: 64px; object-fit: contain;">
+                    }
+                    <div>
+                        <h1 class="h2 mb-1 fw-bold">@employerName</h1>
+                        <p class="mb-0 text-muted">Tất cả việc làm đang tuyển dụng</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="me-4">
+                        <div class="d-flex align-items-center">
+                            <div class="badge bg-primary d-flex align-items-center p-2 me-2">
+                                <div class="rounded-circle p-1 bg-white bg-opacity-25 me-2">
+                                    <i class="bi bi-briefcase-fill text-white"></i>
+                                </div>
+                                <span>@totalPosts việc làm</span>
+                            </div>
+                            <a asp-controller="EmployersPage" asp-action="ViewEmployerDetail" asp-route-employerId="@employerId" class="text-decoration-none">
+                                <i class="bi bi-building me-1"></i> Xem trang công ty
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 d-flex justify-content-md-end mt-4 mt-md-0">
+                <button type="button" class="btn btn-primary rounded-pill me-2" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <i class="bi bi-funnel-fill me-2"></i>Lọc việc làm
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary rounded-pill dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-sort-down me-1"></i>Sắp xếp
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                        <li>
+                            <a class="dropdown-item @(sortOrder == "newest" ? "active" : "")" 
+                               href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder = "newest", page = 1 })">
+                                <i class="bi bi-calendar-event me-2"></i>Mới nhất
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(sortOrder == "salary_high_low" ? "active" : "")" 
+                               href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder = "salary_high_low", page = 1 })">
+                                <i class="bi bi-cash-coin me-2"></i>Lương cao - thấp
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(sortOrder == "salary_low_high" ? "active" : "")" 
+                               href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder = "salary_low_high", page = 1 })">
+                                <i class="bi bi-cash-coin me-2"></i>Lương thấp - cao
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(sortOrder == "name_az" ? "active" : "")" 
+                               href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder = "name_az", page = 1 })">
+                                <i class="bi bi-arrow-down-up me-2"></i>Tên A-Z
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="job-listing py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 d-none d-md-block">
+                <div class="card shadow-sm sticky-top">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0"><i class="bi bi-funnel me-2"></i>Bộ lọc</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="ViewAllJobsByEmployers" method="get" id="filterForm">
+                            <input type="hidden" name="employerId" value="@employerId" />
+                            <input type="hidden" name="sortOrder" value="@sortOrder" />
+                            
+                            <!-- Search input -->
+                            <div class="mb-3">
+                                <label for="searchKeyword" class="form-label">Tìm kiếm</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchKeyword" name="searchKeyword" 
+                                           value="@searchKeyword" placeholder="Nhập từ khóa...">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Job Types -->
+                            <div class="mb-3">
+                                <h6 class="fw-bold">Loại công việc</h6>
+                                @foreach (var jobType in jobTypes)
+                                {
+                                    bool isChecked = ViewBag.SelectedJobTypes != null && ViewBag.SelectedJobTypes.Contains(jobType);
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="selectedJobTypes" 
+                                               id="job-type-@jobType.Replace(" ", "-")" value="@jobType" @(isChecked ? "checked" : "")>
+                                        <label class="form-check-label" for="job-type-@jobType.Replace(" ", "-")">
+                                            @jobType
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <!-- Locations -->
+                            <div class="mb-3">
+                                <h6 class="fw-bold">Địa điểm</h6>
+                                @foreach (var location in locations)
+                                {
+                                    bool isChecked = ViewBag.SelectedLocations != null && ViewBag.SelectedLocations.Contains(location);
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="selectedLocations" 
+                                               id="location-@location.Replace(" ", "-")" value="@location" @(isChecked ? "checked" : "")>
+                                        <label class="form-check-label" for="location-@location.Replace(" ", "-")">
+                                            @location
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <!-- Experience Levels -->
+                            <div class="mb-3">
+                                <h6 class="fw-bold">Kinh nghiệm</h6>
+                                @foreach (var experience in experienceLevels)
+                                {
+                                    bool isChecked = ViewBag.SelectedExperiences != null && ViewBag.SelectedExperiences.Contains(experience);
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="selectedExperiences" 
+                                               id="exp-@experience.Replace(" ", "-")" value="@experience" @(isChecked ? "checked" : "")>
+                                        <label class="form-check-label" for="exp-@experience.Replace(" ", "-")">
+                                            @experience
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <!-- Salary Range - Cách mới -->
+                            <div class="mb-3">
+                                <h6 class="fw-bold">Mức lương (triệu đồng)</h6>
+                                
+                                <!-- Các khoảng lương phổ biến -->
+                                <div class="salary-tags d-flex flex-wrap gap-2 mb-3">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="0" data-max="10">
+                                        Dưới 10 triệu
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="10" data-max="20">
+                                        10 - 20 triệu
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="20" data-max="30">
+                                        20 - 30 triệu
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="30" data-max="50">
+                                        30 - 50 triệu
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="50" data-max="100">
+                                        Trên 50 triệu
+                                    </button>
+                                </div>
+                                
+                                <!-- Tùy chọn nhập khoảng lương -->
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="customMinSalary" class="form-label small">Từ</label>
+                                        <div class="input-group input-group-sm mb-2">
+                                            <input type="number" class="form-control" id="customMinSalary" name="minSalary" 
+                                                  value="@(ViewBag.MinSalary ?? 0)" min="0" max="100">
+                                            <span class="input-group-text">triệu</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="customMaxSalary" class="form-label small">Đến</label>
+                                        <div class="input-group input-group-sm mb-2">
+                                            <input type="number" class="form-control" id="customMaxSalary" name="maxSalary" 
+                                                  value="@(ViewBag.MaxSalary ?? 50)" min="0" max="100">
+                                            <span class="input-group-text">triệu</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Filter Actions -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-funnel-fill me-1"></i>Áp dụng bộ lọc
+                                </button>
+                                <a href="@Url.Action("ViewAllJobsByEmployers", new { employerId = employerId, sortOrder = sortOrder })" 
+                                   class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-1"></i>Xóa bộ lọc
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 mb-0 fw-bold">@totalPosts việc làm từ @employerName</h2>
+                    <form class="d-flex d-lg-none" method="get" action="@Url.Action("ViewAllJobsByEmployers", "EmployersPage")">
+                        <input type="hidden" name="employerId" value="@employerId" />
+                        <input type="hidden" name="sortOrder" value="@sortOrder" />
+                        <input type="text" class="form-control form-control-sm me-2" name="searchKeyword" placeholder="Tìm kiếm..." value="@searchKeyword">
+                        <button class="btn btn-sm btn-primary me-2" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <i class="bi bi-funnel-fill"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(searchKeyword))
+                {
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-search me-2"></i>
+                                Kết quả tìm kiếm cho "<strong>@searchKeyword</strong>" (@totalPosts việc làm)
+                            </div>
+                            <a href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, sortOrder })" class="btn btn-sm btn-light">
+                                <i class="bi bi-x-lg me-1"></i> Xóa bộ lọc
+                            </a>
+                        </div>
+                    </div>
+                }
+                
+                <div class="job-list">
+                    @if (Model.Any())
+                    {
+                        foreach (var job in Model)
+                        {
+                            <div class="job-card bg-white rounded-4 shadow-sm p-4 mb-4 position-relative transition-all">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <h3 class="h5 mb-2 fw-bold">
+                                            <a asp-controller="ApplyJob" asp-action="Details" asp-route-postID="@job.PostId" class="text-decoration-none">
+                                                @job.Title
+                                            </a>
+                                        </h3>
+                                        <div class="mb-3">
+                                            <span class="badge bg-primary-light text-primary me-2">@job.JobType</span>
+                                            <span class="badge bg-secondary-light text-secondary me-2">@job.Experience</span>
+                                            <span class="badge bg-success-light text-success">@job.Position</span>
+                                        </div>
+                                        <div class="job-meta d-flex flex-wrap text-muted small mb-3">
+                                            <div class="me-3 mb-2">
+                                                <i class="bi bi-geo-alt me-1"></i> @job.CityName
+                                            </div>
+                                            <div class="me-3 mb-2">
+                                                <i class="bi bi-cash-stack me-1"></i> @job.Salary.ToString("N0") VND
+                                            </div>
+                                            <div class="mb-2">
+                                                <i class="bi bi-calendar-date me-1"></i> Đăng ngày @job.CreatedAt.ToString("dd/MM/yyyy")
+                                            </div>
+                                        </div>
+                                        <p class="job-description mb-0 text-truncate-3">@job.Description</p>
+                                    </div>
+                                    <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                        <div class="d-flex flex-column align-items-md-end">
+                                            @if (User.Identity?.IsAuthenticated == true)
+                                            {
+                                                if (job.IsSaved)
+                                                {
+                                                    <form method="post" action="@Url.Action("UnsaveJob", "EmployersPage", new { postId = job.PostId })">
+                                                        <input type="hidden" name="employerId" value="@employerId" />
+                                                        <input type="hidden" name="page" value="@currentPage" />
+                                                        <input type="hidden" name="searchKeyword" value="@searchKeyword" />
+                                                        <input type="hidden" name="sortOrder" value="@sortOrder" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill mb-2">
+                                                            <i class="bi bi-bookmark-fill me-1"></i> Bỏ lưu
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form method="post" action="@Url.Action("SaveJob", "EmployersPage", new { postId = job.PostId })">
+                                                        <input type="hidden" name="employerId" value="@employerId" />
+                                                        <input type="hidden" name="page" value="@currentPage" />
+                                                        <input type="hidden" name="searchKeyword" value="@searchKeyword" />
+                                                        <input type="hidden" name="sortOrder" value="@sortOrder" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill mb-2">
+                                                            <i class="bi bi-bookmark me-1"></i> Lưu
+                                                        </button>
+                                                    </form>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("Login", "Account", new { returnUrl = Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder, page = currentPage }) })" 
+                                                   class="btn btn-sm btn-outline-primary rounded-pill mb-2">
+                                                    <i class="bi bi-bookmark me-1"></i> Lưu
+                                                </a>
+                                            }
+                                            
+                                            <a asp-controller="ApplyJob" asp-action="Details" asp-route-postID="@job.PostId" class="btn btn-sm btn-primary rounded-pill z-index-2 position-relative">
+                                                Ứng tuyển ngay
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                        <!-- Pagination -->
+                        @if (totalPages > 1)
+                        {
+                            <nav aria-label="Phân trang">
+                                <ul class="pagination justify-content-center mt-5">
+                                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                        <a class="page-link rounded-pill" href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder, page = currentPage - 1 })">
+                                            <i class="bi bi-chevron-left"></i> Trước
+                                        </a>
+                                    </li>
+                                    
+                                    @{
+                                        int startPage = Math.Max(1, currentPage - 2);
+                                        int endPage = Math.Min(totalPages, startPage + 4);
+                                        
+                                        if (endPage - startPage < 4 && startPage > 1)
+                                        {
+                                            startPage = Math.Max(1, endPage - 4);
+                                        }
+                                    }
+                                    
+                                    @for (int i = startPage; i <= endPage; i++)
+                                    {
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <a class="page-link rounded-pill" href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder, page = i })">@i</a>
+                                        </li>
+                                    }
+                                    
+                                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                        <a class="page-link rounded-pill" href="@Url.Action("ViewAllJobsByEmployers", "EmployersPage", new { employerId, searchKeyword, sortOrder, page = currentPage + 1 })">
+                                            Sau <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info py-4 text-center">
+                            <i class="bi bi-info-circle display-6 d-block mb-3"></i>
+                            <h4>Không tìm thấy việc làm</h4>
+                            <p class="mb-0">
+                                @if (!string.IsNullOrEmpty(searchKeyword))
+                                {
+                                    <span>Không tìm thấy kết quả phù hợp với từ khóa "<strong>@searchKeyword</strong>".</span>
+                                }
+                                else
+                                {
+                                    <span>Hiện tại công ty chưa có vị trí tuyển dụng nào.</span>
+                                }
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mobile Filter Button (visible only on small screens) -->
+<div class="d-md-none mb-3">
+    <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#filtersModal">
+        <i class="bi bi-funnel me-2"></i>Bộ lọc và tìm kiếm
+    </button>
+</div>
+
+<!-- Mobile Filters Modal -->
+<div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filtersModalLabel"><i class="bi bi-funnel me-2"></i>Bộ lọc tìm kiếm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="ViewAllJobsByEmployers" method="get" id="mobileFilterForm">
+                    <input type="hidden" name="employerId" value="@employerId" />
+                    <input type="hidden" name="sortOrder" value="@sortOrder" />
+                    
+                    <!-- Search input -->
+                    <div class="mb-3">
+                        <label for="modalSearchKeyword" class="form-label">Tìm kiếm</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="modalSearchKeyword" name="searchKeyword" 
+                                   value="@searchKeyword" placeholder="Nhập từ khóa...">
+                            <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('mobileFilterForm').submit();">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Types -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Loại công việc</h6>
+                        @foreach (var jobType in jobTypes)
+                        {
+                            bool isChecked = ViewBag.SelectedJobTypes != null && ViewBag.SelectedJobTypes.Contains(jobType);
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selectedJobTypes" 
+                                       id="modal-job-type-@jobType.Replace(" ", "-")" value="@jobType" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="modal-job-type-@jobType.Replace(" ", "-")">
+                                    @jobType
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    
+                    <!-- Locations -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Địa điểm</h6>
+                        @foreach (var location in locations)
+                        {
+                            bool isChecked = ViewBag.SelectedLocations != null && ViewBag.SelectedLocations.Contains(location);
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selectedLocations" 
+                                       id="modal-location-@location.Replace(" ", "-")" value="@location" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="modal-location-@location.Replace(" ", "-")">
+                                    @location
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    
+                    <!-- Experience Levels -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Kinh nghiệm</h6>
+                        @foreach (var experience in experienceLevels)
+                        {
+                            bool isChecked = ViewBag.SelectedExperiences != null && ViewBag.SelectedExperiences.Contains(experience);
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selectedExperiences" 
+                                       id="modal-exp-@experience.Replace(" ", "-")" value="@experience" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="modal-exp-@experience.Replace(" ", "-")">
+                                    @experience
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    
+                    <!-- Salary Range - Cách mới -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Mức lương (triệu đồng)</h6>
+                        
+                        <!-- Các khoảng lương phổ biến -->
+                        <div class="salary-tags d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="0" data-max="10">
+                                Dưới 10 triệu
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="10" data-max="20">
+                                10 - 20 triệu
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="20" data-max="30">
+                                20 - 30 triệu
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="30" data-max="50">
+                                30 - 50 triệu
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary salary-tag" data-min="50" data-max="100">
+                                Trên 50 triệu
+                            </button>
+                        </div>
+                        
+                        <!-- Tùy chọn nhập khoảng lương -->
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="modalCustomMinSalary" class="form-label small">Từ</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" id="modalCustomMinSalary" name="minSalary" 
+                                          value="@(ViewBag.MinSalary ?? 0)" min="0" max="100">
+                                    <span class="input-group-text">triệu</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label for="modalCustomMaxSalary" class="form-label small">Đến</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" id="modalCustomMaxSalary" name="maxSalary" 
+                                          value="@(ViewBag.MaxSalary ?? 50)" min="0" max="100">
+                                    <span class="input-group-text">triệu</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <a href="@Url.Action("ViewAllJobsByEmployers", new { employerId = employerId, sortOrder = sortOrder })" 
+                   class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-1"></i>Xóa bộ lọc
+                </a>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('mobileFilterForm').submit();">
+                    <i class="bi bi-funnel-fill me-1"></i>Áp dụng bộ lọc
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .text-truncate-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        
+        .bg-primary-light {
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        
+        .bg-secondary-light {
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+        
+        .bg-success-light {
+            background-color: rgba(25, 135, 84, 0.1);
+        }
+        
+        .sticky-top {
+            top: 1rem;
+            z-index: 1020;
+        }
+        
+        .z-index-2 {
+            z-index: 2;
+        }
+        
+        /* Salary Range Slider Styles */
+        .salary-range-container {
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .range-slider {
+            height: 30px;
+            margin-bottom: 10px;
+        }
+        
+        .range-slider input[type="range"] {
+            position: absolute;
+            pointer-events: none;
+            -webkit-appearance: none;
+            z-index: 2;
+            height: 6px;
+            width: 100%;
+            opacity: 0;
+        }
+        
+        .range-slider input[type="range"]::-webkit-slider-thumb {
+            pointer-events: all;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 2px solid #0d6efd;
+            -webkit-appearance: none;
+            cursor: pointer;
+            z-index: 3;
+        }
+        
+        .salary-track {
+            position: absolute;
+            z-index: 1;
+            left: 0;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+        }
+        
+        .salary-track:before {
+            content: '';
+            position: absolute;
+            background: #0d6efd;
+            height: 100%;
+            left: 0%;
+            right: 0%;
+            border-radius: 3px;
+        }
+        
+        /* For mobile devices */
+        @@media (max-width: 767.98px) {
+            .job-meta {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSortLinks();
+            initializeSalaryRangeControls();
+            initializeSalaryTags();
+        });
+
+        // Xử lý liên kết sắp xếp
+        function initializeSortLinks() {
+            const currentSort = "@sortOrder";
+            const sortLinks = document.querySelectorAll('.dropdown-menu .dropdown-item');
+            
+            sortLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (!href) return;
+                
+                try {
+                    // Sử dụng URLSearchParams để phân tích URL an toàn hơn
+                    const url = new URL(href, window.location.origin);
+                    const params = new URLSearchParams(url.search);
+                    const sortValue = params.get('sortOrder');
+                    
+                    if (sortValue === currentSort) {
+                        link.classList.add('active');
+                    }
+                } catch (error) {
+                    console.warn('Lỗi khi phân tích URL:', error);
+                }
+            });
+        }
+
+        // Xử lý thanh khoảng lương
+        function initializeSalaryRangeControls() {
+            // Cấu hình cho desktop
+            const desktopConfig = {
+                minRange: document.getElementById('customMinSalary'),
+                maxRange: document.getElementById('customMaxSalary'),
+                minDisplay: document.getElementById('minSalaryDisplay'),
+                maxDisplay: document.getElementById('maxSalaryDisplay'),
+                rangeText: document.getElementById('salaryRangeText')
+            };
+            
+            // Cấu hình cho mobile
+            const mobileConfig = {
+                minRange: document.getElementById('modalCustomMinSalary'),
+                maxRange: document.getElementById('modalCustomMaxSalary'),
+                minDisplay: document.getElementById('modalMinSalaryDisplay'),
+                maxDisplay: document.getElementById('modalMaxSalaryDisplay'),
+                rangeText: document.getElementById('modalSalaryRangeText')
+            };
+            
+            // Khởi tạo bộ điều khiển khoảng lương
+            setupSalaryRangeController(desktopConfig);
+            setupSalaryRangeController(mobileConfig);
+            
+            // Đồng bộ giữa desktop và mobile
+            syncSalaryRangeControllers(desktopConfig, mobileConfig);
+        }
+
+        function setupSalaryRangeController(config) {
+            const { minRange, maxRange, minDisplay, maxDisplay, rangeText } = config;
+            
+            if (!minRange || !maxRange) return;
+            
+            // Cập nhật hiển thị ban đầu
+            updateSalaryDisplay(config);
+            
+            // Thêm sự kiện thay đổi giá trị
+            minRange.addEventListener('input', function() {
+                // Đảm bảo giá trị minRange không lớn hơn maxRange
+                if (parseInt(minRange.value) > parseInt(maxRange.value)) {
+                    minRange.value = maxRange.value;
+                }
+                updateSalaryDisplay(config);
+            });
+            
+            maxRange.addEventListener('input', function() {
+                // Đảm bảo giá trị maxRange không nhỏ hơn minRange
+                if (parseInt(maxRange.value) < parseInt(minRange.value)) {
+                    maxRange.value = minRange.value;
+                }
+                updateSalaryDisplay(config);
+            });
+        }
+
+        function updateSalaryDisplay(config) {
+            const { minRange, maxRange, minDisplay, maxDisplay, rangeText } = config;
+            
+            const minVal = parseInt(minRange.value);
+            const maxVal = parseInt(maxRange.value);
+            
+            // Cập nhật text hiển thị
+            if (minDisplay) minDisplay.textContent = minVal;
+            if (maxDisplay) maxDisplay.textContent = maxVal < 50 ? maxVal : '50+';
+            
+            // Cập nhật text khoảng lương
+            const maxText = maxVal < 50 ? maxVal : '50+';
+            if (rangeText) rangeText.textContent = `${minVal} - ${maxText} triệu`;
+        }
+
+        function syncSalaryRangeControllers(desktop, mobile) {
+            if (!desktop.minRange || !mobile.minRange) return;
+            
+            // Đồng bộ từ desktop sang mobile
+            desktop.minRange.addEventListener('input', function() {
+                mobile.minRange.value = this.value;
+                updateSalaryDisplay(mobile);
+            });
+            
+            desktop.maxRange.addEventListener('input', function() {
+                mobile.maxRange.value = this.value;
+                updateSalaryDisplay(mobile);
+            });
+            
+            // Đồng bộ từ mobile sang desktop
+            mobile.minRange.addEventListener('input', function() {
+                desktop.minRange.value = this.value;
+                updateSalaryDisplay(desktop);
+            });
+            
+            mobile.maxRange.addEventListener('input', function() {
+                desktop.maxRange.value = this.value;
+                updateSalaryDisplay(desktop);
+            });
+        }
+
+        // Xử lý các tag lương
+        function initializeSalaryTags() {
+            const salaryTags = document.querySelectorAll('.salary-tag');
+            const customMinSalary = document.getElementById('customMinSalary');
+            const customMaxSalary = document.getElementById('customMaxSalary');
+            const modalCustomMinSalary = document.getElementById('modalCustomMinSalary');
+            const modalCustomMaxSalary = document.getElementById('modalCustomMaxSalary');
+            
+            if (!customMinSalary || !customMaxSalary) return;
+            
+            // Làm nổi bật tag lương đang được chọn
+            highlightActiveSalaryTag();
+            
+            // Thêm sự kiện click cho các tag lương desktop
+            salaryTags.forEach(tag => {
+                tag.addEventListener('click', function(e) {
+                    e.preventDefault(); // Ngăn form submit
+                    
+                    const min = this.dataset.min;
+                    const max = this.dataset.max;
+                    
+                    if (customMinSalary) customMinSalary.value = min;
+                    if (customMaxSalary) customMaxSalary.value = max;
+                    if (modalCustomMinSalary) modalCustomMinSalary.value = min;
+                    if (modalCustomMaxSalary) modalCustomMaxSalary.value = max;
+                    
+                    highlightActiveSalaryTag();
+                });
+            });
+            
+            // Thêm sự kiện thay đổi giá trị cho input salary
+            [customMinSalary, customMaxSalary, modalCustomMinSalary, modalCustomMaxSalary].forEach(input => {
+                if (input) {
+                    input.addEventListener('change', highlightActiveSalaryTag);
+                }
+            });
+            
+            function highlightActiveSalaryTag() {
+                if (!customMinSalary || !customMaxSalary) return;
+                
+                const currentMin = parseInt(customMinSalary.value);
+                const currentMax = parseInt(customMaxSalary.value);
+                
+                salaryTags.forEach(tag => {
+                    const tagMin = parseInt(tag.dataset.min);
+                    const tagMax = parseInt(tag.dataset.max);
+                    
+                    if (currentMin === tagMin && currentMax === tagMax) {
+                        tag.classList.add('btn-primary');
+                        tag.classList.remove('btn-outline-secondary');
+                    } else {
+                        tag.classList.remove('btn-primary');
+                        tag.classList.add('btn-outline-secondary');
+                    }
+                });
+            }
+        }
+    </script>
+}

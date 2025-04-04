@@ -321,5 +321,15 @@ namespace TVOnline.Repository.Posts
             // If no experience filter, use EF Count
             return await query.CountAsync();
         }
+
+        public async Task<List<Post>> GetPostsByEmployerId(string employerId)
+        {
+            return await _context.Posts
+                .Where(p => p.EmployerId == employerId && p.IsActive)
+                .Include(p => p.Employer)
+                .Include(p => p.City)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
     }
 }

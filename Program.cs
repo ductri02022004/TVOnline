@@ -20,6 +20,7 @@ using TVOnline.Service.Vnpay;
 using TVOnline.Services;
 using Microsoft.AspNetCore.Authorization;
 using TVOnline.Areas.Premium.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace TVOnline {
     public class Program {
@@ -47,6 +48,12 @@ namespace TVOnline {
         }
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration) {
+            // Configure Azure App Service
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
             // Configure HttpClient
             services.AddHttpClient<VnPayService>();
 
@@ -118,16 +125,19 @@ namespace TVOnline {
             });
 
             // Add CORS policy
-            services.AddCors(options => {
+            services.AddCors(options =>
+            {
                 options.AddPolicy("AllowAllOrigins",
-                    builder => {
-                        builder.AllowAnyOrigin()
                     builder =>
                     {
-                        builder.WithOrigins("https://localhost:7216", "http://localhost:5216")
-                               .AllowAnyMethod()
-                               .AllowAnyHeader()
-                               .AllowCredentials();
+                        builder.WithOrigins(
+                            "https://localhost:7216",
+                            "http://localhost:5216",
+                            "https://tvonline.azurewebsites.net"
+                        )
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                     });
             });
 
