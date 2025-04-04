@@ -10,6 +10,7 @@
 	<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
 	<link href="~/admin/css/styles.css" rel="stylesheet" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+	@await RenderSectionAsync("Styles", required: false)
 	<style>
 		.navbar-toggler {
 			padding: 0.5rem;
@@ -95,6 +96,16 @@
 						</a>
 						
 						<div class="sb-sidenav-menu-heading">QUẢN LÝ HỆ THỐNG</div>
+
+						<a href="@Url.Action("Index", "AdminChat", new { area = "Admin" })"
+						   class="sidebar-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "AdminChat" ? "active" : "")">
+							<span class="sidebar-menu-icon"><i class="fas fa-comments"></i></span>
+							<span>Quản lý tin nhắn</span>
+							@if (ViewBag.UnreadMessagesCount > 0)
+							{
+								<span class="badge badge-unread rounded-pill">@ViewBag.UnreadMessagesCount</span>
+							}
+						</a>
 						<a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "UserManagement" ? "active" : "")" href="@Url.Action("ManageUsers", "UserManagement", new { area = "Admin" })">
 							<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
 							Quản lý người dùng
@@ -111,7 +122,10 @@
 							<div class="sb-nav-link-icon"><i class="fas fa-file-invoice"></i></div>
 							Quản lý mẫu CV
 						</a>
-						
+						<a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Feedback" ? "active" : "")" href="@Url.Action("Index", "Feedback", new { area = "Admin" })">
+							<div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+							Quản lý phản hồi
+						</a>
 						<div class="sb-sidenav-menu-heading">LIÊN KẾT NHANH</div>
 						<a class="nav-link" href="/" target="_blank">
 							<div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>

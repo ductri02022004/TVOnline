@@ -1,0 +1,143 @@
+@model TVOnline.Models.PremiumUserCV
+
+@{
+    ViewData["Title"] = "Xem CV - " + Model.Title;
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TVOnline</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .preview-header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .preview-content {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .cv-container {
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 0;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Thêm các style mẫu cho CV */
+        @Html.Raw(Model.CssContent)
+        
+        @@media print {
+            .preview-header, .no-print {
+                display: none !important;
+            }
+            
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .preview-content {
+                padding: 0;
+            }
+            
+            .cv-container {
+                width: 100%;
+                height: 100%;
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-file-alt me-2"></i> @Model.Title
+                </h4>
+                <div>
+                    <button onclick="window.print()" class="btn btn-success me-2">
+                        <i class="fas fa-print me-1"></i> In CV
+                    </button>
+                    <a asp-action="Download" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+                        <i class="fas fa-download me-1"></i> Tải PDF
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                        <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                    </a>
+                    <a asp-action="MyCV" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="preview-content">
+        <div class="cv-container">
+            @{
+                // Xử lý nội dung CV với dữ liệu từ JSON
+                var htmlContent = Model.HtmlContent;
+                try {
+                    dynamic cvData = Newtonsoft.Json.JsonConvert.DeserializeObject(Model.Content);
+                    
+                    // Thay thế các biến trong mẫu CV bằng dữ liệu người dùng
+                    htmlContent = htmlContent.Replace("{{Name}}", cvData.personalInfo.fullName?.ToString() ?? "");
+                    htmlContent = htmlContent.Replace("{{JobTitle}}", cvData.personalInfo.jobTitle?.ToString() ?? "");
+                    htmlContent = htmlContent.Replace("{{Email}}", cvData.personalInfo.email?.ToString() ?? "");
+                    htmlContent = htmlContent.Replace("{{Phone}}", cvData.personalInfo.phone?.ToString() ?? "");
+                    htmlContent = htmlContent.Replace("{{Address}}", cvData.personalInfo.address?.ToString() ?? "");
+                    
+                    // Xử lý các phần có nhiều dòng
+                    string educationHtml = cvData.education?.ToString().Replace("\n", "<br>") ?? "";
+                    string experienceHtml = cvData.experience?.ToString().Replace("\n", "<br>") ?? "";
+                    string skillsHtml = cvData.skills?.ToString().Replace("\n", "<br>") ?? "";
+                    string othersHtml = cvData.others?.ToString().Replace("\n", "<br>") ?? "";
+                    
+                    htmlContent = htmlContent.Replace("{{Education}}", educationHtml);
+                    htmlContent = htmlContent.Replace("{{Experience}}", experienceHtml);
+                    htmlContent = htmlContent.Replace("{{Skills}}", skillsHtml);
+                    htmlContent = htmlContent.Replace("{{Others}}", othersHtml);
+                }
+                catch (Exception ex) {
+                    // Nếu có lỗi khi xử lý JSON, hiển thị mẫu CV gốc
+                    <div class="alert alert-danger no-print">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Có lỗi khi hiển thị CV: @ex.Message
+                    </div>
+                }
+            }
+            
+            @Html.Raw(htmlContent)
+        </div>
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

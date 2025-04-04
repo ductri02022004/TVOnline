@@ -62,6 +62,12 @@ namespace TVOnline.Hubs
                     return;
                 }
 
+                if (string.IsNullOrEmpty(senderId) || string.IsNullOrEmpty(receiverId))
+                {
+                    _logger.LogWarning($"Invalid sender or receiver ID: senderId={senderId}, receiverId={receiverId}");
+                    throw new ArgumentException("Sender and receiver IDs are required");
+                }
+
                 _logger.LogInformation($"Sending message from {senderId} to {receiverId}");
 
                 var chatMessage = new ChatMessage
@@ -77,9 +83,21 @@ namespace TVOnline.Hubs
                 var savedMessage = await _chatService.SaveMessageAsync(chatMessage);
                 _logger.LogInformation($"Message saved successfully with ID {savedMessage.Id}");
 
+                // Chuẩn bị dữ liệu tin nhắn để gửi về client
+                var messageData = new
+                {
+                    id = savedMessage.Id,
+                    senderId = savedMessage.SenderId,
+                    receiverId = savedMessage.ReceiverId,
+                    content = savedMessage.Content,
+                    timestamp = savedMessage.Timestamp,
+                    isRead = savedMessage.IsRead,
+                    isEdited = savedMessage.IsEdited
+                };
+
                 // Gửi tin nhắn đến người nhận và người gửi (để hiển thị trên cả hai phía)
-                await Clients.Group(receiverId).SendAsync("ReceiveMessage", savedMessage);
-                await Clients.Group(senderId).SendAsync("ReceiveMessage", savedMessage);
+                await Clients.Group(receiverId).SendAsync("ReceiveMessage", messageData);
+                await Clients.Group(senderId).SendAsync("ReceiveMessage", messageData);
                 _logger.LogInformation($"Message sent to groups {senderId} and {receiverId}");
             }
             catch (Exception ex)

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
 using TVOnline.Models;
 using TVOnline.Service.DTO;
@@ -59,6 +60,16 @@ namespace TVOnline.Controllers.Employer
         public async Task<IActionResult> ViewEmployerDetail(string employerId)
         {
             var employer = await _employersService.GetEmployerById(employerId);
+            
+            // Lấy danh sách công việc của nhà tuyển dụng
+            var jobs = await _context.Posts
+                .Where(p => p.EmployerId == employerId && p.IsActive)
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(5)
+                .ToListAsync();
+                
+            ViewBag.Jobs = jobs;
+            
             return View("Details", employer);
         }
 

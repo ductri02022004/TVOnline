@@ -133,7 +133,15 @@ namespace TVOnline {
                         builder.WithOrigins(
                             "https://localhost:7216",
                             "http://localhost:5216",
-                            "https://tvonline.azurewebsites.net"
+                            "https://tvonline.azurewebsites.net",
+                            "http://localhost:5000",
+                            "http://localhost:5001",
+                            "https://localhost:5000",
+                            "https://localhost:5001",
+                            "https://localhost:7223",
+                            "http://localhost:7223",
+                            "http://localhost:44351",
+                            "https://localhost:44351"
                         )
                         .AllowAnyMethod()
                         .AllowAnyHeader()
@@ -148,6 +156,7 @@ namespace TVOnline {
                     policy.Requirements.Add(new PremiumRequirement()));
             });
 
+
             services.AddScoped<IAuthorizationHandler, PremiumAuthorizationHandler>();
         }
 
@@ -161,7 +170,7 @@ namespace TVOnline {
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+             
             app.UseRouting();
 
             // Use CORS policy

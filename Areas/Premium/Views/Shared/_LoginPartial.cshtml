@@ -1,0 +1,50 @@
+@using Microsoft.AspNetCore.Identity
+@using TVOnline.Models
+@using TVOnline.Services
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+@inject IPremiumUserService PremiumUserService
+
+<ul class="ms-auto d-flex align-items-center">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        var isPremium = await PremiumUserService.IsUserPremium(user.Id);
+        
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-light" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">
+                    <i class="fas fa-tachometer-alt me-1"></i> Trang chủ Admin
+                </a>
+            </li>
+        }
+        
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center text-light" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="~/images/account-bg.jpg" alt="User Avatar" class="rounded-circle" width="32" height="32">
+                <span class="ms-2">@User.Identity.Name</span>
+            </a>
+
+            <ul class="dropdown-menu user-dropdown-menu" aria-labelledby="userDropdown">
+                <li class="user-info">@User.Identity.Name</li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="EditUserProfile" asp-action="Index"><i class="fas fa-user me-1"></i> Chỉnh sửa tài khoản</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="AppliedJob"><i class="fas fa-file-alt me-1"></i> CV của tôi</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="GetSavedJobs"><i class="fas fa-bookmark me-1"></i> Công việc đã lưu</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="AccountStatus" asp-action="Index"><i class="fas fa-user-tag me-1"></i> Trạng thái tài khoản</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="Payment" asp-action="PaymentHistory"><i class="fas fa-credit-card me-1"></i> Lịch sử giao dịch</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" asp-area="" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt me-1"></i> Đăng xuất</a></li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="btn btn-outline-light me-2" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-light me-2" asp-area="" asp-controller="Account" asp-action="Register">Đăng kí</a>
+        </li>
+    }
+</ul>

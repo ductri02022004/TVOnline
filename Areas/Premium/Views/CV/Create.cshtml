@@ -1,0 +1,234 @@
+@model TVOnline.Areas.Premium.Controllers.CVViewModel
+
+@{
+    ViewData["Title"] = "Tạo CV từ mẫu - " + Model.TemplateName;
+    Layout = "~/Areas/Premium/Views/Shared/_PremiumLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-area="Premium" asp-controller="Home" asp-action="Index">Trang chủ Premium</a></li>
+                    <li class="breadcrumb-item"><a asp-area="Premium" asp-controller="CV" asp-action="Index">Mẫu CV</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tạo CV</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-primary">Tạo CV từ mẫu: @Model.TemplateName</h2>
+            <p class="text-muted">Điền thông tin của bạn vào form bên dưới để tạo CV</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0"><i class="fas fa-edit me-2 text-primary"></i>Thông tin CV</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <input type="hidden" asp-for="TemplateId" />
+                        <input type="hidden" asp-for="TemplateName" />
+                        <input type="hidden" asp-for="HtmlContent" />
+                        <input type="hidden" asp-for="CssContent" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Tiêu đề CV</label>
+                            <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề cho CV của bạn" required />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <div class="form-text">Đặt một tiêu đề dễ nhớ để dễ dàng tìm kiếm sau này</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Thông tin cá nhân</label>
+                            <div class="card">
+                                <div class="card-body bg-light">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Họ và tên</label>
+                                            <input type="text" class="form-control" id="fullName" placeholder="Nguyễn Văn A" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Vị trí ứng tuyển</label>
+                                            <input type="text" class="form-control" id="jobTitle" placeholder="Frontend Developer" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Email</label>
+                                            <input type="email" class="form-control" id="email" placeholder="example@email.com" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Số điện thoại</label>
+                                            <input type="tel" class="form-control" id="phone" placeholder="0912345678" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="form-label small">Địa chỉ</label>
+                                            <input type="text" class="form-control" id="address" placeholder="Hà Nội, Việt Nam" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Học vấn</label>
+                            <textarea class="form-control" id="education" rows="4" placeholder="- 2018-2022: Đại học ABC, Chuyên ngành XYZ, GPA: 3.5/4.0"></textarea>
+                            <div class="form-text">Liệt kê các bằng cấp, chứng chỉ và thành tích học tập của bạn</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kinh nghiệm làm việc</label>
+                            <textarea class="form-control" id="experience" rows="6" placeholder="- 2022-Hiện tại: Công ty ABC, Vị trí XYZ&#10;  + Trách nhiệm 1&#10;  + Trách nhiệm 2"></textarea>
+                            <div class="form-text">Mô tả kinh nghiệm làm việc của bạn, bắt đầu từ công việc gần đây nhất</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kỹ năng</label>
+                            <textarea class="form-control" id="skills" rows="4" placeholder="- Kỹ năng chuyên môn: HTML, CSS, JavaScript, React&#10;- Kỹ năng mềm: Làm việc nhóm, Quản lý thời gian"></textarea>
+                            <div class="form-text">Liệt kê các kỹ năng chuyên môn và kỹ năng mềm của bạn</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Thông tin khác</label>
+                            <textarea class="form-control" id="others" rows="4" placeholder="- Ngôn ngữ: Tiếng Anh (TOEIC 750)&#10;- Sở thích: Đọc sách, Du lịch"></textarea>
+                            <div class="form-text">Thêm các thông tin bổ sung như ngôn ngữ, sở thích, dự án cá nhân...</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Content" class="form-label">Nội dung CV (JSON)</label>
+                            <textarea asp-for="Content" id="jsonContent" class="form-control d-none" rows="10" required></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-save me-1"></i> Lưu CV
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="fas fa-eye me-2 text-primary"></i>Xem trước</h5>
+                    <button class="btn btn-sm btn-outline-primary" id="refreshPreviewBtn">
+                        <i class="fas fa-sync-alt me-1"></i> Cập nhật xem trước
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="cv-preview-container" style="height: 800px; overflow-y: auto;">
+                        <div id="cvPreview" style="transform-origin: top left; transform: scale(0.7); width: 142%; height: 142%;">
+                            <style id="cvCssContent">
+                                @Html.Raw(Model.CssContent)
+                            </style>
+                            <div id="cvHtmlContent">
+                                @Html.Raw(Model.HtmlContent)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Khởi tạo object để lưu dữ liệu CV
+            let cvData = {
+                personalInfo: {
+                    fullName: "",
+                    jobTitle: "",
+                    email: "",
+                    phone: "",
+                    address: ""
+                },
+                education: "",
+                experience: "",
+                skills: "",
+                others: ""
+            };
+            
+            // Cập nhật JSON khi người dùng nhập liệu
+            function updateJsonContent() {
+                cvData.personalInfo.fullName = $("#fullName").val();
+                cvData.personalInfo.jobTitle = $("#jobTitle").val();
+                cvData.personalInfo.email = $("#email").val();
+                cvData.personalInfo.phone = $("#phone").val();
+                cvData.personalInfo.address = $("#address").val();
+                cvData.education = $("#education").val();
+                cvData.experience = $("#experience").val();
+                cvData.skills = $("#skills").val();
+                cvData.others = $("#others").val();
+                
+                $("#jsonContent").val(JSON.stringify(cvData));
+            }
+            
+            // Cập nhật xem trước CV
+            function updatePreview() {
+                let htmlContent = $("#cvHtmlContent").html();
+                
+                // Thay thế các biến trong mẫu CV bằng dữ liệu người dùng nhập
+                htmlContent = htmlContent.replace(/{{Name}}/g, cvData.personalInfo.fullName || "Nguyễn Văn A");
+                htmlContent = htmlContent.replace(/{{JobTitle}}/g, cvData.personalInfo.jobTitle || "Frontend Developer");
+                htmlContent = htmlContent.replace(/{{Email}}/g, cvData.personalInfo.email || "example@email.com");
+                htmlContent = htmlContent.replace(/{{Phone}}/g, cvData.personalInfo.phone || "0912345678");
+                htmlContent = htmlContent.replace(/{{Address}}/g, cvData.personalInfo.address || "Hà Nội, Việt Nam");
+                
+                // Xử lý các phần có nhiều dòng
+                let educationHtml = cvData.education ? cvData.education.replace(/\n/g, "<br>") : "- 2018-2022: Đại học ABC, Chuyên ngành XYZ, GPA: 3.5/4.0";
+                let experienceHtml = cvData.experience ? cvData.experience.replace(/\n/g, "<br>") : "- 2022-Hiện tại: Công ty ABC, Vị trí XYZ<br>  + Trách nhiệm 1<br>  + Trách nhiệm 2";
+                let skillsHtml = cvData.skills ? cvData.skills.replace(/\n/g, "<br>") : "- Kỹ năng chuyên môn: HTML, CSS, JavaScript, React<br>- Kỹ năng mềm: Làm việc nhóm, Quản lý thời gian";
+                let othersHtml = cvData.others ? cvData.others.replace(/\n/g, "<br>") : "- Ngôn ngữ: Tiếng Anh (TOEIC 750)<br>- Sở thích: Đọc sách, Du lịch";
+                
+                htmlContent = htmlContent.replace(/{{Education}}/g, educationHtml);
+                htmlContent = htmlContent.replace(/{{Experience}}/g, experienceHtml);
+                htmlContent = htmlContent.replace(/{{Skills}}/g, skillsHtml);
+                htmlContent = htmlContent.replace(/{{Others}}/g, othersHtml);
+                
+                $("#cvHtmlContent").html(htmlContent);
+            }
+            
+            // Sự kiện khi người dùng nhập liệu
+            $("input, textarea").on("input", function() {
+                updateJsonContent();
+            });
+            
+            // Sự kiện khi người dùng nhấn nút cập nhật xem trước
+            $("#refreshPreviewBtn").click(function() {
+                updateJsonContent();
+                updatePreview();
+            });
+            
+            // Sự kiện khi người dùng nhấn nút lưu CV
+            $("#submitBtn").click(function(e) {
+                updateJsonContent();
+                
+                // Kiểm tra tiêu đề CV
+                if (!$("#Title").val()) {
+                    e.preventDefault();
+                    alert("Vui lòng nhập tiêu đề cho CV của bạn!");
+                    $("#Title").focus();
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Khởi tạo ban đầu
+            updateJsonContent();
+            updatePreview();
+        });
+    </script>
+}

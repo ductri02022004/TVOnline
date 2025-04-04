@@ -177,7 +177,7 @@
                                     <img src="@post.CompanyLogoURL" class="company-logo-lg" alt="@post.CompanyName" style="max-width: 80px; max-height: 80px;">
                                 </div>
                                 <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
-                                    <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">
+                                    <a asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">
                                         <h4>@post.Title</h4>
                                     </a>
                                     <p class="company-name mb-2">@post.CompanyName</p>
@@ -188,7 +188,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3 text-md-end">
-                                    <a class="btn btn-primary me-2" asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
+                                    <a class="btn btn-primary me-2" asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
                                     @if (signInManager.IsSignedIn(User))
                                     {
                                         @if (post.IsSaved)
