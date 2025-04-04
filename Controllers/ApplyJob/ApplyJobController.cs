@@ -89,10 +89,9 @@ namespace TVOnline.Controllers.ApplyJob
         }
 
         [Route("[action]/{id?}")]
-        [Route("[action]")]
-        public async Task<IActionResult> JobDetails(string? id, [FromQuery] string? postID)
+        public async Task<IActionResult> JobDetails(string? id, [FromQuery] string? postId)
         {
-            var postIdToUse = id ?? postID;
+            var postIdToUse = id ?? postId;
             if (string.IsNullOrEmpty(postIdToUse))
             {
                 return NotFound();
