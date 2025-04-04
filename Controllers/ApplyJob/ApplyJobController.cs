@@ -133,7 +133,7 @@ namespace TVOnline.Controllers.ApplyJob
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "Bạn cần đăng nhập để ứng tuyển.";
-                    return RedirectToAction("Details", new { postId });
+                    return RedirectToAction("JobDetails", new { postId });
                 }
 
                 // Check if user has already applied to this job
@@ -141,10 +141,10 @@ namespace TVOnline.Controllers.ApplyJob
                 if (existingApplication != null)
                 {
                     TempData["ErrorMessage"] = "Bạn đã ứng tuyển vào vị trí này rồi.";
-                    return RedirectToAction("Details", new { postId });
+                    return RedirectToAction("JobDetails", new { postId });
                 }
 
-                // Get post details to validate
+                // Get post JobDetails to validate
                 var post = await _postService.FindPostById(postId);
                 if (post == null)
                 {
@@ -182,11 +182,11 @@ namespace TVOnline.Controllers.ApplyJob
                 await _userCvService.SaveCv(userCvAddRequest);
 
                 TempData["SuccessMessage"] = "Ứng tuyển thành công! Nhà tuyển dụng sẽ xem xét hồ sơ của bạn.";
-                return RedirectToAction("Details", new { postId });
+                return RedirectToAction("JobDetails", new { postId });
             }
 
             TempData["ErrorMessage"] = "Vui lòng tải lên CV của bạn.";
-            return RedirectToAction("Details", new { postId });
+            return RedirectToAction("JobDetails", new { postId });
         }
 
         [Authorize]
