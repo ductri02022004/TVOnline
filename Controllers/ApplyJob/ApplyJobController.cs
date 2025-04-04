@@ -88,10 +88,16 @@ namespace TVOnline.Controllers.ApplyJob
             return View("Details", jobsViewModel);
         }
 
-        [Route("[action]/{id}")]
-        public async Task<IActionResult> JobDetails(string id)
+        [Route("[action]/{id?}")]
+        public async Task<IActionResult> JobDetails(string? id, [FromQuery] string? postId)
         {
-            var post = await _postService.FindPostById(id);
+            var postIdToUse = id ?? postId;
+            if (string.IsNullOrEmpty(postIdToUse))
+            {
+                return NotFound();
+            }
+
+            var post = await _postService.FindPostById(postIdToUse);
 
             // Check if user is logged in to show application status
             if (User.Identity.IsAuthenticated)
@@ -100,7 +106,7 @@ namespace TVOnline.Controllers.ApplyJob
                 if (user != null)
                 {
                     // Check if user has already applied to this job
-                    var existingApplication = await _userCvService.GetApplicationByUserAndPost(user.Id, id);
+                    var existingApplication = await _userCvService.GetApplicationByUserAndPost(user.Id, postIdToUse);
                     if (existingApplication != null)
                     {
                         ViewBag.HasApplied = true;
