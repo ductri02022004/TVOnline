@@ -1078,6 +1078,7 @@ nav ~ .container {
 .message-sent {
   float: right;
   margin-left: auto;
+  text-align: right;
 }
 
 .message-received {

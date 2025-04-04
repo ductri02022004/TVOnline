@@ -14,5 +14,7 @@ namespace TVOnline.Service.Post
         Task<int> CountSearchPosts(string keyword, int? cityId);
         Task<List<PostResponse>> FilterPosts(string keyword, int? cityId, decimal? minSalary, decimal? maxSalary, int? minExperience, int? maxExperience, int page, int pageSize, string? userId = null);
         Task<int> CountFilteredPosts(string keyword, int? cityId, decimal? minSalary, decimal? maxSalary, int? minExperience, int? maxExperience);
+        Task<bool> IsJobSavedByUser(string postId, string userId);
+        Task<List<PostResponse>> GetPostsByEmployer(string employerId);
     }
 }

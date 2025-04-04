@@ -9,20 +9,20 @@ namespace TVOnline.Data.Migrations
             // Thêm các Zone
             migrationBuilder.InsertData(
                 table: "Zones",
-                columns: new[] { "ZoneId", "ZoneName" },
-                values: new object[] { 1, "Miền Bắc" }
+                columns: ["ZoneId", "ZoneName"],
+                values: [1, "Miền Bắc"]
             );
 
             migrationBuilder.InsertData(
                 table: "Zones",
-                columns: new[] { "ZoneId", "ZoneName" },
-                values: new object[] { 2, "Miền Trung" }
+                columns: ["ZoneId", "ZoneName"],
+                values: [2, "Miền Trung"]
             );
 
             migrationBuilder.InsertData(
                 table: "Zones",
-                columns: new[] { "ZoneId", "ZoneName" },
-                values: new object[] { 3, "Miền Nam" }
+                columns: ["ZoneId", "ZoneName"],
+                values: [3, "Miền Nam"]
             );
 
             // Thêm các thành phố miền Bắc
@@ -38,8 +38,8 @@ namespace TVOnline.Data.Migrations
             {
                 migrationBuilder.InsertData(
                     table: "Cities",
-                    columns: new[] { "CityId", "CityName", "ZoneId" },
-                    values: new object[] { i + 1, northCities[i], 1 }
+                    columns: ["CityId", "CityName", "ZoneId"],
+                    values: [i + 1, northCities[i], 1]
                 );
             }
 
@@ -54,8 +54,8 @@ namespace TVOnline.Data.Migrations
             {
                 migrationBuilder.InsertData(
                     table: "Cities",
-                    columns: new[] { "CityId", "CityName", "ZoneId" },
-                    values: new object[] { northCities.Length + i + 1, centralCities[i], 2 }
+                    columns: ["CityId", "CityName", "ZoneId"],
+                    values: [northCities.Length + i + 1, centralCities[i], 2]
                 );
             }
 
@@ -71,8 +71,8 @@ namespace TVOnline.Data.Migrations
             {
                 migrationBuilder.InsertData(
                     table: "Cities",
-                    columns: new[] { "CityId", "CityName", "ZoneId" },
-                    values: new object[] { northCities.Length + centralCities.Length + i + 1, southCities[i], 3 }
+                    columns: ["CityId", "CityName", "ZoneId"],
+                    values: [northCities.Length + centralCities.Length + i + 1, southCities[i], 3]
                 );
             }
         }
@@ -88,7 +88,7 @@ namespace TVOnline.Data.Migrations
             migrationBuilder.DeleteData(
                 table: "Zones",
                 keyColumn: "ZoneId",
-                keyValues: new object[] { 1, 2, 3 }
+                keyValues: [1, 2, 3]
             );
         }
     }

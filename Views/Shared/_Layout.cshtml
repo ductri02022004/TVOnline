@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/animations.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header class="header-area shadow-sm">
@@ -90,53 +91,53 @@
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-6">
-                    <h5 class="text-white mb-4">Về TVOnline</h5>
-                    <p class="text-white-50">Nền tảng tìm kiếm việc làm hàng đầu Việt Nam kết nối ứng viên với nhà tuyển dụng để tạo nên cơ hội nghề nghiệp tốt nhất.</p>
+                    <h5 class="text-dark mb-4">Về TVOnline</h5>
+                    <p class="text-dark">Nền tảng tìm kiếm việc làm hàng đầu Việt Nam kết nối ứng viên với nhà tuyển dụng để tạo nên cơ hội nghề nghiệp tốt nhất.</p>
                     <div class="social-links mt-4">
-                        <a href="#" class="me-2"><i class="bi bi-facebook fs-5"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-linkedin fs-5"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-twitter fs-5"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="#" class="me-2 text-dark"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#" class="me-2 text-dark"><i class="bi bi-linkedin fs-5"></i></a>
+                        <a href="#" class="me-2 text-dark"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#" class="me-2 text-dark"><i class="bi bi-instagram fs-5"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6">
-                    <h5 class="text-white mb-4">Liên Kết</h5>
+                    <h5 class="text-dark mb-4">Liên Kết</h5>
                     <ul class="list-unstyled footer-links">
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Về Chúng Tôi</a></li>
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Điều Khoản Sử Dụng</a></li>
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Chính Sách Bảo Mật</a></li>
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Hỗ Trợ</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Về Chúng Tôi</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Điều Khoản Sử Dụng</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Chính Sách Bảo Mật</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Hỗ Trợ</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6">
-                    <h5 class="text-white mb-4">Dành cho Ứng Viên</h5>
+                    <h5 class="text-dark mb-4">Dành cho Ứng Viên</h5>
                     <ul class="list-unstyled footer-links">
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Tìm Việc Làm</a></li>
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Tạo CV</a></li>
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Công Ty Tuyển Dụng</a></li>
-                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i>Cẩm Nang</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Tìm Việc Làm</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Tạo CV</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Công Ty Tuyển Dụng</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark"><i class="bi bi-chevron-right me-2"></i>Cẩm Nang</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <h5 class="text-white mb-4">Liên Hệ</h5>
+                    <h5 class="text-dark mb-4">Liên Hệ</h5>
                     <ul class="list-unstyled contact-info">
                         <li class="d-flex mb-3">
                             <i class="bi bi-geo-alt-fill me-3 text-primary"></i>
-                            <span>TP. Hồ Chí Minh, Việt Nam</span>
+                            <span class="text-dark">Đà Nẵng, Việt Nam</span>
                         </li>
                         <li class="d-flex mb-3">
                             <i class="bi bi-envelope-fill me-3 text-primary"></i>
-                            <span>contact@tvonline.vn</span>
+                            <span class="text-dark">contact@tvonline.vn</span>
                         </li>
                         <li class="d-flex mb-3">
                             <i class="bi bi-telephone-fill me-3 text-primary"></i>
-                            <span>1900 1234</span>
+                            <span class="text-dark">1900 1234</span>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="text-center pt-4 border-top border-secondary">
-                <p class="text-white-50 mb-0">© @DateTime.Now.Year - TVOnline. Tất cả quyền được bảo lưu.</p>
+                <p class="text-dark mb-0">© @DateTime.Now.Year - TVOnline. Tất cả quyền được bảo lưu.</p>
             </div>
         </div>
     </footer>
@@ -198,6 +199,6 @@
             });
         });
     </script>
-    @RenderSection("Scripts", required: false)
-</body>
+    @await RenderSectionAsync("Scripts", required: false)
+    </body>
 </html>
