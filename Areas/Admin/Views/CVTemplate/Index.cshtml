@@ -34,7 +34,7 @@
                             <td class="text-center">
                                 @if (!string.IsNullOrEmpty(item.ThumbnailPath))
                                 {
-                                    <img src="@item.ThumbnailPath" alt="@item.Name" style="max-width: 80px; max-height: 80px;" class="img-thumbnail" />
+                                    <img src="@Url.Content(item.ThumbnailPath)" alt="@item.Name" style="max-width: 80px; max-height: 80px;" class="img-thumbnail" />
                                 }
                                 else
                                 {

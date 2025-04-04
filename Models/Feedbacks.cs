@@ -23,5 +23,9 @@ namespace TVOnline.Models
         [ValidateNever]
         public Employers? Employer { get; set; }
         public string? EmployerId { get; set; }
+        
+        // Thông tin phản hồi của admin
+        public string? AdminReply { get; set; }
+        public DateTime? AdminReplyDate { get; set; }
     }
 }

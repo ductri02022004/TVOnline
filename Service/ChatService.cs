@@ -147,8 +147,19 @@ namespace TVOnline.Service
 
             try
             {
-                // Caching key for this user's list
-                string cacheKey = $"UserChats_{userId}";
+                // Thêm logging để debug
+                Console.WriteLine($"GetUserIdsWithChatHistoryAsync called for userId: {userId}");
+                
+                // Kiểm tra xem có bản ghi nào trong bảng ChatMessages không
+                var totalMessages = await _context.ChatMessages.CountAsync();
+                Console.WriteLine($"Total messages in database: {totalMessages}");
+                
+                // Kiểm tra xem có tin nhắn nào liên quan đến userId không
+                var userMessages = await _context.ChatMessages
+                    .AsNoTracking()
+                    .Where(m => m.SenderId == userId || m.ReceiverId == userId)
+                    .CountAsync();
+                Console.WriteLine($"Messages related to user {userId}: {userMessages}");
 
                 // Use one optimized query instead of multiple queries
                 var userIds = await _context.ChatMessages

@@ -23,6 +23,7 @@ namespace TVOnline.Data
         public DbSet<CVTemplate> CVTemplates { get; set; }
         public DbSet<AccountStatus> AccountStatuses { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<PremiumUserCV> PremiumUserCVs { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

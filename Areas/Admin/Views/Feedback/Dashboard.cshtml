@@ -1,0 +1,345 @@
+@model TVOnline.Areas.Admin.Controllers.FeedbackDashboardViewModel
+
+@{
+    ViewData["Title"] = "Thống kê phản hồi";
+}
+
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@Model.TotalFeedbacks</h3>
+                        <div>Tổng số phản hồi</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-comments fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" asp-action="Index">Xem chi tiết</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@Model.AverageRating.ToString("0.0")</h3>
+                        <div>Đánh giá trung bình</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-star fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#ratingChart">Xem biểu đồ</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@(Model.FourStars + Model.FiveStars)</h3>
+                        <div>Đánh giá tích cực</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-thumbs-up fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#positiveRatings">Xem chi tiết</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@(Model.OneStar + Model.TwoStars)</h3>
+                        <div>Đánh giá tiêu cực</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-thumbs-down fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#negativeRatings">Xem chi tiết</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-1"></i>
+                Phân bố đánh giá
+            </div>
+            <div class="card-body">
+                <div id="ratingChart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-pie me-1"></i>
+                Tỷ lệ đánh giá
+            </div>
+            <div class="card-body">
+                <div id="ratingPieChart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4" id="positiveRatings">
+    <div class="card-header">
+        <i class="fas fa-thumbs-up me-1"></i>
+        Đánh giá tích cực gần đây
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Nội dung</th>
+                        <th>Đánh giá</th>
+                        <th>Ngày gửi</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.RecentFeedbacks.Where(f => f.Rating >= 4).Take(5))
+                    {
+                        <tr>
+                            <td>
+                                @if (item.User != null)
+                                {
+                                    <span>@item.User.UserName</span>
+                                }
+                                else if (item.Employer != null)
+                                {
+                                    <span>@item.Employer.CompanyName (Nhà tuyển dụng)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Người dùng ẩn danh</span>
+                                }
+                            </td>
+                            <td>
+                                @if (string.IsNullOrEmpty(item.Content))
+                                {
+                                    <span class="text-muted">Không có nội dung</span>
+                                }
+                                else
+                                {
+                                    <span>@(item.Content.Length > 100 ? item.Content.Substring(0, 100) + "..." : item.Content)</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= item.Rating)
+                                        {
+                                            <i class="fas fa-star text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-warning"></i>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td>@item.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Details" asp-route-id="@item.FeedbackId" class="btn btn-info btn-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Reply" asp-route-id="@item.FeedbackId" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-reply"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4" id="negativeRatings">
+    <div class="card-header">
+        <i class="fas fa-thumbs-down me-1"></i>
+        Đánh giá tiêu cực gần đây
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Nội dung</th>
+                        <th>Đánh giá</th>
+                        <th>Ngày gửi</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.RecentFeedbacks.Where(f => f.Rating <= 2).Take(5))
+                    {
+                        <tr>
+                            <td>
+                                @if (item.User != null)
+                                {
+                                    <span>@item.User.UserName</span>
+                                }
+                                else if (item.Employer != null)
+                                {
+                                    <span>@item.Employer.CompanyName (Nhà tuyển dụng)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Người dùng ẩn danh</span>
+                                }
+                            </td>
+                            <td>
+                                @if (string.IsNullOrEmpty(item.Content))
+                                {
+                                    <span class="text-muted">Không có nội dung</span>
+                                }
+                                else
+                                {
+                                    <span>@(item.Content.Length > 100 ? item.Content.Substring(0, 100) + "..." : item.Content)</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= item.Rating)
+                                        {
+                                            <i class="fas fa-star text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-warning"></i>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td>@item.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Details" asp-route-id="@item.FeedbackId" class="btn btn-info btn-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Reply" asp-route-id="@item.FeedbackId" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-reply"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Biểu đồ cột cho phân bố đánh giá
+            var ratingCtx = document.getElementById('ratingChart').getContext('2d');
+            var ratingChart = new Chart(ratingCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['1 sao', '2 sao', '3 sao', '4 sao', '5 sao'],
+                    datasets: [{
+                        label: 'Số lượng đánh giá',
+                        data: [@Model.OneStar, @Model.TwoStars, @Model.ThreeStars, @Model.FourStars, @Model.FiveStars],
+                        backgroundColor: [
+                            'rgba(220, 53, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(23, 162, 184, 0.7)',
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(0, 123, 255, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(0, 123, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Biểu đồ tròn cho tỷ lệ đánh giá
+            var pieCtx = document.getElementById('ratingPieChart').getContext('2d');
+            var pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['1 sao', '2 sao', '3 sao', '4 sao', '5 sao'],
+                    datasets: [{
+                        data: [@Model.OneStar, @Model.TwoStars, @Model.ThreeStars, @Model.FourStars, @Model.FiveStars],
+                        backgroundColor: [
+                            'rgba(220, 53, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(23, 162, 184, 0.7)',
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(0, 123, 255, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(0, 123, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        });
+    </script>
+}

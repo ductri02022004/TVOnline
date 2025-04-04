@@ -86,7 +86,7 @@ namespace TVOnline.Areas.Admin.Controllers
                 if (string.IsNullOrEmpty(adminId))
                 {
                     _logger.LogWarning("Admin ID not found when retrieving chat users");
-                    return BadRequest("Admin ID not found");
+                    return BadRequest(new { success = false, message = "Admin ID not found" });
                 }
 
                 // Verify admin exists in database
@@ -94,7 +94,7 @@ namespace TVOnline.Areas.Admin.Controllers
                 if (adminUser == null)
                 {
                     _logger.LogWarning($"Admin user with ID {adminId} not found in database");
-                    return BadRequest("Admin user not found");
+                    return BadRequest(new { success = false, message = "Admin user not found" });
                 }
 
                 _logger.LogInformation($"Admin user found: {adminUser.UserName}");
@@ -107,12 +107,39 @@ namespace TVOnline.Areas.Admin.Controllers
 
                 _logger.LogInformation($"Direct count check: {directMessageCount} messages for admin {adminId}");
 
-                // Get users with chat history - optimized version
+                // Kiểm tra trực tiếp từ cơ sở dữ liệu
+                var directUserIds = await _context.ChatMessages
+                    .AsNoTracking()
+                    .Where(m => m.SenderId == adminId || m.ReceiverId == adminId)
+                    .Select(m => m.SenderId == adminId ? m.ReceiverId : m.SenderId)
+                    .Where(id => id != adminId && !string.IsNullOrEmpty(id))
+                    .Distinct()
+                    .ToListAsync();
+
+                _logger.LogInformation($"Direct query found {directUserIds.Count} users");
+
+                // Nếu truy vấn trực tiếp tìm thấy người dùng, trả về kết quả
+                if (directUserIds.Count > 0)
+                {
+                    var endTime = DateTime.Now;
+                    var duration = (endTime - startTime).TotalMilliseconds;
+                    _logger.LogInformation($"GetUsersWithChatHistory completed in {duration:F2}ms, found {directUserIds.Count} users");
+                    
+                    // Trả về dữ liệu theo định dạng mà UI mới mong đợi
+                    return Json(new { 
+                        success = true, 
+                        data = directUserIds,
+                        count = directUserIds.Count,
+                        duration = duration
+                    });
+                }
+
+                // Nếu không tìm thấy người dùng qua truy vấn trực tiếp, thử dùng ChatService
                 var userIds = await _chatService.GetUserIdsWithChatHistoryAsync(adminId);
 
-                var endTime = DateTime.Now;
-                var duration = (endTime - startTime).TotalMilliseconds;
-                _logger.LogInformation($"GetUsersWithChatHistory completed in {duration:F2}ms, found {userIds.Count} users");
+                var endTime2 = DateTime.Now;
+                var duration2 = (endTime2 - startTime).TotalMilliseconds;
+                _logger.LogInformation($"GetUsersWithChatHistory completed in {duration2:F2}ms, found {userIds.Count} users");
 
                 // Check for inconsistency as a last resort
                 if (directMessageCount > 0 && (userIds == null || userIds.Count == 0))
@@ -129,10 +156,22 @@ namespace TVOnline.Areas.Admin.Controllers
                         .ToListAsync();
 
                     _logger.LogInformation($"Emergency fallback found {manualUserIds.Count} users");
-                    return Json(manualUserIds);
+                    return Json(new { 
+                        success = true, 
+                        data = manualUserIds,
+                        count = manualUserIds.Count,
+                        duration = duration2,
+                        source = "emergency_fallback"
+                    });
                 }
 
-                return Json(userIds);
+                return Json(new { 
+                    success = true, 
+                    data = userIds,
+                    count = userIds.Count,
+                    duration = duration2,
+                    source = "chat_service"
+                });
             }
             catch (Exception ex)
             {
@@ -154,7 +193,12 @@ namespace TVOnline.Areas.Admin.Controllers
                             .ToListAsync();
 
                         _logger.LogInformation($"Emergency query found {emergencyUserIds.Count} users");
-                        return Json(emergencyUserIds);
+                        return Json(new { 
+                            success = true, 
+                            data = emergencyUserIds,
+                            count = emergencyUserIds.Count,
+                            source = "exception_fallback"
+                        });
                     }
                 }
                 catch (Exception innerEx)
@@ -162,7 +206,11 @@ namespace TVOnline.Areas.Admin.Controllers
                     _logger.LogError(innerEx, "Emergency fallback also failed");
                 }
 
-                return StatusCode(500, new { message = "Error retrieving users", error = ex.Message });
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = "Error retrieving users", 
+                    error = ex.Message 
+                });
             }
         }
 
@@ -181,30 +229,148 @@ namespace TVOnline.Areas.Admin.Controllers
         {
             var adminId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(adminId))
-                return BadRequest("Admin ID not found");
+                return BadRequest(new { success = false, message = "Admin ID not found" });
 
             try
             {
-                // Get all users who have chat history with admin
+                // Truy vấn trực tiếp từ cơ sở dữ liệu
+                var directUserIds = await _context.ChatMessages
+                    .AsNoTracking()
+                    .Where(m => m.SenderId == adminId || m.ReceiverId == adminId)
+                    .Select(m => m.SenderId == adminId ? m.ReceiverId : m.SenderId)
+                    .Where(id => id != adminId && !string.IsNullOrEmpty(id))
+                    .Distinct()
+                    .ToListAsync();
+
+                _logger.LogInformation($"GetAllUsersDetails: Direct query found {directUserIds.Count} users");
+
+                // Nếu truy vấn trực tiếp tìm thấy người dùng
+                if (directUserIds.Count > 0)
+                {
+                    // Lấy thông tin chi tiết của người dùng
+                    var users = await _userManager.Users
+                        .Where(u => directUserIds.Contains(u.Id))
+                        .Select(u => new { id = u.Id, userName = u.UserName, email = u.Email })
+                        .ToListAsync();
+
+                    _logger.LogInformation($"GetAllUsersDetails: Found details for {users.Count} users");
+                    
+                    // Kiểm tra người dùng Premium
+                    var premiumUserIds = await _context.AccountStatuses
+                        .Where(a => a.IsPremium && a.EndDate > DateTime.Now)
+                        .Select(a => a.UserId)
+                        .ToListAsync();
+                    
+                    // Tạo dictionary để trả về
+                    var userDict = users.ToDictionary(
+                        u => u.id,
+                        u => new { 
+                            id = u.id, 
+                            userName = u.userName, 
+                            email = u.email,
+                            isPremium = premiumUserIds.Contains(u.id)
+                        }
+                    );
+                    
+                    return Json(new { 
+                        success = true, 
+                        data = userDict,
+                        count = users.Count
+                    });
+                }
+
+                // Nếu không tìm thấy người dùng qua truy vấn trực tiếp, thử dùng ChatService
                 var userIds = await _chatService.GetUserIdsWithChatHistoryAsync(adminId);
+                _logger.LogInformation($"GetAllUsersDetails: ChatService found {userIds.Count} users");
 
                 if (userIds.Count == 0)
                 {
-                    return Json(new List<object>());
+                    return Json(new { success = true, data = new Dictionary<string, object>(), count = 0 });
                 }
 
                 // Use a single query to get all users at once instead of individual queries
-                var users = await _userManager.Users
+                var usersFromService = await _userManager.Users
                     .Where(u => userIds.Contains(u.Id))
                     .Select(u => new { id = u.Id, userName = u.UserName, email = u.Email })
                     .ToListAsync();
+                
+                // Kiểm tra người dùng Premium
+                var premiumUserIdsFromService = await _context.AccountStatuses
+                    .Where(a => a.IsPremium && a.EndDate > DateTime.Now)
+                    .Select(a => a.UserId)
+                    .ToListAsync();
+                
+                // Tạo dictionary để trả về
+                var userDictFromService = usersFromService.ToDictionary(
+                    u => u.id,
+                    u => new { 
+                        id = u.id, 
+                        userName = u.userName, 
+                        email = u.email,
+                        isPremium = premiumUserIdsFromService.Contains(u.id)
+                    }
+                );
 
-                return Json(users);
+                return Json(new { 
+                    success = true, 
+                    data = userDictFromService,
+                    count = usersFromService.Count,
+                    source = "chat_service"
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting user details");
-                return StatusCode(500, new { message = "Error getting user details" });
+                
+                // Thử fallback trong trường hợp lỗi
+                try
+                {
+                    _logger.LogWarning("Attempting emergency direct DB query for user details after exception");
+                    var emergencyUserIds = await _context.ChatMessages
+                        .AsNoTracking()
+                        .Where(m => m.SenderId == adminId || m.ReceiverId == adminId)
+                        .Select(m => m.SenderId == adminId ? m.ReceiverId : m.SenderId)
+                        .Where(id => id != adminId && !string.IsNullOrEmpty(id))
+                        .Distinct()
+                        .ToListAsync();
+
+                    if (emergencyUserIds.Count > 0)
+                    {
+                        var emergencyUsers = await _userManager.Users
+                            .Where(u => emergencyUserIds.Contains(u.Id))
+                            .Select(u => new { id = u.Id, userName = u.UserName, email = u.Email })
+                            .ToListAsync();
+                        
+                        // Tạo dictionary để trả về
+                        var emergencyUserDict = emergencyUsers.ToDictionary(
+                            u => u.id,
+                            u => new { 
+                                id = u.id, 
+                                userName = u.userName, 
+                                email = u.email,
+                                isPremium = false // Giả định không phải Premium trong trường hợp khẩn cấp
+                            }
+                        );
+
+                        _logger.LogInformation($"Emergency query found details for {emergencyUsers.Count} users");
+                        return Json(new { 
+                            success = true, 
+                            data = emergencyUserDict,
+                            count = emergencyUsers.Count,
+                            source = "emergency"
+                        });
+                    }
+                }
+                catch (Exception innerEx)
+                {
+                    _logger.LogError(innerEx, "Emergency fallback also failed for user details");
+                }
+                
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = "Error getting user details", 
+                    error = ex.Message 
+                });
             }
         }
 
@@ -248,8 +414,41 @@ namespace TVOnline.Areas.Admin.Controllers
 
             try
             {
-                // Get all users who have chat history with admin
+                // Truy vấn trực tiếp từ cơ sở dữ liệu
+                var directUserIds = await _context.ChatMessages
+                    .AsNoTracking()
+                    .Where(m => m.SenderId == adminId || m.ReceiverId == adminId)
+                    .Select(m => m.SenderId == adminId ? m.ReceiverId : m.SenderId)
+                    .Where(id => id != adminId && !string.IsNullOrEmpty(id))
+                    .Distinct()
+                    .ToListAsync();
+
+                _logger.LogInformation($"GetAllUnreadCounts: Direct query found {directUserIds.Count} users");
+
+                if (directUserIds.Count > 0)
+                {
+                    // Lấy số lượng tin nhắn chưa đọc từ mỗi người dùng
+                    var unreadCounts = await _context.ChatMessages
+                        .Where(m => directUserIds.Contains(m.SenderId) && m.ReceiverId == adminId && !m.IsRead)
+                        .GroupBy(m => m.SenderId)
+                        .Select(g => new { userId = g.Key, count = g.Count() })
+                        .ToDictionaryAsync(
+                            g => g.userId,
+                            g => g.count
+                        );
+
+                    // Đảm bảo tất cả userIds đều có một entry (mặc định 0 nếu không có tin nhắn chưa đọc)
+                    var result = directUserIds.ToDictionary(
+                        id => id,
+                        id => unreadCounts.ContainsKey(id) ? unreadCounts[id] : 0
+                    );
+
+                    return Json(result);
+                }
+
+                // Nếu không tìm thấy người dùng qua truy vấn trực tiếp, thử dùng ChatService
                 var userIds = await _chatService.GetUserIdsWithChatHistoryAsync(adminId);
+                _logger.LogInformation($"GetAllUnreadCounts: ChatService found {userIds.Count} users");
 
                 if (userIds.Count == 0)
                 {
@@ -257,7 +456,7 @@ namespace TVOnline.Areas.Admin.Controllers
                 }
 
                 // Use a single query to get all unread counts at once
-                var unreadCounts = await _context.ChatMessages
+                var unreadCountsFromService = await _context.ChatMessages
                     .Where(m => userIds.Contains(m.SenderId) && m.ReceiverId == adminId && !m.IsRead)
                     .GroupBy(m => m.SenderId)
                     .Select(g => new { userId = g.Key, count = g.Count() })
@@ -267,17 +466,59 @@ namespace TVOnline.Areas.Admin.Controllers
                     );
 
                 // Make sure all userIds have an entry (default 0 if no unread messages)
-                var result = userIds.ToDictionary(
+                var resultFromService = userIds.ToDictionary(
                     id => id,
-                    id => unreadCounts.ContainsKey(id) ? unreadCounts[id] : 0
+                    id => unreadCountsFromService.ContainsKey(id) ? unreadCountsFromService[id] : 0
                 );
 
-                return Json(result);
+                return Json(resultFromService);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting unread counts");
-                return StatusCode(500, new { message = "Error getting unread counts" });
+                
+                // Thử fallback trong trường hợp lỗi
+                try
+                {
+                    _logger.LogWarning("Attempting emergency direct DB query for unread counts after exception");
+                    
+                    // Lấy danh sách người dùng
+                    var emergencyUserIds = await _context.ChatMessages
+                        .AsNoTracking()
+                        .Where(m => m.SenderId == adminId || m.ReceiverId == adminId)
+                        .Select(m => m.SenderId == adminId ? m.ReceiverId : m.SenderId)
+                        .Where(id => id != adminId && !string.IsNullOrEmpty(id))
+                        .Distinct()
+                        .ToListAsync();
+
+                    if (emergencyUserIds.Count > 0)
+                    {
+                        // Lấy số lượng tin nhắn chưa đọc
+                        var emergencyUnreadCounts = await _context.ChatMessages
+                            .Where(m => emergencyUserIds.Contains(m.SenderId) && m.ReceiverId == adminId && !m.IsRead)
+                            .GroupBy(m => m.SenderId)
+                            .Select(g => new { userId = g.Key, count = g.Count() })
+                            .ToDictionaryAsync(
+                                g => g.userId,
+                                g => g.count
+                            );
+
+                        // Đảm bảo tất cả userIds đều có một entry
+                        var emergencyResult = emergencyUserIds.ToDictionary(
+                            id => id,
+                            id => emergencyUnreadCounts.ContainsKey(id) ? emergencyUnreadCounts[id] : 0
+                        );
+
+                        _logger.LogInformation($"Emergency query found unread counts for {emergencyUserIds.Count} users");
+                        return Json(emergencyResult);
+                    }
+                }
+                catch (Exception innerEx)
+                {
+                    _logger.LogError(innerEx, "Emergency fallback also failed for unread counts");
+                }
+                
+                return StatusCode(500, new { message = "Error getting unread counts", error = ex.Message });
             }
         }
 

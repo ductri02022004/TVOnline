@@ -122,7 +122,10 @@
 							<div class="sb-nav-link-icon"><i class="fas fa-file-invoice"></i></div>
 							Quản lý mẫu CV
 						</a>
-						
+						<a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Feedback" ? "active" : "")" href="@Url.Action("Index", "Feedback", new { area = "Admin" })">
+							<div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+							Quản lý phản hồi
+						</a>
 						<div class="sb-sidenav-menu-heading">LIÊN KẾT NHANH</div>
 						<a class="nav-link" href="/" target="_blank">
 							<div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>

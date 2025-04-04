@@ -19,7 +19,9 @@ namespace TVOnline.Controllers.ApplyJob
         private readonly ILocationService _locationService = locationService;
         private readonly UserManager<Users> _userManager = userManager;
 
-        [Route("[action]")]
+        [HttpGet]
+        [Route("")]
+        [Route("Index")]
         public async Task<IActionResult> Index(int page = 1)
         {
             Users? user = await _userManager.GetUserAsync(User);
@@ -87,10 +89,10 @@ namespace TVOnline.Controllers.ApplyJob
             return View("Details", jobsViewModel);
         }
 
-        [Route("[action]/{postID}")]
-        public async Task<IActionResult> Details(string postID)
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> JobDetails(string id)
         {
-            var post = await _postService.FindPostById(postID);
+            var post = await _postService.FindPostById(id);
 
             // Check if user is logged in to show application status
             if (User.Identity.IsAuthenticated)
@@ -99,7 +101,7 @@ namespace TVOnline.Controllers.ApplyJob
                 if (user != null)
                 {
                     // Check if user has already applied to this job
-                    var existingApplication = await _userCvService.GetApplicationByUserAndPost(user.Id, postID);
+                    var existingApplication = await _userCvService.GetApplicationByUserAndPost(user.Id, id);
                     if (existingApplication != null)
                     {
                         ViewBag.HasApplied = true;
@@ -122,7 +124,7 @@ namespace TVOnline.Controllers.ApplyJob
         }
 
         [HttpPost]
-        [Route("[action]/{postID}")]
+        [Route("[action]/{postId}")]
         [Authorize]
         public async Task<IActionResult> Apply(IFormFile cvFile, string postId)
         {

@@ -1,4 +1,4 @@
-﻿@model TVOnline.Service.DTO.EmployerResponse
+@model TVOnline.Service.DTO.EmployerResponse
 
 @{
     ViewData["Title"] = @Model.CompanyName;
@@ -92,44 +92,38 @@
                         <i class="bi bi-briefcase-fill text-primary me-2"></i>Việc làm đang tuyển
                     </h3>
                     <div class="job-list">
-                        <div class="job-item p-3 border rounded mb-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">Senior Web Developer</h5>
-                                    <div class="d-flex flex-wrap">
-                                        <span class="badge bg-light text-dark me-2 mb-2">
-                                            <i class="bi bi-geo-alt me-1"></i>@Model.CityName
-                                        </span>
-                                        <span class="badge bg-light text-dark me-2 mb-2">
-                                            <i class="bi bi-cash me-1"></i>15-25 triệu
-                                        </span>
-                                        <span class="badge bg-light text-dark mb-2">
-                                            <i class="bi bi-briefcase me-1"></i>Toàn thời gian
-                                        </span>
+                        @if (ViewBag.Jobs != null && ViewBag.Jobs.Count > 0)
+                        {
+                            @foreach (var job in ViewBag.Jobs)
+                            {
+                                <div class="job-item p-3 border rounded mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">@job.Title</h5>
+                                            <div class="d-flex flex-wrap">
+                                                <span class="badge bg-light text-dark me-2 mb-2">
+                                                    <i class="bi bi-geo-alt me-1"></i>@Model.CityName
+                                                </span>
+                                                <span class="badge bg-light text-dark me-2 mb-2">
+                                                    <i class="bi bi-cash me-1"></i>@(job.Salary?.ToString("N0") ?? "Thỏa thuận") VNĐ
+                                                </span>
+                                                <span class="badge bg-light text-dark mb-2">
+                                                    <i class="bi bi-briefcase me-1"></i>@job.JobType
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <a asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@job.PostId" class="btn btn-sm btn-outline-primary">Ứng tuyển</a>
                                     </div>
                                 </div>
-                                <a href="#" class="btn btn-sm btn-outline-primary">Ứng tuyển</a>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <p class="mb-0">Hiện tại công ty chưa có tin tuyển dụng nào.</p>
                             </div>
-                        </div>
-                        <div class="job-item p-3 border rounded mb-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">UI/UX Designer</h5>
-                                    <div class="d-flex flex-wrap">
-                                        <span class="badge bg-light text-dark me-2 mb-2">
-                                            <i class="bi bi-geo-alt me-1"></i>@Model.CityName
-                                        </span>
-                                        <span class="badge bg-light text-dark me-2 mb-2">
-                                            <i class="bi bi-cash me-1"></i>12-18 triệu
-                                        </span>
-                                        <span class="badge bg-light text-dark mb-2">
-                                            <i class="bi bi-briefcase me-1"></i>Toàn thời gian
-                                        </span>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn btn-sm btn-outline-primary">Ứng tuyển</a>
-                            </div>
-                        </div>
+                        }
+                        
                         <div class="text-center mt-3">
                             <a href="#" class="btn btn-link">Xem tất cả việc làm <i class="bi bi-arrow-right"></i></a>
                         </div>

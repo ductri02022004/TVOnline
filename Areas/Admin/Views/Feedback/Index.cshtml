@@ -1,0 +1,184 @@
+@model TVOnline.Areas.Admin.Controllers.FeedbackIndexViewModel
+
+@{
+    ViewData["Title"] = "Quản lý phản hồi";
+}
+
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@Model.Stats.TotalUsers</h3>
+                        <div>Người dùng có phản hồi</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <span class="small text-white">Tổng người dùng có phản hồi</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@Model.Stats.TotalFeedbacks</h3>
+                        <div>Tổng số phản hồi</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-comments fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" asp-action="Dashboard">Xem thống kê chi tiết</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@Model.Stats.AverageRating.ToString("0.0")</h3>
+                        <div>Đánh giá trung bình</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-star fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" asp-action="Dashboard">Xem biểu đồ</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-info text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">@(Model.Stats.HighestRatedUser?.UserName ?? "N/A")</h3>
+                        <div>Đánh giá cao nhất</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-trophy fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                @if (Model.Stats.HighestRatedUser != null)
+                {
+                    <a class="small text-white stretched-link" asp-action="UserFeedbacks" asp-route-id="@Model.Stats.HighestRatedUser.UserId">Xem phản hồi</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                }
+                else
+                {
+                    <span class="small text-white">Không có dữ liệu</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <i class="fas fa-users me-1"></i>
+            Danh sách người dùng có phản hồi
+        </div>
+        <div>
+            <a asp-action="Dashboard" class="btn btn-primary btn-sm">
+                <i class="fas fa-chart-bar me-1"></i> Xem thống kê
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="usersTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Email</th>
+                        <th>Loại tài khoản</th>
+                        <th>Số phản hồi</th>
+                        <th>Đánh giá TB</th>
+                        <th>Phản hồi gần nhất</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>
+                                @if (user.IsEmployer)
+                                {
+                                    <span class="badge bg-info">Nhà tuyển dụng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary">Người dùng</span>
+                                }
+                            </td>
+                            <td>@user.TotalFeedbacks</td>
+                            <td>
+                                <div class="rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Math.Round(user.AverageRating))
+                                        {
+                                            <i class="fas fa-star text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-warning"></i>
+                                        }
+                                    }
+                                    <span class="ms-2">(@user.AverageRating.ToString("0.0"))</span>
+                                </div>
+                            </td>
+                            <td>@user.LatestFeedbackDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <a asp-action="UserFeedbacks" asp-route-id="@user.UserId" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-comments me-1"></i> Xem phản hồi
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#usersTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json'
+                },
+                order: [[3, 'desc']]
+            });
+        });
+    </script>
+}

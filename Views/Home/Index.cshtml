@@ -1,4 +1,4 @@
-﻿@model TVOnline.ViewModels.Home.HomeIndexViewModel
+@model TVOnline.ViewModels.Home.HomeIndexViewModel
 
 @{
     ViewData["Title"] = "Trang chủ";
@@ -148,7 +148,7 @@
                                     <i class="bi bi-geo-alt-fill me-1"></i>@post.CityName
                                 </span>
                             </div>
-                            <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId" 
+                            <a asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId" 
                                class="btn btn-outline-primary w-100 mt-3">
                                 <i class="bi bi-arrow-right-circle me-2"></i>Ứng Tuyển Ngay
                             </a>

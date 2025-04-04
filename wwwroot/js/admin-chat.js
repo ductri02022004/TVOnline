@@ -205,22 +205,52 @@ const AdminChat = (function () {
     }
 
     function getAllUsersDetails(userIds) {
+      if (!userIds || !userIds.length) {
+        return Promise.resolve({});
+      }
+
       return _request({
         url: _config.api.getAllUsersDetails,
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(userIds),
         timeout: _config.timeouts.apiTimeout.details,
+      }).then(function(response) {
+        // Xử lý định dạng phản hồi mới (có trường success và data)
+        if (response && response.hasOwnProperty('success') && response.hasOwnProperty('data')) {
+          if (!response.success) {
+            console.error("API error:", response.message || "Unknown error");
+            return {};
+          }
+          return response.data;
+        }
+        // Định dạng cũ
+        return response || {};
       });
     }
 
     function getAllUnreadCounts(userIds) {
+      if (!userIds || !userIds.length) {
+        return Promise.resolve({});
+      }
+
       return _request({
         url: _config.api.getAllUnreadCounts,
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(userIds),
         timeout: _config.timeouts.apiTimeout.default,
+      }).then(function(response) {
+        // Xử lý định dạng phản hồi mới (có trường success và data)
+        if (response && response.hasOwnProperty('success') && response.hasOwnProperty('data')) {
+          if (!response.success) {
+            console.error("API error:", response.message || "Unknown error");
+            return {};
+          }
+          return response.data;
+        }
+        // Định dạng cũ
+        return response || {};
       });
     }
 
@@ -255,6 +285,11 @@ const AdminChat = (function () {
     }
 
     function updateMessage(messageId, content) {
+      if (!messageId || !content) {
+        console.error("Invalid parameters for updateMessage:", { messageId, content });
+        return Promise.reject(new Error("Message ID and content are required"));
+      }
+
       return _request({
         url: `${_config.api.updateMessage}${messageId}`,
         type: "PUT",
@@ -266,6 +301,11 @@ const AdminChat = (function () {
     }
 
     function deleteMessage(messageId) {
+      if (!messageId) {
+        console.error("Invalid messageId for deleteMessage:", messageId);
+        return Promise.reject(new Error("Message ID is required"));
+      }
+
       return _request({
         url: `${_config.api.deleteMessage}${messageId}`,
         type: "DELETE",
@@ -610,6 +650,12 @@ const AdminChat = (function () {
     }
 
     function appendMessage(message) {
+      // Kiểm tra dữ liệu tin nhắn hợp lệ
+      if (!message || !message.id || !message.senderId) {
+        console.error("Invalid message data:", message);
+        return;
+      }
+
       const isAdmin = message.senderId === _state.adminId;
       const canEdit =
         isAdmin && Utils.canEditMessage(new Date(message.timestamp));
@@ -889,8 +935,6 @@ const AdminChat = (function () {
           fileIcon = "fa-file-word";
         } else if (["xls", "xlsx"].includes(extension)) {
           fileIcon = "fa-file-excel";
-        } else if (["zip", "rar", "7z"].includes(extension)) {
-          fileIcon = "fa-file-archive";
         } else if (["txt", "log"].includes(extension)) {
           fileIcon = "fa-file-alt";
         }
@@ -1076,13 +1120,45 @@ const AdminChat = (function () {
 
       // Get users with chat history
       ApiService.getUsersWithChatHistory()
-        .then(function (users) {
+        .then(function (response) {
           const usersTime = performance.now() - startTime;
+          clearTimeout(loadingTimeout);
+
+          // Kiểm tra định dạng phản hồi
+          if (!response) {
+            Utils.log("warn", "No response from API");
+            UI.updateTotalUsersCount(0);
+            UI.renderUserList([]);
+            return;
+          }
+
+          // Xử lý định dạng phản hồi mới (có trường success và data)
+          let users;
+          if (response.hasOwnProperty('success') && response.hasOwnProperty('data')) {
+            // Định dạng mới
+            if (!response.success) {
+              Utils.log("error", "API returned error:", response.message || "Unknown error");
+              UI.showLoadingError(500, response.message || "Unknown error");
+              return;
+            }
+            users = response.data;
+            
+            // Log thông tin bổ sung nếu có
+            if (response.duration) {
+              Utils.log("info", `Server processing time: ${response.duration.toFixed(2)}ms`);
+            }
+            if (response.source) {
+              Utils.log("info", `Data source: ${response.source}`);
+            }
+          } else {
+            // Định dạng cũ (mảng trực tiếp)
+            users = response;
+          }
+
           Utils.log(
             "info",
             `Got ${users ? users.length : 0} users in ${usersTime.toFixed(2)}ms`
           );
-          clearTimeout(loadingTimeout);
 
           if (!users || users.length === 0) {
             Utils.log("warn", "No users returned from API");
@@ -1382,10 +1458,18 @@ const AdminChat = (function () {
      * @param {number} messageId - Message ID
      */
     function editMessage(messageId) {
+      if (!messageId) {
+        console.error("Invalid messageId for editMessage:", messageId);
+        return;
+      }
+
       const messageElement = document.querySelector(
         `[data-message-id="${messageId}"]`
       );
-      if (!messageElement) return;
+      if (!messageElement) {
+        console.error("Message element not found for ID:", messageId);
+        return;
+      }
 
       const messageBubble = messageElement.querySelector(".message-bubble");
       const messageContent = messageBubble.textContent.trim();
@@ -1450,6 +1534,11 @@ const AdminChat = (function () {
      * @param {number} messageId - Message ID
      */
     function deleteMessage(messageId) {
+      if (!messageId) {
+        console.error("Invalid messageId for deleteMessage:", messageId);
+        return Promise.reject(new Error("Message ID is required"));
+      }
+
       if (!confirm("Bạn có chắc chắn muốn xóa tin nhắn này?")) {
         return;
       }
@@ -1500,7 +1589,7 @@ const AdminChat = (function () {
     function testApiConnection() {
       UI.updateApiTestResults(`
         <div class="alert alert-info">
-          <div class="spinner-border spinner-border-sm" role="status"></div>
+          <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
           Đang kiểm tra kết nối...
         </div>
       `);
@@ -2233,19 +2322,17 @@ const AdminChat = (function () {
             background-color: #f1f3f5;
           }
           
-          /* Unread count */
-          .chat-user-unread {
+          /* Unread indicator */
+          .chat-user-avatar.has-unread::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
             background-color: #0084ff;
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-            min-width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 6px;
+            border-radius: 50%;
+            border: 2px solid #f5f7fa;
+            top: 0;
+            right: 0;
           }
           
           /* Message actions */
@@ -2298,121 +2385,6 @@ const AdminChat = (function () {
           }
           
           /* Other styling */
-          .chat-section-header {
-            padding: 8px 15px;
-            background-color: #f5f7fa;
-            font-size: 13px;
-            font-weight: 600;
-            color: #65676b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          }
-          
-          .empty-chat-state {
-            padding: 50px 20px;
-            color: #8e8e8e;
-          }
-          
-          /* Message editing */
-          .edit-container {
-            width: 100%;
-          }
-          
-          .edit-input {
-            width: 100%;
-            resize: none;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 5px;
-          }
-          
-          .edit-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 5px;
-          }
-          
-          /* Animation */
-          .fade-out {
-            animation: fadeOut 0.3s forwards;
-          }
-          
-          @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; height: 0; margin: 0; padding: 0; overflow: hidden; }
-          }
-          
-          /* Unread indicator */
-          .chat-user-avatar.has-unread::after {
-            content: '';
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background-color: #0084ff;
-            border-radius: 50%;
-            border: 2px solid #f5f7fa;
-            top: 0;
-            right: 0;
-          }
-          
-          /* Fix for messenger footer overflow */
-          .messenger-content-footer {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border-top: 1px solid #e4e4e4;
-            background-color: #fff;
-            overflow: hidden;
-            position: relative;
-            z-index: 10;
-            display: block;
-            flex-shrink: 0;
-          }
-          
-          .messenger-content-footer #message-form {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            display: block;
-          }
-          
-          .messenger-content-footer .message-input-container {
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-            display: block;
-          }
-          
-          .messenger-content-footer .message-input-wrapper {
-            width: 100%;
-            display: flex;
-            flex-wrap: nowrap;
-            max-width: 100%;
-            align-items: center;
-          }
-          
-          /* Fix messenger form layout */
-          .messenger-content-footer {
-            position: relative;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #fff;
-            border-top: 1px solid #e4e4e4;
-            padding: 10px;
-            z-index: 200;
-            flex-shrink: 0;
-            height: auto;
-            max-height: 200px;
-            width: 100%;
-            box-sizing: border-box;
-            overflow: hidden;
-          }
-          
-          /* Rest of styles */
           /* Message form fix */
           .message-form {
             display: block;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -19,29 +19,29 @@ namespace TVOnline.Migrations
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
 
-            migrationBuilder.CreateTable(
-                name: "ChatMessages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SenderId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReceiverId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChatMessages", x => x.Id);
-                });
+            // Kiểm tra xem bảng ChatMessages đã tồn tại chưa
+            migrationBuilder.Sql(@"
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ChatMessages')
+                BEGIN
+                    CREATE TABLE [ChatMessages] (
+                        [Id] int NOT NULL IDENTITY,
+                        [SenderId] nvarchar(max) NOT NULL,
+                        [ReceiverId] nvarchar(max) NOT NULL,
+                        [Content] nvarchar(max) NOT NULL,
+                        [Timestamp] datetime2 NOT NULL,
+                        [IsRead] bit NOT NULL,
+                        CONSTRAINT [PK_ChatMessages] PRIMARY KEY ([Id])
+                    );
+                END
+            ");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ChatMessages");
+            // Không xóa bảng ChatMessages trong phương thức Down để tránh mất dữ liệu
+            // migrationBuilder.DropTable(
+            //    name: "ChatMessages");
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "EndDate",

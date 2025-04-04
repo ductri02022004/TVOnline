@@ -1,0 +1,174 @@
+@model IEnumerable<TVOnline.Models.PremiumUserCV>
+
+@{
+    ViewData["Title"] = "CV của tôi";
+    Layout = "~/Areas/Premium/Views/Shared/_PremiumLayout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-primary">CV của tôi</h2>
+            <p class="lead text-muted">Quản lý các CV bạn đã tạo</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="Index" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Tạo CV mới
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tiêu đề</th>
+                                <th>Mẫu CV</th>
+                                <th>Ngày tạo</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cv in Model)
+                            {
+                                <tr>
+                                    <td>@cv.Title</td>
+                                    <td>@(cv.Template?.Name ?? "Không xác định")</td>
+                                    <td>@cv.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        @if (cv.IsPublic)
+                                        {
+                                            <span class="badge bg-success">Công khai</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Riêng tư</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="View" asp-route-id="@cv.Id" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@cv.Id" class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Download" asp-route-id="@cv.Id" class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@cv.Id">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal xác nhận xóa -->
+                                        <div class="modal fade" id="deleteModal-@cv.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@cv.Id" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel-@cv.Id">Xác nhận xóa</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Bạn có chắc chắn muốn xóa CV "<strong>@cv.Title</strong>"? Hành động này không thể hoàn tác.
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <form asp-action="Delete" method="post">
+                                                            <input type="hidden" name="id" value="@cv.Id" />
+                                                            <button type="submit" class="btn btn-danger">Xóa</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <img src="~/images/empty-state.svg" alt="Không có dữ liệu" style="max-width: 200px;" class="mb-4" />
+                    <h4 class="text-muted">Bạn chưa tạo CV nào</h4>
+                    <p class="text-muted mb-4">Hãy tạo CV đầu tiên của bạn để nâng cao cơ hội tìm việc</p>
+                    <a asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Tạo CV ngay
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 rounded-3 bg-light">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3"><i class="fas fa-lightbulb text-warning me-2"></i> Mẹo sử dụng CV hiệu quả</h4>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-check-circle text-success fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold">Cập nhật thường xuyên</h5>
+                                    <p class="text-muted">Luôn cập nhật CV của bạn với các kỹ năng và kinh nghiệm mới nhất</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-star text-warning fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold">Tùy chỉnh cho từng công việc</h5>
+                                    <p class="text-muted">Điều chỉnh CV của bạn để phù hợp với từng vị trí ứng tuyển cụ thể</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-bolt text-primary fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold">Tải xuống nhiều định dạng</h5>
+                                    <p class="text-muted">Tải xuống CV của bạn ở nhiều định dạng khác nhau để đáp ứng yêu cầu nhà tuyển dụng</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+}
