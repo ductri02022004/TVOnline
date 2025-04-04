@@ -108,7 +108,7 @@ public class PaymentController : Controller
             PaymentId = id,
             PaymentDate = vietnamTime,
             PaymentMethod = paymentMethod ?? "PAYOS",
-            Amount = amount,
+            Amount = 10000,
             Status = "Success",
             UserId = userId
         };

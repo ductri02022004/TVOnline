@@ -11,6 +11,9 @@ namespace TVOnline.Models
         public string? Content { get; set; }
         public DateTime Date { get; set; }
 
+        [Range(1, 5, ErrorMessage = "Đánh giá sao phải từ 1 đến 5")]
+        public int Rating { get; set; }
+
         [ForeignKey("UserId")]
         [ValidateNever]
         public Users? User { get; set; }

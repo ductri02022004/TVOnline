@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using TVOnline.Data;
 using TVOnline.Models;
+using System;
+using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace TVOnline.Controllers
 {
@@ -47,6 +50,7 @@ namespace TVOnline.Controllers
                 {
                     feedback.Date = DateTime.Now;
                     feedback.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    feedback.Rating = feedback.Rating; // Lưu đánh giá sao
 
                     _context.Feedbacks.Add(feedback);
                     await _context.SaveChangesAsync();
