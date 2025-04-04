@@ -20,7 +20,7 @@
             </li>
         }
         
-        @if (!isEmployer && !Context.Request.Path.Value.Contains("EmployerDashboard"))
+        @if (!User.IsInRole("Employer") && !Context.Request.Path.Value.Contains("EmployerDashboard"))
         {
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="BecomeEmployer">
