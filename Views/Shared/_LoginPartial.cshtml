@@ -45,10 +45,6 @@
                 }
                 <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="GetSavedJobs"><i class="bi bi-bookmark"></i> Công việc đã lưu</a></li>
                 <li><a class="dropdown-item" asp-area="" asp-controller="AccountStatus" asp-action="Index"><i class="bi bi-person-badge"></i> Trạng thái tài khoản</a></li>
-                @if (User.IsInRole("Employer"))
-                {
-                    <li><a class="dropdown-item" asp-area="Employer" asp-controller="EmployerDashboard" asp-action="Index"><i class="bi bi-briefcase"></i> Employer Dashboard</a></li>
-                }
                 @if (isPremium)
                 {
                     <li><a class="dropdown-item" asp-area="Premium" asp-controller="Home" asp-action="Index"><i class="bi bi-star-fill text-warning"></i> Premium Dashboard</a></li>
