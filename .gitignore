@@ -364,8 +364,6 @@ FodyWeavers.xsd
 /Migrations/20250221194201_InitialCreate.Designer.cs
 
 # Ignore appsettings files
-#appsettings.json
-#appsettings.Development.json
-#appsettings.Production.json
+
 
 

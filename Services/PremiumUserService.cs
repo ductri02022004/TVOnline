@@ -71,5 +71,38 @@ namespace TVOnline.Services
 
             return true;
         }
+
+        public async Task<PremiumUser> GetPremiumUser(string userId)
+        {
+            return await _context.PremiumUsers
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+        }
+
+        public async Task<PremiumUser> CreatePremiumUser(string userId)
+        {
+            var premiumUser = new PremiumUser
+            {
+                PremiumUserId = Guid.NewGuid().ToString(),
+                UserId = userId
+            };
+
+            _context.PremiumUsers.Add(premiumUser);
+            await _context.SaveChangesAsync();
+
+            return premiumUser;
+        }
+
+        public async Task<bool> DeletePremiumUser(string userId)
+        {
+            var premiumUser = await GetPremiumUser(userId);
+            if (premiumUser == null)
+                return false;
+
+            _context.PremiumUsers.Remove(premiumUser);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

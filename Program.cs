@@ -20,7 +20,10 @@ using TVOnline.Service.Vnpay;
 using TVOnline.Services;
 using Microsoft.AspNetCore.Authorization;
 using TVOnline.Areas.Premium.Authorization;
+<<<<<<< HEAD
 using Microsoft.AspNetCore.HttpOverrides;
+=======
+>>>>>>> f900aa096e750915c85fd2849d23bdb4db5bfcb1
 
 namespace TVOnline {
     public class Program {
