@@ -7,7 +7,7 @@ using System.Security.Claims;
 using TVOnline.Data;
 using TVOnline.Models;
 
-[Route("Payment")]
+[Route("payment")]
 [ApiController]
 public class PaymentController : Controller
 {

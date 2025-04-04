@@ -184,7 +184,7 @@ namespace TVOnline {
 
             app.MapControllerRoute(
                 name: "vnpay",
-                pattern: "payment/{action=Index}/{id?}",
+                pattern: "Payment/{action=Index}/{id?}",
                 defaults: new { controller = "Payment" });
 
             // Thêm hub endpoints
