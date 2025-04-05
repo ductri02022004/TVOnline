@@ -1,38 +1,281 @@
-﻿@model TVOnline.Service.DTO.EmployerResponse
+@model TVOnline.Service.DTO.EmployerResponse
 
-<section class="company-detail py-5">
+@{
+    ViewData["Title"] = @Model.CompanyName;
+    var jobCount = Model.Posts.Count;
+    var roundedJobCount = jobCount is > 0 and < 10 ? jobCount : (Math.Floor(jobCount / 10.0) * 10);
+    var jobsToPreview = Model.Posts.Count >= 2 ? Model.Posts.Take(2).ToList() : Model.Posts; 
+}
+
+<section class="company-header py-5 bg-gradient" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8">
-                <div class="card p-4 mb-4">
-                    <div class="d-flex align-items-center mb-4">
-                        <img src="@Model.LogoURL" class="company-logo-xl me-4" alt="Company Logo">
-                        <div>
-                            <h2 class="mb-2">@Model.CompanyName</h2>
-                            <div class="company-meta">
-                                <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@Model.CityName</span>
-                                @* <span><i class="bi bi-globe me-1"></i>www.techsolutions.com</span> *@
+            <div class="col-12">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a asp-controller="EmployersPage" asp-action="Index" class="text-decoration-none">Công ty</a></li>
+                        <li class="breadcrumb-item active fw-semibold" aria-current="page">@Model.CompanyName</li>
+                    </ol>
+                </nav>
+
+                <div class="card border-0 rounded-4 shadow overflow-hidden fade-in-up">
+                    <div class="card-body p-0">
+                        <div class="company-cover position-relative" style="height: 220px; background: linear-gradient(45deg, #0d6efd 0%, #0a58ca 100%);">
+                            <div class="company-logo-wrapper position-absolute start-4 bottom-0 translate-middle-y">
+                                <div class="position-relative">
+                                    <img src="@Model.LogoUrl" class="company-logo-xl rounded-circle bg-white p-2 shadow border border-3 border-white" alt="@Model.CompanyName" style="width: 120px; height: 120px; object-fit: contain;" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="company-info p-4 pt-5 mt-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div>
+                                        <h1 class="mb-2 display-6 fw-bold d-flex align-items-center">
+                                            @Model.CompanyName
+                                        </h1>
+                                        <p class="text-muted mb-3">@Model.Field</p>
+                                    </div>
+                                    <div class="d-flex flex-wrap align-items-center mb-3">
+                                        <div class="badge bg-light text-dark d-flex align-items-center p-2 me-2 mb-2">
+                                            <div class="rounded-circle p-1 bg-primary bg-opacity-10 me-2">
+                                                <i class="bi bi-geo-alt-fill text-primary"></i>
+                                            </div>
+                                            <span>@Model.CityName</span>
+                                        </div>
+                                        <div class="badge bg-light text-dark d-flex align-items-center p-2 me-2 mb-2">
+                                            <div class="rounded-circle p-1 bg-primary bg-opacity-10 me-2">
+                                                <i class="bi bi-building text-primary"></i>
+                                            </div>
+                                            <span>@Model.Field</span>
+                                        </div>
+                                        <div class="badge bg-light text-dark d-flex align-items-center p-2 me-2 mb-2">
+                                            <div class="rounded-circle p-1 bg-primary bg-opacity-10 me-2">
+                                                <i class="bi bi-people-fill text-primary"></i>
+                                            </div>
+                                            <span>1000+ nhân viên</span>
+                                        </div>
+                                        <div class="badge bg-primary d-flex align-items-center p-2 mb-2">
+                                            <div class="rounded-circle p-1 bg-white bg-opacity-25 me-2">
+                                                <i class="bi bi-briefcase-fill text-white"></i>
+                                            </div>
+                                            <span>@(roundedJobCount)+ việc làm đang tuyển</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="company-overview mb-4">
-                        <h4>Giới thiệu công ty</h4>
-                        <p>@Model.Description</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card p-4 mb-4">
-                    <h4 class="mb-4">Thông tin liên hệ</h4>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
-                            @Model.CityName
-                        </li>
-                    </ul>
-                    <hr>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<section class="company-detail py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 fade-in-up">
+                    <h3 class="card-title mb-4">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>Giới thiệu công ty
+                    </h3>
+                    <div class="company-description">
+                        <p>@Model.Description</p>
+                    </div>
+
+                    <div class="company-gallery mt-4">
+                        <h4 class="mb-3">Hình ảnh công ty</h4>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <img src="https://images.unsplash.com/photo-1497215842964-222b430dc094" alt="Office" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c" alt="Team" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2" alt="Culture" class="img-fluid rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 fade-in-up" id="jobs">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-briefcase-fill text-primary me-2"></i>Việc làm đang tuyển
+                        </h3>
+                        <span class="badge bg-primary rounded-pill px-3 py-2 fs-6">@(roundedJobCount)+ việc làm</span>
+                    </div>
+
+                    <div class="job-list">
+                        @if (jobsToPreview.Any())
+                        {
+                            foreach (var job in jobsToPreview)
+                            {
+                                <div class="job-item p-3 border rounded-3 mb-3 transition-all">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1 fw-bold"><a asp-controller="ApplyJob" asp-action="Details", asp-route-postID="@job.PostId">@job.Title</a></h5>
+                                            <div class="d-flex flex-wrap">
+                                                <span class="badge bg-light text-dark me-2 mb-2">
+                                                    <i class="bi bi-geo-alt me-1"></i>@job.CityName
+                                                </span>
+                                                <span class="badge bg-light text-dark me-2 mb-2">
+                                                    <i class="bi bi-cash me-1"></i>@job.Salary.ToString("N0") VND
+                                                </span>
+                                                <span class="badge bg-light text-dark mb-2">
+                                                    <i class="bi bi-briefcase me-1"></i>@job.JobType
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <a asp-controller="ApplyJob" asp-action="Details" asp-route-postID="@job.PostId" class="btn btn-sm btn-primary fw-medium rounded-pill">Ứng tuyển</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Hiện tại công ty chưa có vị trí tuyển dụng nào.
+                            </div>
+                        }
+                        <div class="text-center mt-3">
+                            <a asp-controller="EmployersPage", asp-action="ViewAllJobsByEmployers" asp-route-EmployerId="@Model.EmployerId" class="btn btn-link">Xem tất cả việc làm <i class="bi bi-arrow-right"></i></a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 sticky-lg-top company-info-card fade-in-right" style="top: 1rem; z-index: 1;">
+                    <h3 class="card-title mb-4">
+                        <i class="bi bi-telephone-fill text-primary me-2"></i>Thông tin liên hệ
+                    </h3>
+                    <ul class="list-unstyled contact-info">
+                        <li class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-geo-alt-fill text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Địa chỉ</h6>
+                                <p class="mb-0 text-muted">@Model.CityName, Việt Nam</p>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-globe text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Website</h6>
+                                <p class="mb-0"><a href="#" class="text-primary">www.@(Model.CompanyName.ToLower().Replace(" ", "")).com</a></p>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-envelope-fill text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Email</h6>
+                                <p class="mb-0"><a href="mailto:@Model.Email" class="text-primary">@Model.Email</a></p>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="bi bi-telephone-fill text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Điện thoại</h6>
+                                <p class="mb-0 text-muted">(+84) 28 1234 5678</p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="mt-4 pt-3 border-top">
+                        <h5 class="mb-3">Kết nối với @Model.CompanyName</h5>
+                        <div class="d-flex">
+                            <a href="#" class="social-link me-2">
+                                <div class="icon-box bg-facebook text-white rounded p-2">
+                                    <i class="bi bi-facebook"></i>
+                                </div>
+                            </a>
+                            <a href="#" class="social-link me-2">
+                                <div class="icon-box bg-linkedin text-white rounded p-2">
+                                    <i class="bi bi-linkedin"></i>
+                                </div>
+                            </a>
+                            <a href="#" class="social-link me-2">
+                                <div class="icon-box bg-twitter text-white rounded p-2">
+                                    <i class="bi bi-twitter"></i>
+                                </div>
+                            </a>
+                            <a href="#" class="social-link">
+                                <div class="icon-box bg-instagram text-white rounded p-2">
+                                    <i class="bi bi-instagram"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to job items
+            const jobItems = document.querySelectorAll('.job-item');
+            jobItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.classList.add('shadow-sm');
+                    this.classList.add('border-primary');
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.classList.remove('shadow-sm');
+                    this.classList.remove('border-primary');
+                });
+            });
+
+            // Add zoom effect to gallery images
+            const galleryImages = document.querySelectorAll('.company-gallery img');
+            galleryImages.forEach(img => {
+                img.addEventListener('mouseenter', function() {
+                    this.classList.add('scale-animation');
+                });
+                img.addEventListener('mouseleave', function() {
+                    this.classList.remove('scale-animation');
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .bg-facebook {
+            background-color: #3b5998;
+        }
+
+        .bg-linkedin {
+            background-color: #0077b5;
+        }
+
+        .bg-twitter {
+            background-color: #1da1f2;
+        }
+
+        .bg-instagram {
+            background-color: #e1306c;
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+    </style>
+}

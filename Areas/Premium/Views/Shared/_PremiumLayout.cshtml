@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TVOnline Premium</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/premium.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="Premium" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-crown text-warning me-2"></i>TVOnline Premium
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Premium" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home me-1"></i> Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Premium" asp-controller="CV" asp-action="Index">
+                                <i class="fas fa-file-alt me-1"></i> Mẫu CV
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Premium" asp-controller="CV" asp-action="MyCV">
+                                <i class="fas fa-folder me-1"></i> CV của tôi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-arrow-left me-1"></i> Quay lại trang chính
+                            </a>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top footer text-muted bg-light">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-primary mb-3">TVOnline Premium</h5>
+                    <p>Dịch vụ cao cấp dành cho người tìm việc chuyên nghiệp</p>
+                    <p>
+                        <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Chính sách bảo mật</a> |
+                        <a asp-area="" asp-controller="Home" asp-action="Terms" class="text-decoration-none">Điều khoản sử dụng</a>
+                    </p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-primary mb-3">Liên hệ</h5>
+                    <p><i class="fas fa-envelope me-2"></i> support@tvonline.vn</p>
+                    <p><i class="fas fa-phone me-2"></i> (024) 3795 5417</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> Hà Nội, Việt Nam</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-primary mb-3">Theo dõi chúng tôi</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-decoration-none fs-4"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-decoration-none fs-4"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-decoration-none fs-4"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-decoration-none fs-4"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <p>&copy; @DateTime.Now.Year - TVOnline - Đơn vị cung cấp dịch vụ tìm việc hàng đầu Việt Nam</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,107 @@
+@model TVOnline.Areas.Admin.Controllers.FeedbackReplyViewModel
+
+@{
+    ViewData["Title"] = "Phản hồi ý kiến";
+}
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-reply me-1"></i>
+                Phản hồi ý kiến
+            </div>
+            <div>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@Model.UserName</strong>
+                            </div>
+                            <div>
+                                <span class="text-muted">@Model.FeedbackDate.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="rating mb-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= Model.Rating)
+                                    {
+                                        <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star text-warning"></i>
+                                    }
+                                }
+                                <span class="ms-2">(@Model.Rating/5)</span>
+                            </div>
+                            <div class="feedback-content">
+                                @if (string.IsNullOrEmpty(Model.FeedbackContent))
+                                {
+                                    <p class="text-muted fst-italic">Không có nội dung phản hồi.</p>
+                                }
+                                else
+                                {
+                                    <p>@Model.FeedbackContent</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="Reply" method="post">
+                    <input type="hidden" asp-for="FeedbackId" />
+                    <div class="form-group mb-3">
+                        <label for="ReplyContent" class="form-label">Nội dung phản hồi</label>
+                        <textarea asp-for="ReplyContent" class="form-control" rows="5" placeholder="Nhập nội dung phản hồi của bạn..."></textarea>
+                        <span asp-validation-for="ReplyContent" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i> Gửi phản hồi
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <i class="fas fa-info-circle me-1"></i> Hướng dẫn
+                    </div>
+                    <div class="card-body">
+                        <p>Khi phản hồi ý kiến của người dùng, hãy lưu ý:</p>
+                        <ul>
+                            <li>Viết phản hồi một cách chuyên nghiệp và lịch sự</li>
+                            <li>Trả lời đầy đủ các vấn đề người dùng đã nêu</li>
+                            <li>Cung cấp thông tin hữu ích và giải pháp cụ thể</li>
+                            <li>Cảm ơn người dùng đã dành thời gian gửi phản hồi</li>
+                        </ul>
+                        <div class="alert alert-info">
+                            <i class="fas fa-lightbulb me-1"></i> Phản hồi của bạn sẽ được gửi đến email của người dùng.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

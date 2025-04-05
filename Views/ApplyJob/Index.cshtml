@@ -1,0 +1,172 @@
+@model TVOnline.ViewModels.JobsViewModel.JobsViewModel
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.IdentityModel.Tokens
+@using TVOnline.Models
+@inject SignInManager<Users> signInManager;
+@inject TVOnline.Services.IPremiumUserService PremiumUserService
+
+@{
+    ViewData["Title"] = "Việc làm";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    bool isPremium = false;
+    if (User.Identity.IsAuthenticated)
+    {
+        var user = await signInManager.UserManager.GetUserAsync(User);
+        isPremium = await PremiumUserService.IsUserPremium(user.Id);
+    }
+}
+
+<section class="job-filters py-4">
+    <div class="container">
+        @if (!isPremium && User.Identity.IsAuthenticated)
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-star-fill me-2"></i>
+                <strong>Nâng cấp tài khoản Premium</strong> để có nhiều lợi ích hơn!
+                <a asp-controller="Account" asp-action="UpgradeAccount" class="btn btn-warning btn-sm ms-2">
+                    <i class="bi bi-star-fill me-1"></i>Nâng cấp ngay
+                </a>
+            </div>
+        }
+        <form class="row g-3" asp-controller="Home" asp-action="SearchJobs" method="get">
+            <div class="col-md-5">
+                <input type="text" value="@Model.SearchKeyword" class="form-control" placeholder="Tên công việc hoặc từ khóa" name="keyword">
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" name="cityId">
+                    <option value="">Chọn địa điểm</option>
+                    @foreach (var city in Model.Locations)
+                    {
+                        <option value="@city.Id">@city.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Tìm Kiếm</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="job-listings py-5">
+    <div class="container">
+        <div class="row g-4">
+            @if (Model.Posts == null || !Model.Posts.Any())
+            {
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i>Không có công việc nào
+                    </div>
+                </div>
+            }
+            else
+            {
+                foreach (var post in Model.Posts)
+                {
+                    <div class="col-12">
+                        <div class="job-list-card p-4 rounded shadow-sm" style="opacity: 1; transform: translateY(0);">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 col-sm-3 mb-3 mb-md-0 d-flex justify-content-center">
+                                    <img src="@post.CompanyLogoUrl" class="company-logo-lg" alt="@post.CompanyName">
+                                </div>
+                                <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
+                                    <a asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">
+                                        <h4>@post.Title</h4>
+                                    </a>
+                                    <p class="company-name mb-2">@post.CompanyName</p>
+                                    <div class="job-meta">
+                                        <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@post.CityName</span>
+                                        <span class="me-3"><i class="bi bi-cash-stack me-1"></i>@($"{post.Salary:N0} VND")</span>
+                                        <span><i class="bi bi-briefcase me-1"></i>@post.Experience</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-md-end">
+                                    <a class="btn btn-primary me-2" asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
+                                    @if (signInManager.IsSignedIn(User))
+                                    {
+                                        @if (post.IsSaved)
+                                        {
+                                            <form asp-controller="ApplyJob" asp-action="UnsaveJob" asp-route-postId="@post.PostId" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy lưu công việc này?');" class="d-inline-block">
+                                                <button type="submit" class="btn btn-danger">Bỏ Lưu</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-controller="ApplyJob" asp-action="SaveJob" asp-route-postId="@post.PostId" class="d-inline-block">
+                                                <button type="submit" class="btn btn-success">Lưu</button>
+                                            </form>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        @if (Model.Posts != null && Model.Posts.Any() && totalPages > 1)
+        {
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="?page=@(currentPage - 1)">Trước</a>
+                    </li>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="?page=@(currentPage + 1)">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Đảm bảo DOM đã load xong trước khi thao tác
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - Fixing Index.cshtml');
+            
+            // Lấy tất cả các job-list-card và đảm bảo hiển thị
+            const jobCards = document.querySelectorAll('.job-list-card');
+            console.log('Số lượng card tìm thấy:', jobCards.length);
+            
+            if (jobCards.length > 0) {
+                // Áp dụng style trực tiếp vào mỗi card
+                jobCards.forEach(card => {
+                    // Đặt thuộc tính style trực tiếp
+                    card.setAttribute('style', 'opacity: 1 !important; transform: translateY(0) !important;');
+                    
+                    // Thêm class để đảm bảo hiển thị
+                    card.classList.add('show');
+                    
+                    // Xóa bất kỳ class animation nào có thể gây vấn đề
+                    card.classList.remove('with-animation', 'animate', 'fade-in-up');
+                });
+                
+                console.log('Đã áp dụng style cho tất cả card');
+            }
+        });
+        
+        // Đảm bảo khi trang đã tải hoàn tất
+        window.addEventListener('load', function() {
+            console.log('Window loaded - Fixing visibility issues');
+            
+            // Làm lại các bước của DOMContentLoaded
+            const jobCards = document.querySelectorAll('.job-list-card');
+            jobCards.forEach(card => {
+                card.setAttribute('style', 'opacity: 1 !important; transform: translateY(0) !important;');
+            });
+        });
+    </script>
+} 

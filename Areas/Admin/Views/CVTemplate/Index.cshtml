@@ -1,0 +1,102 @@
+@model IEnumerable<TVOnline.Models.CVTemplate>
+
+@{
+    ViewData["Title"] = "Quản lý mẫu CV";
+}
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <i class="fas fa-file-alt me-1"></i>
+            Danh sách mẫu CV
+        </div>
+        <a asp-action="Create" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i> Thêm mẫu CV mới
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="cvTemplatesTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Hình ảnh</th>
+                        <th>Tên mẫu</th>
+                        <th>Mô tả</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center">
+                                @if (!string.IsNullOrEmpty(item.ThumbnailPath))
+                                {
+                                    <img src="@Url.Content(item.ThumbnailPath)" alt="@item.Name" style="max-width: 80px; max-height: 80px;" class="img-thumbnail" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Không có ảnh</span>
+                                }
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)</td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                            </td>
+                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Preview" asp-route-id="@item.TemplateId" class="btn btn-info btn-sm" target="_blank">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.TemplateId" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.TemplateId" class="btn btn-secondary btn-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <form asp-action="ToggleStatus" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@item.TemplateId" />
+                                        <button type="submit" class="btn @(item.IsActive ? "btn-warning" : "btn-success") btn-sm" 
+                                                onclick="return confirm('Bạn có chắc muốn @(item.IsActive ? "vô hiệu hóa" : "kích hoạt") mẫu CV này?')">
+                                            <i class="fas @(item.IsActive ? "fa-ban" : "fa-check")"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-action="Delete" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@item.TemplateId" />
+                                        <button type="submit" class="btn btn-danger btn-sm" 
+                                                onclick="return confirm('Bạn có chắc muốn xóa mẫu CV này? Hành động này không thể hoàn tác!')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#cvTemplatesTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+                }
+            });
+        });
+    </script>
+}

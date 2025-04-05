@@ -1,0 +1,169 @@
+@model TVOnline.ViewModels.CVPreviewViewModel
+
+@{
+    ViewData["Title"] = "Xem trước mẫu CV";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xem trước: @Model.Template.Name - TVOnline</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .preview-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .preview-header {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .preview-actions a {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        
+        .preview-actions a:hover {
+            background-color: #0069d9;
+        }
+        
+        .preview-actions a.secondary {
+            background-color: #6c757d;
+        }
+        
+        .preview-actions a.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .preview-frame {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 30px;
+            position: relative;
+        }
+        
+        .preview-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(0,0,0,0.05);
+            pointer-events: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        
+        /* Mẫu CSS từ template */
+        #cv-template {
+            position: relative;
+            z-index: 5;
+        }
+        
+        /* CSS của mẫu CV */
+        @Html.Raw(Model.Template.CssContent)
+
+        @@media print {
+            .preview-header, .preview-watermark {
+                display: none;
+            }
+            
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            
+            .preview-container {
+                max-width: 100%;
+            }
+            
+            .preview-frame {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <div class="preview-header">
+            <div class="preview-title">
+                Xem trước: @Model.Template.Name
+            </div>
+            <div class="preview-actions">
+                <a href="javascript:window.print();" class="print-btn">
+                    <i class="bi bi-printer"></i> In CV
+                </a>
+                <a asp-action="Create" asp-route-id="@Model.Template.TemplateId" class="secondary">
+                    <i class="bi bi-pencil-square"></i> Tạo CV
+                </a>
+                <a asp-action="Index" class="secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+        
+        <div class="preview-frame">
+            <div class="preview-watermark">TVONLINE PREVIEW</div>
+            
+            <div id="cv-template">
+                @Html.Raw(Model.Template.HtmlContent
+                    .Replace("{{Name}}", Model.User.FullName ?? "Họ và tên")
+                    .Replace("{{Email}}", Model.User.Email ?? "email@example.com")
+                    .Replace("{{Phone}}", Model.User.PhoneNumber ?? "0123456789")
+                    .Replace("{{Address}}", "Địa chỉ của bạn")
+                    .Replace("{{JobTitle}}", "Vị trí ứng tuyển")
+                    .Replace("{{Summary}}", "Đây là phần tóm tắt về bản thân và mục tiêu nghề nghiệp của bạn. Hãy viết ngắn gọn nhưng đầy đủ thông tin quan trọng.")
+                    .Replace("{{Education}}", "<div class='education-item'><h4>Tên trường đại học/cao đẳng</h4><p>Chuyên ngành, Năm tốt nghiệp</p><p>Thông tin thêm về thành tích học tập</p></div>")
+                    .Replace("{{Experience}}", "<div class='experience-item'><h4>Tên công ty</h4><p>Vị trí, Thời gian làm việc</p><ul><li>Mô tả công việc và thành tích 1</li><li>Mô tả công việc và thành tích 2</li></ul></div>")
+                    .Replace("{{Skills}}", "<ul><li>Kỹ năng 1</li><li>Kỹ năng 2</li><li>Kỹ năng 3</li></ul>")
+                    .Replace("{{Languages}}", "<ul><li>Tiếng Việt (Bản ngữ)</li><li>Tiếng Anh (Trình độ của bạn)</li></ul>")
+                    .Replace("{{Certificates}}", "<ul><li>Tên chứng chỉ 1 (Năm)</li><li>Tên chứng chỉ 2 (Năm)</li></ul>")
+                    .Replace("{{Projects}}", "<div class='project-item'><h4>Tên dự án</h4><p>Mô tả ngắn gọn về dự án và vai trò của bạn</p></div>")
+                    .Replace("{{Interests}}", "<ul><li>Sở thích 1</li><li>Sở thích 2</li><li>Sở thích 3</li></ul>")
+                )
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

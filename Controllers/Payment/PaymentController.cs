@@ -1,17 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Net.payOS.Types;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Net.payOS;
-using System;
-using System.Threading.Tasks;
+using Net.payOS.Types;
+using System.Security.Claims;
 using TVOnline.Data;
 using TVOnline.Models;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.SqlClient;
-using System.Linq;
 
-[Route("Payment")]
+[Route("payment")]
 [ApiController]
 public class PaymentController : Controller
 {
@@ -112,7 +108,7 @@ public class PaymentController : Controller
             PaymentId = id,
             PaymentDate = vietnamTime,
             PaymentMethod = paymentMethod ?? "PAYOS",
-            Amount = amount,
+            Amount = 10000,
             Status = "Success",
             UserId = userId
         };
@@ -122,7 +118,7 @@ public class PaymentController : Controller
             // Use direct SQL with parameters to insert payment record
             var sql = @"INSERT INTO Payments (PaymentId, PaymentDate, PaymentMethod, Amount, Status, UserId) 
                        VALUES (@PaymentId, @PaymentDate, @PaymentMethod, @Amount, @Status, @UserId)";
-            
+
             await _context.Database.ExecuteSqlRawAsync(sql,
                 new SqlParameter("@PaymentId", payment.PaymentId),
                 new SqlParameter("@PaymentDate", payment.PaymentDate),
@@ -130,7 +126,7 @@ public class PaymentController : Controller
                 new SqlParameter("@Amount", payment.Amount),
                 new SqlParameter("@Status", payment.Status),
                 new SqlParameter("@UserId", payment.UserId));
-            
+
             // Check if user is already premium
             var existingPremiumUser = await _context.PremiumUsers
                 .FirstOrDefaultAsync(p => p.UserId == userId);
@@ -144,8 +140,31 @@ public class PaymentController : Controller
                     UserId = userId
                 };
                 _context.PremiumUsers.Add(premiumUser);
-                await _context.SaveChangesAsync();
             }
+
+            // Update or create account status
+            var accountStatus = await _context.AccountStatuses
+                .FirstOrDefaultAsync(a => a.UserId == userId);
+
+            if (accountStatus == null)
+            {
+                accountStatus = new AccountStatus
+                {
+                    UserId = userId,
+                    IsPremium = true,
+                    StartDate = vietnamTime,
+                    EndDate = vietnamTime.AddYears(1) // Premium for 1 year
+                };
+                _context.AccountStatuses.Add(accountStatus);
+            }
+            else
+            {
+                accountStatus.IsPremium = true;
+                accountStatus.StartDate = vietnamTime;
+                accountStatus.EndDate = vietnamTime.AddYears(1);
+            }
+
+            await _context.SaveChangesAsync();
 
             return View("Success", payment);
         }

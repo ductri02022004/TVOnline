@@ -10,45 +10,116 @@
     {
         var user = await UserManager.GetUserAsync(User);
         var isPremium = await PremiumUserService.IsUserPremium(user.Id);
-
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Home" asp-action="BecomeEmployer">
-                <i class="bi bi-briefcase"></i> Trở thành nhà tuyển dụng
-            </a>
-        </li>
+        
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">
+                    <i class="bi bi-briefcase"></i> Trang chủ Admin
+                </a>
+            </li>
+        }
+        
+        @if (!User.IsInRole("Employer") && !Context.Request.Path.Value.Contains("EmployerDashboard"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="BecomeEmployer">
+                    <i class="bi bi-briefcase"></i> Trở thành nhà tuyển dụng
+                </a>
+            </li>
+        }
 
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="~/images/account-bg.jpg" alt="User Avatar" class="rounded-circle" width="32" height="32">
                 <span class="ms-2">@User.Identity.Name</span>
             </a>
-            <ul class="dropdown-menu user-dropdown-menu" aria-labelledby="userDropdown">
+
+            <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userDropdown">
                 <li class="user-info">@User.Identity.Name</li>
-                <li><a class="dropdown-item" asp-controller="EditUserProfile" asp-action="Index"><i class="bi bi-person"></i> Chỉnh sửa tài khoản</a></li>
-                <li><a class="dropdown-item" asp-controller="Account" asp-action="AppliedJob"><i class="bi bi-file-earmark-text"></i> CV của tôi</a></li>
-                <li><a class="dropdown-item" asp-controller="Account" asp-action="GetSavedJobs"><i class="bi bi-bookmark"></i> Công việc đã lưu</a></li>
-                <li><a class="dropdown-item" asp-controller="AccountStatus" asp-action="Index"><i class="bi bi-person-badge"></i> Trạng thái tài khoản</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="EditUserProfile" asp-action="Index"><i class="bi bi-person"></i> Chỉnh sửa tài khoản</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="AppliedJob"><i class="bi bi-file-earmark-text"></i> CV của tôi</a></li>
+                @if (isPremium)
+                {
+                    <li><a class="dropdown-item" asp-area="" asp-controller="PremiumCV" asp-action="Index"><i class="bi bi-star-fill"></i> Mẫu CV Premium</a></li>
+                }
+                <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="GetSavedJobs"><i class="bi bi-bookmark"></i> Công việc đã lưu</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="AccountStatus" asp-action="Index"><i class="bi bi-person-badge"></i> Trạng thái tài khoản</a></li>
                 @if (isPremium)
                 {
                     <li><a class="dropdown-item" asp-area="Premium" asp-controller="Home" asp-action="Index"><i class="bi bi-star-fill text-warning"></i> Premium Dashboard</a></li>
                 }
                 else
                 {
-                    <li><a class="dropdown-item" asp-controller="Account" asp-action="UpgradeAccount"><i class="bi bi-star"></i> Nâng Cấp tài khoản</a></li>
+                    <li class="dropdown-item upgrade-item">
+                        <div class="d-flex flex-column">
+                            <a class="btn btn-warning btn-sm mb-2" asp-area="" asp-controller="Account" asp-action="UpgradeAccount">
+                                <i class="bi bi-star-fill me-1"></i> Nâng Cấp Premium
+                            </a>
+                            <small class="text-muted">
+                                <i class="bi bi-check-circle-fill text-success me-1"></i>Mẫu CV chuyên nghiệp<br>
+                                <i class="bi bi-check-circle-fill text-success me-1"></i>Ưu tiên hiển thị CV<br>
+                                <i class="bi bi-check-circle-fill text-success me-1"></i>Hỗ trợ 24/7
+                            </small>
+                        </div>
+                    </li>
                 }
-                <li><a class="dropdown-item" asp-controller="Payment" asp-action="PaymentHistory"><i class="bi bi-credit-card"></i> Lịch sử giao dịch</a></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="Payment" asp-action="PaymentHistory"><i class="bi bi-credit-card"></i> Lịch sử giao dịch</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                <li><a class="dropdown-item text-danger" asp-area="" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
             </ul>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="btn btn-outline-primary me-2" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+            <a class="btn btn-outline-primary me-2" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a>
         </li>
         <li class="nav-item">
-            <a class="btn btn-primary me-2" asp-controller="Account" asp-action="Register">Đăng kí</a>
+            <a class="btn btn-primary me-2" asp-area="" asp-controller="Account" asp-action="Register">Đăng kí</a>
         </li>
     }
 </ul>
+
+<style>
+    .upgrade-item {
+        padding: 0.5rem 1rem;
+    }
+    .upgrade-item .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #000;
+        font-weight: 500;
+    }
+    .upgrade-item .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+    }
+    .upgrade-item small {
+        font-size: 0.75rem;
+        line-height: 1.4;
+    }
+    .dropdown-menu {
+        position: absolute;
+        z-index: 1000;
+        display: none;
+        min-width: 10rem;
+        padding: 0.5rem 0;
+        margin: 0;
+        font-size: 1rem;
+        color: #212529;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 0.25rem;
+    }
+    .dropdown-menu.show {
+        display: block;
+    }
+    .dropdown-menu-end {
+        right: 0;
+        left: auto;
+    }
+</style>

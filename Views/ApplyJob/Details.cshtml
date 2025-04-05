@@ -1,102 +1,336 @@
 @model TVOnline.ViewModels.JobsViewModel.JobsViewModel
 @using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.IdentityModel.Tokens
+@using TVOnline.Models
+@using CollectionUtils = TVOnline.Extensions.EnumerableExtensions
 @inject SignInManager<Users> signInManager;
+@inject TVOnline.Services.IPremiumUserService PremiumUserService
 
 @{
     ViewData["Title"] = "Chi tiết bài đăng";
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
+    bool isPremium = false;
+    if (User.Identity.IsAuthenticated)
+    {
+        var user = await signInManager.UserManager.GetUserAsync(User);
+        isPremium = await PremiumUserService.IsUserPremium(user.Id);
+    }
 }
 
 <section class="job-filters py-4 bg-light">
+    @if (!isPremium && User.Identity.IsAuthenticated)
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-star-fill me-2"></i>
+            <strong>Nâng cấp tài khoản Premium</strong> để có nhiều lợi ích hơn!
+            <a asp-controller="Account" asp-action="UpgradeAccount" class="btn btn-warning btn-sm ms-2">
+                <i class="bi bi-star-fill me-1"></i>Nâng cấp ngay
+            </a>
+        </div>
+    }
     <div class="container">
-        <div class="row g-3">
+        <form class="row g-3" asp-controller="ApplyJob" asp-action="Filter" method="get" id="filterForm" onsubmit="return validateFilterForm()">
+            <input type="hidden" name="page" value="@currentPage" />
             <div class="col-md-4">
-                <select class="form-select">
-                    <option selected>Ngành Nghề</option>
-                    <option>Công Nghệ Thông Tin</option>
-                    <option>Tài Chính - Ngân Hàng</option>
-                    <option>Marketing</option>
-                    <option>Y Tế</option>
-                </select>
+                <input type="text" value="@Model.SearchKeyword" class="form-control" placeholder="Tên công việc hoặc từ khóa" name="keyword">
             </div>
             <div class="col-md-4">
-                <select class="form-select">
-                    <option selected value="">Địa điểm</option>
+                <select class="form-select" name="cityId">
+                    <option value="">Địa điểm</option>
                     @foreach (var location in Model.Locations)
                     {
-                        <option value="@location.Name">@location.Name</option>
+                        <option value="@location.Id" selected="@(Model.SelectedCityId == location.Id)">@location.Name</option>
                     }
                 </select>
             </div>
-            <div class="col-md-4">
-                <button class="btn btn-primary w-100">Lọc Kết Quả</button>
+            
+            <!-- Salary Range Filter -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header py-2">
+                        <h6 class="mb-0">Mức lương (VND)</h6>
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="minSalary" class="form-label small">Tối thiểu</label>
+                                    <input type="number" class="form-control" id="minSalary" name="minSalary" 
+                                           placeholder="VD: 5000000" value="@Model.MinSalary" min="0">
+                                    <div id="minSalaryError" class="text-danger small"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="maxSalary" class="form-label small">Tối đa</label>
+                                    <input type="number" class="form-control" id="maxSalary" name="maxSalary" 
+                                           placeholder="VD: 20000000" value="@Model.MaxSalary" min="1">
+                                    <div id="maxSalaryError" class="text-danger small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+            
+            <!-- Experience Filter -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header py-2">
+                        <h6 class="mb-0">Kinh nghiệm (năm)</h6>
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="minExperience" class="form-label small">Tối thiểu</label>
+                                    <input type="number" class="form-control" id="minExperience" name="minExperience" 
+                                           placeholder="VD: 1" value="@Model.MinExperience" min="1">
+                                    <div id="minExperienceError" class="text-danger small"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="maxExperience" class="form-label small">Tối đa</label>
+                                    <input type="number" class="form-control" id="maxExperience" name="maxExperience" 
+                                           placeholder="VD: 5" value="@Model.MaxExperience" min="1">
+                                    <div id="maxExperienceError" class="text-danger small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 mt-3">
+                <button class="btn btn-primary w-100" type="submit">Lọc Kết Quả</button>
+            </div>
+            
+            <!-- Current filter summary -->
+            @if (Model.MinSalary.HasValue || Model.MaxSalary.HasValue || Model.MinExperience.HasValue || Model.MaxExperience.HasValue || !string.IsNullOrEmpty(Model.SearchKeyword) || Model.SelectedCityId.HasValue)
+            {
+                <div class="col-12 mt-3">
+                    <div class="alert alert-info">
+                        <h6>Bộ lọc hiện tại:</h6>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            @if (!string.IsNullOrEmpty(Model.SearchKeyword))
+                            {
+                                <span class="badge bg-primary">Từ khóa: @Model.SearchKeyword</span>
+                            }
+                            
+                            @if (Model.SelectedCityId.HasValue)
+                            {
+                                var cityName = Model.Locations.FirstOrDefault(c => c.Id == Model.SelectedCityId)?.Name;
+                                <span class="badge bg-primary">Địa điểm: @cityName</span>
+                            }
+                            
+                            @if (Model.MinSalary.HasValue)
+                            {
+                                <span class="badge bg-primary">Lương tối thiểu: @Model.MinSalary.Value.ToString("N0") VND</span>
+                            }
+                            
+                            @if (Model.MaxSalary.HasValue)
+                            {
+                                <span class="badge bg-primary">Lương tối đa: @Model.MaxSalary.Value.ToString("N0") VND</span>
+                            }
+                            
+                            @if (Model.MinExperience.HasValue)
+                            {
+                                <span class="badge bg-primary">Kinh nghiệm tối thiểu: @Model.MinExperience năm</span>
+                            }
+                            
+                            @if (Model.MaxExperience.HasValue)
+                            {
+                                <span class="badge bg-primary">Kinh nghiệm tối đa: @Model.MaxExperience năm</span>
+                            }
+                            
+                            <a href="@Url.Action("Index")" class="badge bg-danger text-decoration-none">Xóa bộ lọc</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </form>
     </div>
 </section>
 
 <section class="job-listings py-5">
     <div class="container">
         <div class="row g-4">
-            @foreach (var post in Model.Posts)
+            @if (CollectionUtils.IsNullOrEmpty(Model.Posts))
             {
-                <div class="col-12">
-                    <div class="job-list-card p-4 bg-white rounded shadow-sm">
-                        <div class="row align-items-center">
-                            <div class="col-md-2 col-sm-3 mb-3 mb-md-0  d-flex justify-content-center">
-                                <img src="@post.CompanyLogoURL" class="company-logo-lg" alt="@post.CompanyName">
-                            </div>
-                            <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
-                                <a asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">
-                                    <h4>@post.Title</h4>
-                                </a>
-                                <p class="company-name mb-2">@post.CompanyName</p>
-                                <div class="job-meta">
-                                    <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@post.CityName</span>
-                                    <span class="me-3"><i class="bi bi-cash me-1"></i>@($"{post.Salary:N0} VND")</span>
-                                    <span><i class="bi bi-briefcase me-1"></i>@post.Experience</span>
-                                </div>
-                            </div>
-                            <div class="col-md-3 text-md-end">
-                                @if (post.IsSaved)
-                                {
-                                    <form asp-controller="Account" asp-action="UnsaveJob" asp-route-postId="@post.PostId" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy lưu công việc này?');" class="d-inline-block me-2">
-                                        <button type="submit" class="btn btn-danger">Bỏ Lưu</button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-controller="ApplyJob" asp-action="SaveJob" asp-route-postId="@post.PostId" class="d-inline-block me-2">
-                                        <button type="submit" class="btn btn-success">Lưu</button>
-                                    </form>
-                                }
-                                <a class="btn btn-primary" asp-controller="ApplyJob" asp-action="Details" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
-                            </div>
-                        </div>
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i>Không có công việc nào phù hợp với bộ lọc
                     </div>
                 </div>
             }
+            else
+            {
+                foreach (var post in Model.Posts)
+                {
+                    <div class="col-12">
+                        <div class="job-list-card p-4 bg-white rounded shadow-sm">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 col-sm-3 mb-3 mb-md-0 d-flex justify-content-center">
+                                    <img src="@post.CompanyLogoURL" class="company-logo-lg" alt="@post.CompanyName" style="max-width: 80px; max-height: 80px;">
+                                </div>
+                                <div class="col-md-7 col-sm-9 mb-3 mb-md-0">
+                                    <a asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">
+                                        <h4>@post.Title</h4>
+                                    </a>
+                                    <p class="company-name mb-2">@post.CompanyName</p>
+                                    <div class="job-meta">
+                                        <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@post.CityName</span>
+                                        <span class="me-3"><i class="bi bi-cash me-1"></i>@($"{post.Salary:N0} VND")</span>
+                                        <span><i class="bi bi-briefcase me-1"></i>@post.Experience</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-md-end">
+                                    <a class="btn btn-primary me-2" asp-controller="ApplyJob" asp-action="JobDetails" asp-route-id="@post.PostId">Ứng Tuyển Ngay</a>
+                                    @if (signInManager.IsSignedIn(User))
+                                    {
+                                        @if (post.IsSaved)
+                                        {
+                                            <form asp-controller="ApplyJob" asp-action="UnsaveJob" asp-route-postId="@post.PostId" asp-route-returnPage="@currentPage" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy lưu công việc này?');" class="d-inline-block">
+                                                <input type="hidden" name="keyword" value="@Model.SearchKeyword" />
+                                                <input type="hidden" name="cityId" value="@Model.SelectedCityId" />
+                                                <input type="hidden" name="minSalary" value="@Model.MinSalary" />
+                                                <input type="hidden" name="maxSalary" value="@Model.MaxSalary" />
+                                                <input type="hidden" name="minExperience" value="@Model.MinExperience" />
+                                                <input type="hidden" name="maxExperience" value="@Model.MaxExperience" />
+                                                <button type="submit" class="btn btn-danger">Bỏ Lưu</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-controller="ApplyJob" asp-action="SaveJob" asp-route-postId="@post.PostId" asp-route-returnPage="@currentPage" class="d-inline-block">
+                                                <input type="hidden" name="keyword" value="@Model.SearchKeyword" />
+                                                <input type="hidden" name="cityId" value="@Model.SelectedCityId" />
+                                                <input type="hidden" name="minSalary" value="@Model.MinSalary" />
+                                                <input type="hidden" name="maxSalary" value="@Model.MaxSalary" />
+                                                <input type="hidden" name="minExperience" value="@Model.MinExperience" />
+                                                <input type="hidden" name="maxExperience" value="@Model.MaxExperience" />
+                                                <button type="submit" class="btn btn-success">Lưu</button>
+                                            </form>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
         </div>
 
+        @if (!CollectionUtils.IsNullOrEmpty(Model.Posts) && totalPages > 1)
+        {
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action(Model.MinSalary.HasValue || Model.MaxSalary.HasValue || Model.MinExperience.HasValue || Model.MaxExperience.HasValue || !string.IsNullOrEmpty(Model.SearchKeyword) || Model.SelectedCityId.HasValue ? "Filter" : "Index", new { page = currentPage - 1, keyword = Model.SearchKeyword, cityId = Model.SelectedCityId, minSalary = Model.MinSalary, maxSalary = Model.MaxSalary, minExperience = Model.MinExperience, maxExperience = Model.MaxExperience })">Trước</a>
+                    </li>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action(Model.MinSalary.HasValue || Model.MaxSalary.HasValue || Model.MinExperience.HasValue || Model.MaxExperience.HasValue || !string.IsNullOrEmpty(Model.SearchKeyword) || Model.SelectedCityId.HasValue ? "Filter" : "Index", new { page = i, keyword = Model.SearchKeyword, cityId = Model.SelectedCityId, minSalary = Model.MinSalary, maxSalary = Model.MaxSalary, minExperience = Model.MinExperience, maxExperience = Model.MaxExperience })">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action(Model.MinSalary.HasValue || Model.MaxSalary.HasValue || Model.MinExperience.HasValue || Model.MaxExperience.HasValue || !string.IsNullOrEmpty(Model.SearchKeyword) || Model.SelectedCityId.HasValue ? "Filter" : "Index", new { page = currentPage + 1, keyword = Model.SearchKeyword, cityId = Model.SelectedCityId, minSalary = Model.MinSalary, maxSalary = Model.MaxSalary, minExperience = Model.MinExperience, maxExperience = Model.MaxExperience })">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        }
     </div>
-
-    <nav class="mt-5">
-        <ul class="pagination justify-content-center">
-            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="?page=@(currentPage - 1)">Trước</a>
-            </li>
-
-            @for (int i = 1; i <= totalPages; i++)
-            {
-                <li class="page-item @(i == currentPage ? "active" : "")">
-                    <a class="page-link" href="?page=@i">@i</a>
-                </li>
-            }
-
-            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                <a class="page-link" href="?page=@(currentPage + 1)">Sau</a>
-            </li>
-        </ul>
-    </nav>
 </section>
+
+@section Scripts {
+    <script>
+        // Đảm bảo các job-list-card được hiển thị đúng cách
+        document.addEventListener('DOMContentLoaded', function() {
+            const jobCards = document.querySelectorAll('.job-list-card');
+            if (jobCards.length > 0) {
+                jobCards.forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                });
+            }
+            
+            // Attach form validation event
+            const filterForm = document.getElementById('filterForm');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function(e) {
+                    if (!validateFilterForm()) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+        
+        // Validate form before submission
+        function validateFilterForm() {
+            let isValid = true;
+            
+            // Get form values and convert to appropriate types
+            const minSalary = document.getElementById('minSalary').value !== '' 
+                ? parseFloat(document.getElementById('minSalary').value) 
+                : null;
+                
+            const maxSalary = document.getElementById('maxSalary').value !== '' 
+                ? parseFloat(document.getElementById('maxSalary').value) 
+                : null;
+                
+            const minExperience = document.getElementById('minExperience').value !== '' 
+                ? parseInt(document.getElementById('minExperience').value) 
+                : null;
+                
+            const maxExperience = document.getElementById('maxExperience').value !== '' 
+                ? parseInt(document.getElementById('maxExperience').value) 
+                : null;
+            
+            // Reset error messages
+            document.getElementById('minSalaryError').textContent = '';
+            document.getElementById('maxSalaryError').textContent = '';
+            document.getElementById('minExperienceError').textContent = '';
+            document.getElementById('maxExperienceError').textContent = '';
+            
+            // Validate salary range
+            if (minSalary !== null && minSalary < 0) {
+                document.getElementById('minSalaryError').textContent = 'Mức lương tối thiểu phải lớn hơn hoặc bằng 0';
+                isValid = false;
+            }
+            
+            if (maxSalary !== null && maxSalary <= 0) {
+                document.getElementById('maxSalaryError').textContent = 'Mức lương tối đa phải lớn hơn 0';
+                isValid = false;
+            }
+            
+            if (minSalary !== null && maxSalary !== null && minSalary >= maxSalary) {
+                document.getElementById('maxSalaryError').textContent = 'Mức lương tối đa phải lớn hơn mức lương tối thiểu';
+                isValid = false;
+            }
+            
+            // Validate experience range
+            if (minExperience !== null && minExperience <= 0) {
+                document.getElementById('minExperienceError').textContent = 'Số năm kinh nghiệm tối thiểu phải lớn hơn 0';
+                isValid = false;
+            }
+            
+            if (maxExperience !== null && maxExperience <= 0) {
+                document.getElementById('maxExperienceError').textContent = 'Số năm kinh nghiệm tối đa phải lớn hơn 0';
+                isValid = false;
+            }
+            
+            if (minExperience !== null && maxExperience !== null && minExperience >= maxExperience) {
+                document.getElementById('maxExperienceError').textContent = 'Số năm kinh nghiệm tối đa phải lớn hơn số năm kinh nghiệm tối thiểu';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+    </script>
+}

@@ -1,0 +1,105 @@
+@model List<TVOnline.Areas.Admin.Models.UserCVViewModel>
+@{
+    ViewData["Title"] = "Quản lý CV";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .table th {
+        color: #333 !important;
+        font-weight: 600 !important;
+    }
+    .table td {
+        color: #333 !important;
+    }
+    .text-secondary {
+        color: #333 !important;
+    }
+    .text-muted {
+        color: #555 !important;
+    }
+    .card-header h6 {
+        color: #333 !important;
+        font-weight: 600;
+    }
+    .badge {
+        font-weight: 600;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <h6>Quản lý CV người dùng</h6>
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Người dùng</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lượng CV</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">@user.UserName</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">@user.Email</p>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span class="badge badge-sm bg-gradient-success">@user.CVCount</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="@Url.Action("UserCVs", "CVManagement", new { area = "Admin", userId = user.Id })" class="btn btn-sm btn-info">
+                                                <i class="fas fa-file-alt me-1"></i> Xem CV
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.table').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+                }
+            });
+        });
+    </script>
+}

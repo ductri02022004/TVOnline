@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TVOnline.ViewModels.UserProfile {
-    public class EditUserProfileViewModel {
+namespace TVOnline.ViewModels.UserProfile
+{
+    public class EditUserProfileViewModel
+    {
         public string Id { get; set; }
 
         [Display(Name = "Họ và tên")]

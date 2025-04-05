@@ -1,0 +1,67 @@
+@using Microsoft.AspNetCore.Identity
+@using TVOnline.Models
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+@inject Microsoft.AspNetCore.Identity.UserManager<Users> AdminUserManager
+
+@{
+    // Find the admin user
+    var adminUser = await AdminUserManager.FindByEmailAsync("admin@tvonline.com");
+    ViewBag.AdminId = adminUser?.Id ?? "";
+}
+
+@if (SignInManager.IsSignedIn(User) && !User.IsInRole("Admin"))
+{
+    <div id="chat-widget" class="chat-widget" data-user-id="@UserManager.GetUserId(User)" data-admin-id="@ViewBag.AdminId">
+        <div class="chat-header">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-headset me-2"></i>
+                <span>Hỗ trợ trực tuyến</span>
+            </div>
+            <div class="chat-header-actions">
+                <button type="button" id="toggle-chat" class="btn btn-sm chat-close-btn">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            </div>
+        </div>
+        <div class="chat-body" id="chat-messages">
+            <div class="text-center empty-chat-state">
+                <div class="empty-chat-icon">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <h6>Chào mừng bạn đến với hỗ trợ trực tuyến</h6>
+                <p class="small text-muted">Hãy để lại tin nhắn, chúng tôi sẽ phản hồi sớm nhất có thể!</p>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <div class="file-preview-container" id="file-preview-container"></div>
+            <div class="chat-input-area">
+                <div class="input-with-buttons">
+                    <button type="button" id="emoji-button" class="btn btn-light btn-sm chat-tool-button">
+                        <i class="bi bi-emoji-smile"></i>
+                    </button>
+                    <textarea id="message-input" class="form-control" placeholder="Nhập tin nhắn của bạn..." autocomplete="off"></textarea>
+                    <button type="button" id="attachment-button" class="btn btn-light btn-sm chat-tool-button">
+                        <i class="bi bi-paperclip"></i>
+                    </button>
+                    <button type="button" id="send-message" class="btn btn-primary btn-sm" title="Gửi tin nhắn">
+                <i class="bi bi-send-fill"></i>
+            </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="chat-toggle-button" class="chat-toggle-button">
+        <i class="bi bi-chat-dots-fill"></i>
+        <span class="badge" id="unread-count" style="display: none;">0</span>
+    </button>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/chat.css" />
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/js/chat.js"></script>
+} 

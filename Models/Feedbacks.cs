@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace TVOnline.Models {
-    public class Feedbacks {
+namespace TVOnline.Models
+{
+    public class Feedbacks
+    {
         [Key]
         public string FeedbackId { get; set; } = Guid.NewGuid().ToString();
         public string? Content { get; set; }
@@ -21,5 +23,9 @@ namespace TVOnline.Models {
         [ValidateNever]
         public Employers? Employer { get; set; }
         public string? EmployerId { get; set; }
+        
+        // Thông tin phản hồi của admin
+        public string? AdminReply { get; set; }
+        public DateTime? AdminReplyDate { get; set; }
     }
 }

@@ -1,0 +1,90 @@
+@model List<TVOnline.Models.Post>
+@{
+    ViewData["Title"] = "Quản lý bài đăng";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <h6>Danh sách bài đăng</h6>
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tiêu đề</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nhà tuyển dụng</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Địa điểm</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày đăng</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng thái</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var post in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">@post.Title</h6>
+                                                    <p class="text-xs text-secondary mb-0">@post.JobType</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">@post.Employer?.CompanyName</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">@post.City?.CityName</p>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span class="text-secondary text-xs font-weight-bold">@post.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            @if (post.IsActive)
+                                            {
+                                                <span class="badge badge-sm bg-gradient-success">Đang hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-sm bg-gradient-secondary">Đã vô hiệu hóa</span>
+                                            }
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="btn-group" role="group">
+                                                <a href="@Url.Action("PostDetails", "PostManagement", new { area = "Admin", id = post.PostId })" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <form method="post" action="@Url.Action("TogglePostStatus", "PostManagement", new { area = "Admin", id = post.PostId })">
+                                                    <button type="submit" class="btn btn-sm @(post.IsActive ? "btn-warning" : "btn-success")">
+                                                        <i class="fas @(post.IsActive ? "fa-ban" : "fa-check")"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="post" action="@Url.Action("DeletePost", "PostManagement", new { area = "Admin", id = post.PostId })" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài đăng này?');">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

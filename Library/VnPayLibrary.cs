@@ -1,9 +1,9 @@
-﻿using System.Net.Sockets;
+﻿using System.Globalization;
 using System.Net;
-using TVOnline.Models.Vnpay;
-using System.Text;
+using System.Net.Sockets;
 using System.Security.Cryptography;
-using System.Globalization;
+using System.Text;
+using TVOnline.Models.Vnpay;
 
 namespace TVOnline.Library
 {
@@ -31,22 +31,22 @@ namespace TVOnline.Library
             var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
             var checkSignature =
                 vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
-            if (!checkSignature)
-                return new PaymentResponseModel()
+            return !checkSignature
+                ? new PaymentResponseModel()
                 {
                     Success = false
+                }
+                : new PaymentResponseModel()
+                {
+                    Success = true,
+                    PaymentMethod = "VnPay",
+                    OrderDescription = orderInfo,
+                    OrderId = orderId.ToString(),
+                    PaymentId = vnPayTranId.ToString(),
+                    TransactionId = vnPayTranId.ToString(),
+                    Token = vnpSecureHash,
+                    VnPayResponseCode = vnpResponseCode
                 };
-            return new PaymentResponseModel()
-            {
-                Success = true,
-                PaymentMethod = "VnPay",
-                OrderDescription = orderInfo,
-                OrderId = orderId.ToString(),
-                PaymentId = vnPayTranId.ToString(),
-                TransactionId = vnPayTranId.ToString(),
-                Token = vnpSecureHash,
-                VnPayResponseCode = vnpResponseCode
-            };
         }
 
         public string GetIpAddress(HttpContext context)

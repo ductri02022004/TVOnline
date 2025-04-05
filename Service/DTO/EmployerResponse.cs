@@ -9,9 +9,11 @@
         public string Description { get; set; }
         public string Field { get; set; }
         public string? LogoURL { get; set; }
+        public string? LogoUrl => LogoURL;
         public int CityId { get; set; }
         public string? CityName { get; set; }
         public DateTime CreatedAt { get; set; }
+        public List<PostResponse> Posts { get; set; } = new List<PostResponse>();
     }
 
     public static class EmployerResponseExtension

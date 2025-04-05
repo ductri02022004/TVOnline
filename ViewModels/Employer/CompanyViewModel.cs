@@ -1,5 +1,4 @@
 using TVOnline.Service.DTO;
-using TVOnline.Service.Location;
 
 namespace TVOnline.ViewModels.Employer
 {
@@ -14,11 +13,11 @@ namespace TVOnline.ViewModels.Employer
         public string Address { get; set; }
         public string Phone { get; set; }
         public DateTime CreatedAt { get; set; }
-        
+
         // Danh sách cho dropdown (nếu cần)
         public List<CitiesResponse> Cities { get; set; }
     }
-    
+
     // Extension method để chuyển đổi từ EmployerResponse sang CompanyViewModel
     public static class CompanyViewModelExtensions
     {

@@ -1,19 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TVOnline.ViewModels.Post;
-using TVOnline.Data;
+using TVOnline.Models;
 using TVOnline.Service.DTO;
 using TVOnline.Service.Location;
+using TVOnline.Service.Post;
 using TVOnline.Service.UserCVs;
 using TVOnline.ViewModels.JobsViewModel;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using TVOnline.Models;
-using TVOnline.Service.Post;
 
-namespace TVOnline.Controllers {
-    [Route("[controller]")]
+namespace TVOnline.Controllers.ApplyJob
+{
+    [Route("ApplyJob")]
     public class ApplyJobController(IUserCvService userCvService, IPostService postService, UserManager<Users> userManager, ILocationService locationService) : Controller
     {
         private readonly IUserCvService _userCvService = userCvService;
@@ -21,13 +19,14 @@ namespace TVOnline.Controllers {
         private readonly ILocationService _locationService = locationService;
         private readonly UserManager<Users> _userManager = userManager;
 
-        [Route("[action]")]
+        [HttpGet]
+        [Route("")]
+        [Route("Index")]
         public async Task<IActionResult> Index(int page = 1)
         {
             Users? user = await _userManager.GetUserAsync(User);
-           
 
-            var posts = await _postService.GetAllPosts(user.Id);
+            var posts = await _postService.GetAllPosts(user?.Id);
             var cities = await _locationService.GetAllCities();
 
             int pageSize = 5;
@@ -49,11 +48,57 @@ namespace TVOnline.Controllers {
             return View("Details", jobsViewModel);
         }
 
-        [Route("[action]/{postID}")]
-        public async Task<IActionResult> Details(string postID)
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> Filter(string keyword, int? cityId, decimal? minSalary, decimal? maxSalary,
+            int? minExperience, int? maxExperience, int page = 1)
         {
-            var post = await _postService.FindPostById(postID);
-            
+            Users? user = await _userManager.GetUserAsync(User);
+            var cities = await _locationService.GetAllCities();
+
+            int pageSize = 5;
+
+            // Get filtered posts
+            var posts = await _postService.FilterPosts(
+                keyword, cityId, minSalary, maxSalary, minExperience, maxExperience, page, pageSize, user?.Id);
+
+            // Count total posts for pagination
+            var totalPosts = await _postService.CountFilteredPosts(
+                keyword, cityId, minSalary, maxSalary, minExperience, maxExperience);
+
+            int totalPages = (int)Math.Ceiling((double)totalPosts / pageSize);
+
+            var jobsViewModel = new JobsViewModel
+            {
+                Posts = posts,
+                Locations = cities,
+                SearchKeyword = keyword,
+                MinSalary = minSalary,
+                MaxSalary = maxSalary,
+                MinExperience = minExperience,
+                MaxExperience = maxExperience,
+                SelectedCityId = cityId
+            };
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalPosts = totalPosts;
+
+            // Return the same view as Index but with filtered data
+            return View("Details", jobsViewModel);
+        }
+
+        [Route("[action]/{id?}")]
+        public async Task<IActionResult> JobDetails(string? id, [FromQuery] string? postId)
+        {
+            var postIdToUse = id ?? postId;
+            if (string.IsNullOrEmpty(postIdToUse))
+            {
+                return NotFound();
+            }
+
+            var post = await _postService.FindPostById(postIdToUse);
+
             // Check if user is logged in to show application status
             if (User.Identity.IsAuthenticated)
             {
@@ -61,7 +106,7 @@ namespace TVOnline.Controllers {
                 if (user != null)
                 {
                     // Check if user has already applied to this job
-                    var existingApplication = await _userCvService.GetApplicationByUserAndPost(user.Id, postID);
+                    var existingApplication = await _userCvService.GetApplicationByUserAndPost(user.Id, postIdToUse);
                     if (existingApplication != null)
                     {
                         ViewBag.HasApplied = true;
@@ -73,36 +118,39 @@ namespace TVOnline.Controllers {
                     }
                 }
             }
-            
-            var viewModel = new TVOnline.ViewModels.Post.PostDetailViewModel
+
+            var viewModel = new ViewModels.Post.PostDetailViewModel
             {
                 Post = post,
                 CurrentUser = User.Identity.IsAuthenticated ? await _userManager.GetUserAsync(User) : null
             };
-            
+
             return View("JobDetails", viewModel);
         }
 
         [HttpPost]
-        [Route("[action]/{postID}")]
+        [Route("[action]/{postId}")]
         [Authorize]
-        public async Task<IActionResult> Apply(IFormFile cvFile, string postId) {
-            if (cvFile is { Length: > 0 }) {
+        public async Task<IActionResult> Apply(IFormFile cvFile, string postId)
+        {
+            if (cvFile is { Length: > 0 })
+            {
                 var user = await _userManager.GetUserAsync(User);
-                if (user == null) {
+                if (user == null)
+                {
                     TempData["ErrorMessage"] = "Bạn cần đăng nhập để ứng tuyển.";
-                    return RedirectToAction("Details", new { postId = postId });
+                    return RedirectToAction("JobDetails", new { postId });
                 }
-                
+
                 // Check if user has already applied to this job
                 var existingApplication = await _userCvService.GetApplicationByUserAndPost(user.Id, postId);
                 if (existingApplication != null)
                 {
                     TempData["ErrorMessage"] = "Bạn đã ứng tuyển vào vị trí này rồi.";
-                    return RedirectToAction("Details", new { postId = postId });
+                    return RedirectToAction("JobDetails", new { postId });
                 }
-                
-                // Get post details to validate
+
+                // Get post JobDetails to validate
                 var post = await _postService.FindPostById(postId);
                 if (post == null)
                 {
@@ -116,12 +164,13 @@ namespace TVOnline.Controllers {
                 {
                     Directory.CreateDirectory(uploadsDir);
                 }
-                
+
                 // Create a unique filename to prevent overwriting
                 var fileName = $"{user.Id}_{DateTime.Now:yyyyMMddHHmmss}_{Path.GetFileName(cvFile.FileName)}";
                 var filePath = Path.Combine(uploadsDir, fileName);
 
-                await using (var stream = new FileStream(filePath, FileMode.Create)) {
+                await using (var stream = new FileStream(filePath, FileMode.Create))
+                {
                     await cvFile.CopyToAsync(stream);
                 }
 
@@ -139,13 +188,13 @@ namespace TVOnline.Controllers {
                 await _userCvService.SaveCv(userCvAddRequest);
 
                 TempData["SuccessMessage"] = "Ứng tuyển thành công! Nhà tuyển dụng sẽ xem xét hồ sơ của bạn.";
-                return RedirectToAction("Details", new { postId = postId });
+                return RedirectToAction("JobDetails", new { postId });
             }
 
             TempData["ErrorMessage"] = "Vui lòng tải lên CV của bạn.";
-            return RedirectToAction("Details", new { postId = postId });
+            return RedirectToAction("JobDetails", new { postId });
         }
-        
+
         [Authorize]
         [Route("[action]")]
         public async Task<IActionResult> MyApplications()
@@ -155,56 +204,97 @@ namespace TVOnline.Controllers {
             {
                 return RedirectToAction("Login", "Account");
             }
-            
+
             var applications = await _userCvService.GetApplicationsByUser(user.Id);
             return View(applications);
         }
 
         [HttpPost]
         [Route("[action]/{postId}")] // Route for saving a job, now in ApplyJobController (e.g., /ApplyJob/SaveJob/POST001)
-        public async Task<IActionResult> SaveJob(string postId)
+        public async Task<IActionResult> SaveJob(string postId, int returnPage = 1, string keyword = null, int? cityId = null,
+            decimal? minSalary = null, decimal? maxSalary = null, int? minExperience = null, int? maxExperience = null)
         {
             if (string.IsNullOrEmpty(postId))
             {
                 return BadRequest("Post ID is required.");
             }
 
+            // Check if user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Store the post ID in TempData to potentially use it after login
+                TempData["PostToSave"] = postId;
+                return RedirectToAction("Login", "Account");
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
+                return RedirectToAction("Login", "Account");
             }
 
             bool isSaved = await _postService.SaveJobForJobSeeker(postId, userId);
 
-            return isSaved
-                ? RedirectToAction("Index", "ApplyJob")
-                : BadRequest(new
+            // Redirect based on whether we have filter parameters
+            if (!string.IsNullOrEmpty(keyword) || cityId.HasValue || minSalary.HasValue ||
+                maxSalary.HasValue || minExperience.HasValue || maxExperience.HasValue)
+            {
+                return RedirectToAction("Filter", new
                 {
-                    message = "Failed to save job or job already saved."
+                    keyword,
+                    cityId,
+                    minSalary,
+                    maxSalary,
+                    minExperience,
+                    maxExperience,
+                    page = returnPage
                 });
+            }
+
+            return RedirectToAction("Index", new { page = returnPage });
         }
 
         [HttpPost]
         [Route("[action]/{postId}")]
-        public async Task<IActionResult> UnsaveJob(string postId)
+        public async Task<IActionResult> UnsaveJob(string postId, int returnPage = 1, string keyword = null, int? cityId = null,
+            decimal? minSalary = null, decimal? maxSalary = null, int? minExperience = null, int? maxExperience = null)
         {
             if (string.IsNullOrEmpty(postId))
             {
                 return BadRequest("Post ID is required.");
             }
 
+            // Check if user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
+                return RedirectToAction("Login", "Account");
             }
 
             bool isUnsaved = await _postService.DeleteSavedJobForJobSeeker(postId, userId);
 
-            return isUnsaved
-                ? RedirectToAction("Index", "ApplyJob")
-                : BadRequest(new { message = "Failed to unsave job." });
+            // Redirect based on whether we have filter parameters
+            if (!string.IsNullOrEmpty(keyword) || cityId.HasValue || minSalary.HasValue ||
+                maxSalary.HasValue || minExperience.HasValue || maxExperience.HasValue)
+            {
+                return RedirectToAction("Filter", new
+                {
+                    keyword,
+                    cityId,
+                    minSalary,
+                    maxSalary,
+                    minExperience,
+                    maxExperience,
+                    page = returnPage
+                });
+            }
+
+            return RedirectToAction("Index", new { page = returnPage });
         }
     }
 }

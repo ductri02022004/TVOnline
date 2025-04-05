@@ -1,0 +1,80 @@
+﻿.cv-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.5;
+    color: #333;
+}
+
+.cv-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 20px;
+}
+
+    .cv-header h1 {
+        font-size: 32px;
+        margin-bottom: 5px;
+        color: #2c3e50;
+    }
+
+.job-title {
+    font-size: 18px;
+    color: #3498db;
+    margin-bottom: 15px;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+    .contact-info p {
+        margin: 5px 0;
+    }
+
+.cv-section {
+    margin-bottom: 25px;
+}
+
+    .cv-section h2 {
+        font-size: 22px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+
+.education-item, .experience-item {
+    margin-bottom: 15px;
+}
+
+    .education-item h3, .experience-item h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+        color: #3498db;
+    }
+
+.date, .position {
+    font-style: italic;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+}
+
+    .skills-list li {
+        background-color: #f0f0f0;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }

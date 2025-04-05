@@ -1,6 +1,7 @@
 using TVOnline.Data;
 using TVOnline.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace TVOnline.Services
 {
@@ -26,7 +27,16 @@ namespace TVOnline.Services
             if (string.IsNullOrEmpty(userId))
                 return false;
 
-            return await _context.PremiumUsers.AnyAsync(p => p.UserId == userId);
+            // Kiểm tra trong bảng AccountStatuses thay vì PremiumUsers
+            var accountStatus = await _context.AccountStatuses
+                .FirstOrDefaultAsync(a => a.UserId == userId);
+                
+            if (accountStatus == null)
+                return false;
+                
+            // Kiểm tra nếu tài khoản có trạng thái Premium và chưa hết hạn
+            return accountStatus.IsPremium && 
+                  (accountStatus.EndDate == null || accountStatus.EndDate >= DateTime.Now);
         }
 
         public async Task<PremiumUser> GetPremiumUser(string userId)
@@ -62,4 +72,4 @@ namespace TVOnline.Services
             return true;
         }
     }
-} 
+}

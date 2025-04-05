@@ -1,11 +1,11 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.AspNetCore.Http;
-using static TVOnline.Models.Location;
 
-namespace TVOnline.Models {
-    public class Employers {
+namespace TVOnline.Models
+{
+    public class Employers
+    {
         [Key]
         public string EmployerId { get; set; }
 
