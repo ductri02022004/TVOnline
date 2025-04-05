@@ -19,7 +19,6 @@ namespace TVOnline.Models
 
         public double? Amount { get; set; }
 
-        // This maps to the existing Status column in the database
         [Column("Status")]
         public string? Status { get; set; }
     }

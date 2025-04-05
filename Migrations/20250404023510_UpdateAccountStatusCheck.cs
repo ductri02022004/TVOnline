@@ -34,6 +34,19 @@ namespace TVOnline.Migrations
                     );
                 END
             ");
+
+            // Thêm cột Status vào bảng Payments nếu chưa tồn tại
+            migrationBuilder.Sql(@"
+                IF NOT EXISTS (
+                    SELECT * FROM sys.columns 
+                    WHERE object_id = OBJECT_ID(N'[dbo].[Payments]') 
+                    AND name = 'Status'
+                )
+                BEGIN
+                    ALTER TABLE [dbo].[Payments]
+                    ADD [Status] nvarchar(max) NULL
+                END
+            ");
         }
 
         /// <inheritdoc />
@@ -52,6 +65,19 @@ namespace TVOnline.Migrations
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
                 oldNullable: true);
+
+            // Xóa cột Status nếu cần rollback
+            migrationBuilder.Sql(@"
+                IF EXISTS (
+                    SELECT * FROM sys.columns 
+                    WHERE object_id = OBJECT_ID(N'[dbo].[Payments]') 
+                    AND name = 'Status'
+                )
+                BEGIN
+                    ALTER TABLE [dbo].[Payments]
+                    DROP COLUMN [Status]
+                END
+            ");
         }
     }
 }

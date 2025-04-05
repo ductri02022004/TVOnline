@@ -134,10 +134,17 @@ namespace TVOnline.Data
                 .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("NEWID()");
 
-            modelBuilder.Entity<Payment>()
-                .Property(p => p.PaymentId)
-                .ValueGeneratedOnAdd()
-                .HasDefaultValueSql("NEWID()");
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.ToTable("Payments");
+                entity.HasKey(e => e.PaymentId);
+                entity.Property(e => e.PaymentId).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
+                entity.Property(e => e.Status).HasColumnName("Status");
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity<PremiumUser>()
                 .Property(pu => pu.PremiumUserId)

@@ -12,8 +12,8 @@ using TVOnline.Data;
 namespace TVOnline.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250404035314_AddPremiumUserCVs")]
-    partial class AddPremiumUserCVs
+    [Migration("20250405213956_AddRatingAndStatus")]
+    partial class AddRatingAndStatus
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -324,6 +324,12 @@ namespace TVOnline.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<string>("AdminReply")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("AdminReplyDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -455,7 +461,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
@@ -910,7 +916,8 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });

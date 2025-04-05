@@ -6,11 +6,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TVOnline.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPremiumUserCVs : Migration
+    public partial class AddRatingAndStatus : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Payments_AspNetUsers_UserId",
+                table: "Payments");
+
+            migrationBuilder.AddColumn<string>(
+                name: "AdminReply",
+                table: "Feedbacks",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "AdminReplyDate",
+                table: "Feedbacks",
+                type: "datetime2",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "PremiumUserCVs",
                 columns: table => new
@@ -52,13 +68,40 @@ namespace TVOnline.Migrations
                 name: "IX_PremiumUserCVs_UserId",
                 table: "PremiumUserCVs",
                 column: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Payments_AspNetUsers_UserId",
+                table: "Payments",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Payments_AspNetUsers_UserId",
+                table: "Payments");
+
             migrationBuilder.DropTable(
                 name: "PremiumUserCVs");
+
+            migrationBuilder.DropColumn(
+                name: "AdminReply",
+                table: "Feedbacks");
+
+            migrationBuilder.DropColumn(
+                name: "AdminReplyDate",
+                table: "Feedbacks");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Payments_AspNetUsers_UserId",
+                table: "Payments",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id");
         }
     }
 }

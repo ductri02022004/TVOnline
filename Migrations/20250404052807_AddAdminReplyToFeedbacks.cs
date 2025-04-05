@@ -1,39 +1,68 @@
-﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
 
 namespace TVOnline.Migrations
 {
-    /// <inheritdoc />
     public partial class AddAdminReplyToFeedbacks : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "AdminReply",
-                table: "Feedbacks",
-                type: "nvarchar(max)",
-                nullable: true);
+            // Kiểm tra và xóa cột Rating cũ nếu tồn tại
+            migrationBuilder.Sql(@"
+                IF EXISTS (
+                    SELECT * FROM sys.columns 
+                    WHERE object_id = OBJECT_ID(N'[dbo].[Feedbacks]') 
+                    AND name = 'Rating'
+                )
+                BEGIN
+                    ALTER TABLE [dbo].[Feedbacks]
+                    DROP COLUMN [Rating]
+                END
+            ");
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "AdminReplyDate",
+            // Thêm cột Rating mới
+            migrationBuilder.AddColumn<int>(
+                name: "Rating",
                 table: "Feedbacks",
-                type: "datetime2",
-                nullable: true);
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            // Xóa bảng Payments cũ nếu tồn tại
+            migrationBuilder.Sql(@"
+                IF EXISTS (SELECT * FROM sys.tables WHERE name = 'Payments')
+                BEGIN
+                    DROP TABLE [Payments]
+                END
+            ");
+
+            // Tạo lại bảng Payments
+            migrationBuilder.Sql(@"
+                CREATE TABLE [Payments] (
+                    [PaymentId] nvarchar(450) NOT NULL,
+                    [PaymentDate] datetime2 NULL,
+                    [PaymentMethod] nvarchar(max) NULL,
+                    [UserId] nvarchar(450) NULL,
+                    [Amount] float NULL,
+                    [Status] nvarchar(max) NULL,
+                    CONSTRAINT [PK_Payments] PRIMARY KEY ([PaymentId]),
+                    CONSTRAINT [FK_Payments_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers] ([Id]) ON DELETE CASCADE
+                );
+            ");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "AdminReply",
+                name: "Rating",
                 table: "Feedbacks");
 
-            migrationBuilder.DropColumn(
-                name: "AdminReplyDate",
-                table: "Feedbacks");
+            // Xóa bảng Payments nếu cần rollback
+            migrationBuilder.Sql(@"
+                IF EXISTS (SELECT * FROM sys.tables WHERE name = 'Payments')
+                BEGIN
+                    DROP TABLE [Payments]
+                END
+            ");
         }
     }
-}
+} 

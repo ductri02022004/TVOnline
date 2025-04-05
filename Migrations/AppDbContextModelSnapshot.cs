@@ -458,7 +458,7 @@ namespace TVOnline.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("TVOnline.Models.Post", b =>
@@ -913,7 +913,8 @@ namespace TVOnline.Migrations
                 {
                     b.HasOne("TVOnline.Models.Users", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });

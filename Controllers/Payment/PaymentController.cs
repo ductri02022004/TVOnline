@@ -44,8 +44,10 @@ public class PaymentController : Controller
                 amount: 10000,
                 description: "Thanh toán đơn hàng",
                 items: [new("Nâng cấp tài khoản", 1, 10000)],
-                returnUrl: "https://tvonline20250307004019.azurewebsites.net/Payment/success",
-                cancelUrl: "https://tvonline20250307004019.azurewebsites.net/Payment/cancel"
+                // returnUrl: "https://tvonline20250307004019.azurewebsites.net/Payment/success",
+                // cancelUrl: "https://tvonline20250307004019.azurewebsites.net/Payment/cancel"
+                returnUrl: "https://localhost:7216/Payment/success",
+                cancelUrl: "https://localhost:7216/Payment/cancel"
             );
 
             var response = await _payOS.createPaymentLink(paymentLinkRequest);
@@ -72,10 +74,19 @@ public class PaymentController : Controller
             return Unauthorized("Bạn cần đăng nhập để xem lịch sử giao dịch.");
         }
 
-        // Use FromSqlRaw to get payment history
-        var sqlQuery = "SELECT * FROM Payments WHERE UserId = @UserId ORDER BY PaymentDate DESC";
+        // Sử dụng LINQ thay vì SQL trực tiếp
         var payments = await _context.Set<Payment>()
-            .FromSqlRaw(sqlQuery, new SqlParameter("@UserId", userId))
+            .Where(p => p.UserId == userId)
+            .OrderByDescending(p => p.PaymentDate)
+            .Select(p => new Payment
+            {
+                PaymentId = p.PaymentId,
+                PaymentDate = p.PaymentDate,
+                PaymentMethod = p.PaymentMethod,
+                Amount = p.Amount,
+                Status = p.Status,
+                UserId = p.UserId
+            })
             .ToListAsync();
 
         return View(payments);
