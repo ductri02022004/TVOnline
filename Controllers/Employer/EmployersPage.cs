@@ -23,6 +23,7 @@ namespace TVOnline.Controllers.Employer
         private readonly IPostService _postService = postService;
 
         [Route("[action]")]
+    
         public async Task<IActionResult> Index(string companyName = "", string field = "", string location = "", int page = 1)
         {
             // Get all cities and fields for the dropdowns
@@ -60,16 +61,16 @@ namespace TVOnline.Controllers.Employer
         public async Task<IActionResult> ViewEmployerDetail(string employerId)
         {
             var employer = await _employersService.GetEmployerById(employerId);
-            
+
             // Lấy danh sách công việc của nhà tuyển dụng
             var jobs = await _context.Posts
                 .Where(p => p.EmployerId == employerId && p.IsActive)
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(5)
                 .ToListAsync();
-                
+
             ViewBag.Jobs = jobs;
-            
+
             return View("Details", employer);
         }
 
@@ -77,6 +78,7 @@ namespace TVOnline.Controllers.Employer
         /// Hiển thị tất cả công việc của một nhà tuyển dụng
         /// </summary>
         [HttpGet]
+        [Route("[action]/{employerId}")]
         public async Task<IActionResult> ViewAllJobsByEmployers(
             string employerId,
             string sortOrder = "newest",

@@ -7,6 +7,7 @@ namespace TVOnline.Service.UserCVs
     public class UserCvService(IUserCvRepository userCvRepository) : IUserCvService
     {
         private readonly IUserCvRepository _userCvRepository = userCvRepository;
+        private const int DAILY_APPLICATION_LIMIT = 5;
 
         public async Task<List<AppliedJob>> GetAppliedJobsByUserIdAsync(string userId)
         {
@@ -80,6 +81,21 @@ namespace TVOnline.Service.UserCVs
         public async Task<UserCV> UpdateEmployerNotes(string cvId, string notes)
         {
             return await _userCvRepository.UpdateCvNotes(cvId, notes);
+        }
+
+        public async Task<int> GetUserDailyApplicationCount(string userId)
+        {
+            return await _userCvRepository.GetUserDailyApplicationCount(userId);
+        }
+
+        public async Task<bool> CanUserApplyToday(string userId, bool isPremiumUser)
+        {
+            // Premium users can apply unlimited times
+            if (isPremiumUser) return true;
+
+            // Regular users are limited to 5 applications per day
+            var dailyCount = await _userCvRepository.GetUserDailyApplicationCount(userId);
+            return dailyCount < DAILY_APPLICATION_LIMIT;
         }
     }
 }

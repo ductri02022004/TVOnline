@@ -13,5 +13,6 @@ namespace TVOnline.Repository.UserCVs
                 Task<UserCV> GetCvById(string cvId);
                 Task<UserCV> UpdateCvStatus(string cvId, string status);
                 Task<UserCV> UpdateCvNotes(string cvId, string notes);
+                Task<int> GetUserDailyApplicationCount(string userId);
         }
 }

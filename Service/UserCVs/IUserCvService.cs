@@ -13,5 +13,7 @@ namespace TVOnline.Service.UserCVs
                 Task<UserCV> GetApplicationById(string cvId);
                 Task<UserCV> UpdateApplicationStatus(string cvId, string status);
                 Task<UserCV> UpdateEmployerNotes(string cvId, string notes);
+                Task<int> GetUserDailyApplicationCount(string userId);
+                Task<bool> CanUserApplyToday(string userId, bool isPremiumUser);
         }
 }

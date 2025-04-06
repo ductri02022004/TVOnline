@@ -1,4 +1,4 @@
-@model TVOnline.Service.DTO.EmployerResponse
+﻿@model TVOnline.Service.DTO.EmployerResponse
 
 @{
     ViewData["Title"] = @Model.CompanyName;
@@ -132,7 +132,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex">
-                                            <a asp-controller="ApplyJob" asp-action="Details" asp-route-postID="@job.PostId" class="btn btn-sm btn-primary fw-medium rounded-pill">Ứng tuyển</a>
+                                            <a asp-controller="ApplyJob" asp-action="JobDetails" asp-route-postID="@job.PostId" class="btn btn-sm btn-primary fw-medium rounded-pill">Ứng tuyển</a>
                                         </div>
                                     </div>
                                 </div>

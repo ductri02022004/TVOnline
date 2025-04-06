@@ -88,5 +88,13 @@ namespace TVOnline.Repository.UserCVs
             }
             return cv;
         }
+
+        public async Task<int> GetUserDailyApplicationCount(string userId)
+        {
+            var today = DateTime.Today;
+            return await _context.UserCVs
+                    .CountAsync(cv => cv.UserId == userId &&
+                                    cv.ApplicationDate.Date == today);
+        }
     }
 }
