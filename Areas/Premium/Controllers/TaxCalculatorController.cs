@@ -33,6 +33,7 @@ namespace TVOnline.Areas.Premium.Controllers
             model.PreTaxIncome = model.GrossSalary - model.SocialInsurance - model.HealthInsurance - model.UnemploymentInsurance;
 
             // Tính thu nhập chịu thuế
+            model.Dependent = model.DependentDeduction * 4400000; // Giảm trừ gia cảnh cho người phụ thuộc
             model.TaxableIncome = model.PreTaxIncome - model.PersonalDeduction - model.DependentDeduction;
             if (model.TaxableIncome < 0)
             {

@@ -24,8 +24,10 @@ namespace TVOnline.Areas.Premium.Models
         [Display(Name = "Giảm trừ gia cảnh bản thân")]
         public decimal PersonalDeduction { get; set; } = 11000000; // Mặc định 11 triệu/tháng
 
-        [Display(Name = "Giảm trừ gia cảnh người phụ thuộc")]
+        [Display(Name = "Số người phụ thuộc")]
         public decimal DependentDeduction { get; set; }
+        [Display(Name = "Giảm trừ người phụ thuộc")]
+        public decimal Dependent { get; set; }
 
         [Display(Name = "Thu nhập chịu thuế (VNĐ)")]
         public decimal TaxableIncome { get; set; }

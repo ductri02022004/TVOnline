@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Kết quả tính thuế thu nhập cá nhân";
     Layout = "~/Areas/Premium/Views/Shared/_PremiumLayout.cshtml";
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 }
 
 <div class="container-fluid py-4">
@@ -90,7 +92,7 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <h6 class="card-title text-muted">Giảm trừ người phụ thuộc</h6>
-                                    <h5 class="mb-0">@Model.DependentDeduction.ToString("N0") VNĐ</h5>
+                                    <h5 class="mb-0">@Model.Dependent.ToString("N0") VNĐ</h5>
                                 </div>
                             </div>
                         </div>
@@ -107,92 +109,92 @@
                         </div>
                     </div>
 
-                    <div class="row mb-4">
-                        <h6 class="fw-bold mb-3">Chi tiết thuế theo từng bậc:</h6>
-                        @if (Model.TaxLevel1 > 0)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-muted">Bậc 1 (5%)</h6>
-                                        <h5 class="mb-0">@Model.TaxLevel1.ToString("N0") VNĐ</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        @if (Model.TaxLevel2 > 0)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-muted">Bậc 2 (10%)</h6>
-                                        <h5 class="mb-0">@Model.TaxLevel2.ToString("N0") VNĐ</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        @if (Model.TaxLevel3 > 0)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-muted">Bậc 3 (15%)</h6>
-                                        <h5 class="mb-0">@Model.TaxLevel3.ToString("N0") VNĐ</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        @if (Model.TaxLevel4 > 0)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-muted">Bậc 4 (20%)</h6>
-                                        <h5 class="mb-0">@Model.TaxLevel4.ToString("N0") VNĐ</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        @if (Model.TaxLevel5 > 0)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-muted">Bậc 5 (25%)</h6>
-                                        <h5 class="mb-0">@Model.TaxLevel5.ToString("N0") VNĐ</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        @if (Model.TaxLevel6 > 0)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-muted">Bậc 6 (30%)</h6>
-                                        <h5 class="mb-0">@Model.TaxLevel6.ToString("N0") VNĐ</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        @if (Model.TaxLevel7 > 0)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-muted">Bậc 7 (35%)</h6>
-                                        <h5 class="mb-0">@Model.TaxLevel7.ToString("N0") VNĐ</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
+                    @* <div class="row mb-4"> *@
+                    @*     <h6 class="fw-bold mb-3">Chi tiết thuế theo từng bậc:</h6> *@
+                    @*     @if (Model.TaxLevel1 > 0) *@
+                    @*     { *@
+                    @*         <div class="col-md-6 mb-3"> *@
+                    @*             <div class="card bg-light"> *@
+                    @*                 <div class="card-body"> *@
+                    @*                     <h6 class="card-title text-muted">Bậc 1 (5%)</h6> *@
+                    @*                     <h5 class="mb-0">@Model.TaxLevel1.ToString("N0") VNĐ</h5> *@
+                    @*                 </div> *@
+                    @*             </div> *@
+                    @*         </div> *@
+                    @*     } *@
+                    @*     @if (Model.TaxLevel2 > 0) *@
+                    @*     { *@
+                    @*         <div class="col-md-6 mb-3"> *@
+                    @*             <div class="card bg-light"> *@
+                    @*                 <div class="card-body"> *@
+                    @*                     <h6 class="card-title text-muted">Bậc 2 (10%)</h6> *@
+                    @*                     <h5 class="mb-0">@Model.TaxLevel2.ToString("N0") VNĐ</h5> *@
+                    @*                 </div> *@
+                    @*             </div> *@
+                    @*         </div> *@
+                    @*     } *@
+                    @*     @if (Model.TaxLevel3 > 0) *@
+                    @*     { *@
+                    @*         <div class="col-md-6 mb-3"> *@
+                    @*             <div class="card bg-light"> *@
+                    @*                 <div class="card-body"> *@
+                    @*                     <h6 class="card-title text-muted">Bậc 3 (15%)</h6> *@
+                    @*                     <h5 class="mb-0">@Model.TaxLevel3.ToString("N0") VNĐ</h5> *@
+                    @*                 </div> *@
+                    @*             </div> *@
+                    @*         </div> *@
+                    @*     } *@
+                    @*     @if (Model.TaxLevel4 > 0) *@
+                    @*     { *@
+                    @*         <div class="col-md-6 mb-3"> *@
+                    @*             <div class="card bg-light"> *@
+                    @*                 <div class="card-body"> *@
+                    @*                     <h6 class="card-title text-muted">Bậc 4 (20%)</h6> *@
+                    @*                     <h5 class="mb-0">@Model.TaxLevel4.ToString("N0") VNĐ</h5> *@
+                    @*                 </div> *@
+                    @*             </div> *@
+                    @*         </div> *@
+                    @*     } *@
+                    @*     @if (Model.TaxLevel5 > 0) *@
+                    @*     { *@
+                    @*         <div class="col-md-6 mb-3"> *@
+                    @*             <div class="card bg-light"> *@
+                    @*                 <div class="card-body"> *@
+                    @*                     <h6 class="card-title text-muted">Bậc 5 (25%)</h6> *@
+                    @*                     <h5 class="mb-0">@Model.TaxLevel5.ToString("N0") VNĐ</h5> *@
+                    @*                 </div> *@
+                    @*             </div> *@
+                    @*         </div> *@
+                    @*     } *@
+                    @*     @if (Model.TaxLevel6 > 0) *@
+                    @*     { *@
+                    @*         <div class="col-md-6 mb-3"> *@
+                    @*             <div class="card bg-light"> *@
+                    @*                 <div class="card-body"> *@
+                    @*                     <h6 class="card-title text-muted">Bậc 6 (30%)</h6> *@
+                    @*                     <h5 class="mb-0">@Model.TaxLevel6.ToString("N0") VNĐ</h5> *@
+                    @*                 </div> *@
+                    @*             </div> *@
+                    @*         </div> *@
+                    @*     } *@
+                    @*     @if (Model.TaxLevel7 > 0) *@
+                    @*     { *@
+                    @*         <div class="col-md-6 mb-3"> *@
+                    @*             <div class="card bg-light"> *@
+                    @*                 <div class="card-body"> *@
+                    @*                     <h6 class="card-title text-muted">Bậc 7 (35%)</h6> *@
+                    @*                     <h5 class="mb-0">@Model.TaxLevel7.ToString("N0") VNĐ</h5> *@
+                    @*                 </div> *@
+                    @*             </div> *@
+                    @*         </div> *@
+                    @*     } *@
+                    @* </div> *@
 
                     <div class="row mb-4">
                         <div class="col-md-12">
                             <div class="card bg-primary text-white">
                                 <div class="card-body">
-                                    <h6 class="card-title">Tổng số thuế phải nộp</h6>
+                                    <h6 class="card-title text-white"><i class="bi bi-star"></i>Tổng số thuế phải nộp</h6>
                                     <h4 class="mb-0">@Model.TaxAmount.ToString("N0") VNĐ</h4>
                                 </div>
                             </div>
