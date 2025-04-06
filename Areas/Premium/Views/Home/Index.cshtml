@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Premium Dashboard";
+    Layout = "~/Areas/Premium/Views/Shared/_PremiumLayout.cshtml";
 }
 
 <div class="container-fluid py-4">
@@ -16,9 +17,9 @@
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Template CV</h5>
-                                    <p class="card-text">Truy cập các template CV chuyên nghiệp</p>
-                                    <a asp-area="Premium" asp-controller="Template" asp-action="Index" class="btn btn-primary">Xem Templates</a>
+                                    <h5 class="card-title">Tính thuế TNCN</h5>
+                                    <p class="card-text">Tính toán thuế thu nhập cá nhân theo quy định mới nhất</p>
+                                    <a asp-area="Premium" asp-controller="TaxCalculator" asp-action="Index" class="btn btn-primary">Tính thuế</a>
                                 </div>
                             </div>
                         </div>

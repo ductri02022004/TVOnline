@@ -1,0 +1,216 @@
+@model TVOnline.Areas.Premium.Models.TaxCalculationModel
+
+@{
+    ViewData["Title"] = "Kết quả tính thuế thu nhập cá nhân";
+    Layout = "~/Areas/Premium/Views/Shared/_PremiumLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-area="Premium" asp-controller="Home" asp-action="Index">Trang chủ Premium</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Tính thuế thu nhập cá nhân</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Kết quả tính thuế</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-primary">Kết quả tính thuế thu nhập cá nhân</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0"><i class="fas fa-file-invoice-dollar me-2 text-primary"></i>Chi tiết tính thuế</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">Lương GROSS</h6>
+                                    <h4 class="mb-0">@Model.GrossSalary.ToString("N0") VNĐ</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <h6 class="fw-bold mb-3">Các khoản bảo hiểm bắt buộc:</h6>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">BHXH (8%)</h6>
+                                    <h5 class="mb-0">@Model.SocialInsurance.ToString("N0") VNĐ</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">BHYT (1.5%)</h6>
+                                    <h5 class="mb-0">@Model.HealthInsurance.ToString("N0") VNĐ</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">BHTN (1%)</h6>
+                                    <h5 class="mb-0">@Model.UnemploymentInsurance.ToString("N0") VNĐ</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">Thu nhập trước thuế</h6>
+                                    <h4 class="mb-0">@Model.PreTaxIncome.ToString("N0") VNĐ</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <h6 class="fw-bold mb-3">Các khoản giảm trừ:</h6>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">Giảm trừ bản thân</h6>
+                                    <h5 class="mb-0">@Model.PersonalDeduction.ToString("N0") VNĐ</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">Giảm trừ người phụ thuộc</h6>
+                                    <h5 class="mb-0">@Model.DependentDeduction.ToString("N0") VNĐ</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">Thu nhập chịu thuế</h6>
+                                    <h4 class="mb-0">@Model.TaxableIncome.ToString("N0") VNĐ</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <h6 class="fw-bold mb-3">Chi tiết thuế theo từng bậc:</h6>
+                        @if (Model.TaxLevel1 > 0)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Bậc 1 (5%)</h6>
+                                        <h5 class="mb-0">@Model.TaxLevel1.ToString("N0") VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TaxLevel2 > 0)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Bậc 2 (10%)</h6>
+                                        <h5 class="mb-0">@Model.TaxLevel2.ToString("N0") VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TaxLevel3 > 0)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Bậc 3 (15%)</h6>
+                                        <h5 class="mb-0">@Model.TaxLevel3.ToString("N0") VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TaxLevel4 > 0)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Bậc 4 (20%)</h6>
+                                        <h5 class="mb-0">@Model.TaxLevel4.ToString("N0") VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TaxLevel5 > 0)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Bậc 5 (25%)</h6>
+                                        <h5 class="mb-0">@Model.TaxLevel5.ToString("N0") VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TaxLevel6 > 0)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Bậc 6 (30%)</h6>
+                                        <h5 class="mb-0">@Model.TaxLevel6.ToString("N0") VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TaxLevel7 > 0)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Bậc 7 (35%)</h6>
+                                        <h5 class="mb-0">@Model.TaxLevel7.ToString("N0") VNĐ</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <h6 class="card-title">Tổng số thuế phải nộp</h6>
+                                    <h4 class="mb-0">@Model.TaxAmount.ToString("N0") VNĐ</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Thông tin thêm:</h6>
+                        <p class="mb-0">Số thuế trên được tính theo biểu thuế lũy tiến từng phần. Bạn có thể tham khảo bảng thuế suất tại trang tính thuế.</p>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a asp-action="Index" class="btn btn-outline-primary">
+                            <i class="fas fa-calculator me-2"></i>Tính lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

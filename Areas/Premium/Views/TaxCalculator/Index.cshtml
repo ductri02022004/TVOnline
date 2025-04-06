@@ -1,0 +1,146 @@
+@model TVOnline.Areas.Premium.Models.TaxCalculationModel
+
+@{
+    ViewData["Title"] = "Tính thuế thu nhập cá nhân";
+    Layout = "~/Areas/Premium/Views/Shared/_PremiumLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-area="Premium" asp-controller="Home" asp-action="Index">Trang chủ Premium</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tính thuế thu nhập cá nhân</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-primary">Tính thuế thu nhập cá nhân</h2>
+            <p class="text-muted">Nhập thông tin thu nhập để tính số thuế phải nộp</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0"><i class="fas fa-calculator me-2 text-primary"></i>Thông tin tính thuế</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Calculate" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="GrossSalary" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="GrossSalary" class="form-control" type="number" step="1000" min="0" />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="GrossSalary" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Giảm trừ gia cảnh</label>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">Bản thân</span>
+                                <input asp-for="PersonalDeduction" class="form-control" type="number" step="1000" min="0" value="11000000" readonly />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">Người phụ thuộc</span>
+                                <input asp-for="DependentDeduction" class="form-control" type="number" step="1000" min="0" value="0" />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <small class="form-text text-muted">
+                                Giảm trừ người phụ thuộc: 4,4 triệu đồng/người/tháng
+                            </small>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calculator me-2"></i>Tính thuế
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0"><i class="fas fa-info-circle me-2 text-primary"></i>Thông tin về thuế thu nhập cá nhân</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold">Các khoản bảo hiểm bắt buộc:</h6>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check-circle text-success me-2"></i>Bảo hiểm xã hội: 8% lương GROSS</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i>Bảo hiểm y tế: 1.5% lương GROSS</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i>Bảo hiểm thất nghiệp: 1% lương GROSS</li>
+                    </ul>
+
+                    <h6 class="fw-bold">Biểu thuế lũy tiến từng phần:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Bậc</th>
+                                    <th>Thu nhập tính thuế/tháng</th>
+                                    <th>Thuế suất</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Đến 5 triệu</td>
+                                    <td>5%</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Trên 5 đến 10 triệu</td>
+                                    <td>10%</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Trên 10 đến 18 triệu</td>
+                                    <td>15%</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Trên 18 đến 32 triệu</td>
+                                    <td>20%</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Trên 32 đến 52 triệu</td>
+                                    <td>25%</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Trên 52 đến 80 triệu</td>
+                                    <td>30%</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Trên 80 triệu</td>
+                                    <td>35%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6 class="fw-bold">Lưu ý:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Giảm trừ gia cảnh: 11 triệu đồng/tháng</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Giảm trừ cho người phụ thuộc: 4,4 triệu đồng/người/tháng</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
